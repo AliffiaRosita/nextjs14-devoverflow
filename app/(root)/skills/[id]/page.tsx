@@ -1,53 +1,50 @@
 import { auth } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
 
-import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
-import Filter from "@/components/shared/Filter";
+import QuestionCard from "@/components/cards/QuestionCard";
 import NoResult from "@/components/shared/NoResult";
 import Pagination from "@/components/shared/Pagination";
-import QuestionCard from "@/components/cards/QuestionCard";
+import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 
-import { getSavedQuestions, getUserById } from "@/lib/actions/user.action";
+import {
+    getSkillById,
+    getQuestionsBySkillId,
+} from "@/lib/actions/skill.action";
 
-import { QuestionFilters } from "@/constants/filters";
-
-import type { SearchParamsProps } from "@/types";
+import type { URLProps } from "@/types";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-    title: "Collection — DevOverflow",
-};
+export async function generateMetadata({
+    params,
+}: Omit<URLProps, "searchParams">): Promise<Metadata> {
+    const tag = await getSkillById({ skillId: params.id });
 
-export default async function Collection({ searchParams }: SearchParamsProps) {
+    return {
+        title: `Posts by skill '${tag.name}' — DevOverflow`,
+        description: tag.description || `Questions tagged with ${tag.name}`,
+    };
+}
+
+const Page = async ({ params, searchParams }: URLProps) => {
     const { userId: clerkId } = auth();
 
-    if (!clerkId) return null;
-
-    const mongoUser = await getUserById({ userId: clerkId });
-    if (!mongoUser?.onboarded) redirect("/onboarding");
-
-    const result = await getSavedQuestions({
-        clerkId,
+    const result = await getQuestionsBySkillId({
+        skillId: params.id,
         searchQuery: searchParams.q,
-        filter: searchParams.filter,
         page: searchParams.page ? +searchParams.page : 1,
     });
 
     return (
         <>
-            <h1 className="h1-bold text-dark100_light900">Saved Questions</h1>
-            <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
+            <h1 className="h1-bold text-dark100_light900">
+                {result.skillTitle}
+            </h1>
+            <div className="mt-11 w-full">
                 <LocalSearchbar
-                    route="/collection"
+                    route={`/skills/${params.id}`}
                     iconPosition="left"
                     imgSrc="/assets/icons/search.svg"
-                    placeholder="Search for questions"
+                    placeholder="Search tag questions"
                     otherClasses="flex-1"
-                />
-
-                <Filter
-                    filters={QuestionFilters}
-                    otherClasses="min-h-[56px] sm:min-w-[170px]"
                 />
             </div>
 
@@ -69,8 +66,8 @@ export default async function Collection({ searchParams }: SearchParamsProps) {
                     ))
                 ) : (
                     <NoResult
-                        title="No Saved Questions Found"
-                        description="It appears that there are no saved questions in your collection at the moment 😔. Start exploring and saving questions that pique your interest 🌟"
+                        title="No Tag Questions Found"
+                        description="It appears that there are no saved questions in your collection at the moment 😔.Start exploring and saving questions that pique your interest 🌟"
                         link="/"
                         linkTitle="Explore Questions"
                     />
@@ -85,4 +82,6 @@ export default async function Collection({ searchParams }: SearchParamsProps) {
             </div>
         </>
     );
-}
+};
+
+export default Page;

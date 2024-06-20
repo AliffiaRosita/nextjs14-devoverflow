@@ -5,10 +5,9 @@ import { auth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import Filter from "@/components/shared/Filter";
-import NoResult from "@/components/shared/NoResult";
 import Pagination from "@/components/shared/Pagination";
 import HomeFilters from "@/components/shared/Filters";
-import QuestionCard from "@/components/cards/QuestionCard";
+import QuestionsContainer from "@/components/shared/QuestionsContainer";
 
 import { HomePageFilters } from "@/constants/filters";
 
@@ -18,7 +17,6 @@ import {
     getQuestions,
     getRecommendedQuestions,
 } from "@/lib/actions/question.action";
-import { useState } from "react";
 
 export const metadata: Metadata = {
     title: "Home — DevOverflow",
@@ -49,6 +47,8 @@ export default async function Home({ searchParams }: SearchParamsProps) {
             page: searchParams.page ? +searchParams.page : 1,
         });
     }
+
+    const questions = JSON.parse(JSON.stringify(result.questions));
 
     return (
         <>
@@ -82,35 +82,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
             </div>
 
             <HomeFilters filters={HomePageFilters} />
-            <div className="mt-10 flex w-full flex-col gap-6">
-                {result.questions.length > 0 ? (
-                    result.questions.map((question: any) => {
-                        return (
-                            <QuestionCard
-                                key={question._id}
-                                _id={question._id}
-                                clerkId={clerkId}
-                                title={question.title}
-                                skills={question.skills}
-                                author={question.author}
-                                upvotes={question.upvotes}
-                                views={question.views}
-                                answers={question.answers}
-                                createdAt={question.createdAt}
-                            />
-                        );
-                    })
-                ) : (
-                    <NoResult
-                        title="No Questions Found"
-                        description="Be the first to break the silence! 🚀 Post a Problem and kickstart the
-          discussion. our query could be the next big thing others learn from. Get
-          involved! 💡"
-                        link="/post-problem"
-                        linkTitle="Post a Problem"
-                    />
-                )}
-            </div>
+            <QuestionsContainer questions={questions} clerkId={clerkId} />
 
             <div className="mt-10">
                 <Pagination

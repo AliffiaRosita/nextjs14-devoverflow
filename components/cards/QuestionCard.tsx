@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SignedIn } from "@clerk/nextjs";
+import { MessagesSquare, Phone, Video } from "lucide-react";
 
 import RenderTag from "@/components/shared/RenderTag";
 import Metric from "@/components/shared/Metric";
@@ -34,6 +35,7 @@ interface QuestionProps {
     answers: Array<object>;
     createdAt: Date;
     clerkId?: string | null;
+    handleOpenVideoCallModal?: () => void;
 }
 
 const QuestionCard = ({
@@ -46,6 +48,7 @@ const QuestionCard = ({
     answers,
     createdAt,
     clerkId,
+    handleOpenVideoCallModal = () => {}
 }: QuestionProps) => {
     const showActionButtons = clerkId && clerkId === author.clerkId;
     return (
@@ -82,8 +85,8 @@ const QuestionCard = ({
                 ))}
             </div>
 
-            <div className=" mt-6 flex-col w-full flex-wrap ">
-                <div className="flex-row flex-wrap">
+            <div className=" mt-6 w-full flex-col flex-wrap ">
+                <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
                     <Metric
                         imgUrl={author.picture}
                         alt="user"
@@ -93,17 +96,21 @@ const QuestionCard = ({
                         isAuthor
                         textStyles="body-medium text-dark400_light700"
                     />
-                    <Metric
-                        imgUrl="/assets/icons/like.svg"
-                        alt="Video Call"
-                        value={"Video call"}
-                        title=""
-                        href={`/call/${_id}`}
-                        textStyles="small-medium text-dark400_light800"
-                    />
+                    <div className="flex flex-row justify-between gap-2">
+                        <button className="flex-start gap-1" onClick={handleOpenVideoCallModal}>
+                            <Video className="size-4 text-primary-500" />
+                        </button>
+                        <Link href={`profile/${author._id}`} className="flex-start gap-1">
+                            <MessagesSquare className="size-4 text-red-500" />
+                        </Link>
+                        <Link href={`profile/${author._id}`} className="flex-start gap-1">
+                            <Phone className="size-4 text-green-500" />
+                        </Link>
+                    </div>
+
                 </div>
 
-                <div className="flex items-center gap-3 mt-3 max-sm:flex-wrap max-sm:justify-start">
+                <div className="mt-3 flex items-center gap-3 max-sm:flex-wrap max-sm:justify-start">
                     <Metric
                         imgUrl="/assets/icons/like.svg"
                         alt="Upvotes"

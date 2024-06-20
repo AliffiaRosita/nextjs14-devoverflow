@@ -6,19 +6,15 @@ import Metric from "@/components/shared/Metric";
 import EditDeleteAction from "@/components/shared/EditDeleteAction";
 
 import { getFormattedNumber, getTimestamp } from "@/lib/utils";
-import { useState } from "react";
-import {
-    FacebookShareButton,
-    TwitterShareButton,
-    LinkedinShareButton,
-    WhatsappShareButton,
-    FacebookIcon,
-    TwitterIcon,
-    LinkedinIcon,
-    WhatsappIcon,
-    FacebookShareCount,
-} from "react-share";
+
 import SocialShare from "../shared/SocialShare";
+import ContactButton from "../shared/ContactButton";
+import {
+    faMicrosoft,
+    faSkype,
+    faWhatsapp,
+} from "@fortawesome/free-brands-svg-icons";
+import { faVideo } from "@fortawesome/free-solid-svg-icons";
 interface QuestionProps {
     _id: string;
     title: string;
@@ -28,6 +24,11 @@ interface QuestionProps {
         name: string;
         picture: string;
         clerkId: string;
+        whatsapp?: string;
+        zoom?: string;
+        googleMeet?: string;
+        skype?: string;
+        teams: string;
     };
     upvotes: string[];
     views: number;
@@ -83,7 +84,7 @@ const QuestionCard = ({
             </div>
 
             <div className=" mt-6 flex-col w-full flex-wrap ">
-                <div className="flex-row flex-wrap">
+                <div className="flex justify-between gap-3 mt-3 max-sm:flex-wrap max-sm:justify-start">
                     <Metric
                         imgUrl={author.picture}
                         alt="user"
@@ -93,14 +94,48 @@ const QuestionCard = ({
                         isAuthor
                         textStyles="body-medium text-dark400_light700"
                     />
-                    <Metric
-                        imgUrl="/assets/icons/like.svg"
-                        alt="Video Call"
-                        value={"Video call"}
-                        title=""
-                        href={`/call/${_id}`}
-                        textStyles="small-medium text-dark400_light800"
-                    />
+                    <div className="flex gap-3">
+                        {author?.whatsapp && (
+                            <ContactButton
+                                link={`https://wa.me/${author?.whatsapp}`}
+                                color={"green"}
+                                icon={faWhatsapp}
+                                text={"Whatsapp"}
+                            />
+                        )}
+                        {author?.googleMeet && (
+                            <ContactButton
+                                image={"/assets/images/gMeet.png"}
+                                color={"lightBlue"}
+                                text={"Google Meet"}
+                                link={`${author?.googleMeet}`}
+                            />
+                        )}
+                        {author?.zoom && (
+                            <ContactButton
+                                link={`${author?.zoom}`}
+                                color={"blue"}
+                                icon={faVideo}
+                                text={"Zoom"}
+                            />
+                        )}
+                        {author?.teams && (
+                            <ContactButton
+                                image={"/assets/images/teams.png"}
+                                color={"purple"}
+                                text={"Teams"}
+                                link={`${author?.teams}`}
+                            />
+                        )}
+                        {author?.skype && (
+                            <ContactButton
+                                link={`${author?.skype}`}
+                                color={"lightBlue"}
+                                icon={faSkype}
+                                text={"Skype"}
+                            />
+                        )}
+                    </div>
                 </div>
 
                 <div className="flex items-center gap-3 mt-3 max-sm:flex-wrap max-sm:justify-start">

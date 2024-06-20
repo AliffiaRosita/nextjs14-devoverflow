@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { SignedIn } from "@clerk/nextjs";
-import { MessagesSquare, Phone, Video } from "lucide-react";
 
 import RenderTag from "@/components/shared/RenderTag";
 import Metric from "@/components/shared/Metric";
@@ -11,11 +10,15 @@ import { getFormattedNumber, getTimestamp } from "@/lib/utils";
 import SocialShare from "../shared/SocialShare";
 import ContactButton from "../shared/ContactButton";
 import {
-    faMicrosoft,
     faSkype,
     faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons";
-import { faVideo } from "@fortawesome/free-solid-svg-icons";
+import {
+  faVideo,
+  faPhoneAlt,
+  faVideoCamera,
+  faMessage,
+} from "@fortawesome/free-solid-svg-icons";
 interface QuestionProps {
     _id: string;
     title: string;
@@ -97,16 +100,28 @@ const QuestionCard = ({
                         isAuthor
                         textStyles="body-medium text-dark400_light700"
                     />
-                    <div className="flex flex-row justify-between gap-2">
-                        <button className="flex-start gap-1" onClick={handleOpenVideoCallModal}>
-                            <Video className="size-4 text-primary-500" />
-                        </button>
-                        <Link href={`profile/${author._id}`} className="flex-start gap-1">
-                            <MessagesSquare className="size-4 text-red-500" />
-                        </Link>
-                        <Link href={`profile/${author._id}`} className="flex-start gap-1">
-                            <Phone className="size-4 text-green-500" />
-                        </Link>
+                    <div className="flex gap-3">       
+                        <ContactButton
+                            onClick={handleOpenVideoCallModal}
+                            type="button"
+                            color={"blue"}
+                            icon={faVideoCamera}
+                            text={"Video Call"}
+                        />
+                        <ContactButton
+                            onClick={() => {}}
+                            type="button"
+                            color={"green"}
+                            icon={faPhoneAlt}
+                            text={"Voice Call"}
+                        />
+                        <ContactButton
+                            onClick={() => {}}
+                            type="button"
+                            color={"red"}
+                            icon={faMessage}
+                            text={"Message"}
+                        />
                     </div>
                 </div>
 

@@ -15,5 +15,10 @@ export const ProfileValidation = z.object({
     username: z.string().min(5).max(50),
     bio: z.union([z.string().min(5).max(50), z.literal("")]),
     portfolioWebsite: z.union([z.string().url(), z.literal("")]),
+    whatsapp: z.union([z.string().min(5).max(50), z.literal("")]),
+    googleMeet: z.union([z.string().min(5).max(50), z.literal("")]),
     location: z.union([z.string().min(5).max(50), z.literal("")]),
+    zoom: z.union([z.string().min(5).max(50), z.literal("")]),
+    skype: z.union([z.string().min(5).max(50), z.literal("")]),
+    teams: z.union([z.string().min(5).max(50), z.literal("")]),
 });

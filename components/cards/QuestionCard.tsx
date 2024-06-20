@@ -94,6 +94,34 @@ const QuestionCard = ({
                         isAuthor
                         textStyles="body-medium text-dark400_light700"
                     />
+                </div>
+
+                <div className="flex items-center justify-between gap-3 mt-3 max-sm:flex-wrap max-sm:justify-start">
+                    <div className=" flex">
+                        <Metric
+                            imgUrl="/assets/icons/like.svg"
+                            alt="Upvotes"
+                            value={getFormattedNumber(upvotes.length)}
+                            title=" Votes"
+                            textStyles="small-medium text-dark400_light800"
+                        />
+                        <Metric
+                            imgUrl="/assets/icons/message.svg"
+                            alt="Message"
+                            value={getFormattedNumber(answers.length)}
+                            title=" Answers"
+                            textStyles="small-medium text-dark400_light800"
+                        />
+                        <Metric
+                            imgUrl="/assets/icons/eye.svg"
+                            alt="Eye"
+                            value={getFormattedNumber(views)}
+                            title=" Views"
+                            textStyles="small-medium text-dark400_light800"
+                        />
+                        <SocialShare id={_id} />
+                    </div>
+
                     <div className="flex gap-3">
                         {author?.whatsapp && (
                             <ContactButton
@@ -136,31 +164,6 @@ const QuestionCard = ({
                             />
                         )}
                     </div>
-                </div>
-
-                <div className="flex items-center gap-3 mt-3 max-sm:flex-wrap max-sm:justify-start">
-                    <Metric
-                        imgUrl="/assets/icons/like.svg"
-                        alt="Upvotes"
-                        value={getFormattedNumber(upvotes.length)}
-                        title=" Votes"
-                        textStyles="small-medium text-dark400_light800"
-                    />
-                    <Metric
-                        imgUrl="/assets/icons/message.svg"
-                        alt="Message"
-                        value={getFormattedNumber(answers.length)}
-                        title=" Answers"
-                        textStyles="small-medium text-dark400_light800"
-                    />
-                    <Metric
-                        imgUrl="/assets/icons/eye.svg"
-                        alt="Eye"
-                        value={getFormattedNumber(views)}
-                        title=" Views"
-                        textStyles="small-medium text-dark400_light800"
-                    />
-                    <SocialShare id={_id} />
                 </div>
             </div>
         </div>

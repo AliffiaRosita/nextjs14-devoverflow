@@ -1,10 +1,10 @@
 import Pagination from "@/components/shared/Pagination";
-import QuestionCard from "@/components/cards/QuestionCard";
 
 import { getUserQuestions } from "@/lib/actions/user.action";
 
 import type { UserId } from "@/lib/actions/shared.types";
 import type { SearchParamsProps } from "@/types";
+import QuestionsContainer from "./QuestionsContainer";
 
 interface Props extends SearchParamsProps, UserId {
     clerkId?: string | null;
@@ -16,22 +16,11 @@ const QuestionsTab = async ({ searchParams, userId, clerkId }: Props) => {
         page: searchParams.page ? +searchParams.page : 1,
     });
 
+    const questions = JSON.parse(JSON.stringify(result.questions));
+
     return (
         <>
-            {result.questions.map((question) => (
-                <QuestionCard
-                    key={question._id}
-                    _id={question._id}
-                    clerkId={clerkId}
-                    title={question.title}
-                    skills={question.skills}
-                    author={question.author}
-                    upvotes={question.upvotes}
-                    views={question.views}
-                    answers={question.answers}
-                    createdAt={question.createdAt}
-                />
-            ))}
+            <QuestionsContainer questions={questions} clerkId={clerkId} />
 
             <div className="mt-10">
                 <Pagination

@@ -57,10 +57,10 @@ const QuestionsContainer = ({
     if (type === "skill") {
       return (
         <NoResult
-            title="No Tag Questions Found"
-            description="It appears that there are no saved questions in your collection at the moment 😔.Start exploring and saving questions that pique your interest 🌟"
-            link="/"
-            linkTitle="Explore Questions"
+          title="No Tag Questions Found"
+          description="It appears that there are no saved questions in your collection at the moment 😔.Start exploring and saving questions that pique your interest 🌟"
+          link="/"
+          linkTitle="Explore Questions"
         />
       );
     }

@@ -4,22 +4,15 @@ import {
   DeviceSettings,
   VideoPreview,
   useCall,
-  useCallStateHooks,
 } from "@stream-io/video-react-sdk";
 
 import { Button } from "../ui/button";
-import Alert from "./Alert";
 
 const MeetingSetup = ({
   setIsSetupComplete,
 }: {
   setIsSetupComplete: (value: boolean) => void;
 }) => {
-  const { useCallStartsAt } = useCallStateHooks();
-  const callStartsAt = useCallStartsAt();
-  const callTimeNotArrived =
-    callStartsAt && new Date(callStartsAt) > new Date();
-
   const call = useCall();
 
   if (!call) {
@@ -39,13 +32,6 @@ const MeetingSetup = ({
       call.microphone.enable();
     }
   }, [isMicCamToggled, call.camera, call.microphone]);
-
-  if (callTimeNotArrived)
-    return (
-      <Alert
-        title={`Your Video call has not started yet. It is scheduled for ${callStartsAt.toLocaleString()}`}
-      />
-    );
 
   return (
     <div className="text-dark100_light900 mx-auto flex size-full max-w-5xl flex-col items-center justify-center gap-3">

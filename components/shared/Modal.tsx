@@ -13,10 +13,7 @@ interface ModalProps {
   children?: ReactNode;
   handleClick?: () => void;
   buttonText?: string;
-  instantMeeting?: boolean;
   image?: string;
-  buttonClassName?: string;
-  buttonIcon?: string;
 }
 
 const Modal = ({
@@ -27,10 +24,7 @@ const Modal = ({
   children,
   handleClick = () => {},
   buttonText,
-  instantMeeting,
   image,
-  buttonClassName,
-  buttonIcon,
 }: ModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

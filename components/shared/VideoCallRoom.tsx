@@ -31,7 +31,7 @@ const VideoCallRoom = ({ roomId }: VideoCallRoomProps) => {
   return (
     <>
       <StreamCall call={call}>
-        <StreamTheme>
+        <StreamTheme className="light">
           {!isSetupComplete ? (
             <MeetingSetup setIsSetupComplete={setIsSetupComplete} />
           ) : (

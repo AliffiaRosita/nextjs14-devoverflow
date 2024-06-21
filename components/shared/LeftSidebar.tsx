@@ -6,9 +6,10 @@ import { usePathname } from "next/navigation";
 
 import { useAuth } from "@clerk/nextjs";
 
-// import { Button } from "@/components/ui/button";
-
 import { sidebarLinks } from "@/constants";
+import { Button } from "../ui/button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 
 const LeftSidebar = () => {
     const { userId } = useAuth();
@@ -58,6 +59,12 @@ const LeftSidebar = () => {
                         </Link>
                     );
                 })}
+                <Link href="/" className="bottom-0 mt-auto">
+                    <Button className="paragraph-medium bg-green-500 text-white min-h-[46px] min-w-[175px] px-4 py-3">
+                        <FontAwesomeIcon icon={faWhatsapp} className="mr-2" />{" "}
+                        Help & Support
+                    </Button>
+                </Link>
             </div>
         </section>
     );

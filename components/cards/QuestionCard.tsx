@@ -8,7 +8,7 @@ import EditDeleteAction from "@/components/shared/EditDeleteAction";
 import { getFormattedNumber, getTimestamp } from "@/lib/utils";
 
 import SocialShare from "../shared/SocialShare";
-import ContactButton from "../shared/ContactButton";
+import IconButton from "../shared/IconButton";
 import {
     faSkype,
     faWhatsapp,
@@ -19,28 +19,7 @@ import {
   faVideoCamera,
   faMessage,
 } from "@fortawesome/free-solid-svg-icons";
-interface QuestionProps {
-    _id: string;
-    title: string;
-    skills: Array<{ _id: string; name: string }>;
-    author: {
-        _id: string;
-        name: string;
-        picture: string;
-        clerkId: string;
-        whatsapp?: string;
-        zoom?: string;
-        googleMeet?: string;
-        skype?: string;
-        teams: string;
-    };
-    upvotes: string[];
-    views: number;
-    answers: Array<object>;
-    createdAt: Date;
-    clerkId?: string | null;
-    handleOpenVideoCallModal?: () => void;
-}
+import { QuestionProps } from "@/types";
 
 const QuestionCard = ({
     _id,
@@ -101,21 +80,21 @@ const QuestionCard = ({
                         textStyles="body-medium text-dark400_light700"
                     />
                     <div className="flex gap-3">       
-                        <ContactButton
+                        <IconButton
                             onClick={handleOpenVideoCallModal}
                             type="button"
                             color={"blue"}
                             icon={faVideoCamera}
                             text={"Video Call"}
                         />
-                        <ContactButton
+                        <IconButton
                             onClick={() => {}}
                             type="button"
                             color={"green"}
                             icon={faPhoneAlt}
                             text={"Voice Call"}
                         />
-                        <ContactButton
+                        <IconButton
                             onClick={() => {}}
                             type="button"
                             color={"red"}
@@ -153,7 +132,7 @@ const QuestionCard = ({
 
                     <div className="flex gap-3">
                         {author?.whatsapp && (
-                            <ContactButton
+                            <IconButton
                                 link={`https://wa.me/${author?.whatsapp}`}
                                 color={"green"}
                                 icon={faWhatsapp}
@@ -161,7 +140,7 @@ const QuestionCard = ({
                             />
                         )}
                         {author?.googleMeet && (
-                            <ContactButton
+                            <IconButton
                                 image={"/assets/images/gMeet.png"}
                                 color={"lightBlue"}
                                 text={"Google Meet"}
@@ -169,7 +148,7 @@ const QuestionCard = ({
                             />
                         )}
                         {author?.zoom && (
-                            <ContactButton
+                            <IconButton
                                 link={`${author?.zoom}`}
                                 color={"blue"}
                                 icon={faVideo}
@@ -177,7 +156,7 @@ const QuestionCard = ({
                             />
                         )}
                         {author?.teams && (
-                            <ContactButton
+                            <IconButton
                                 image={"/assets/images/teams.png"}
                                 color={"purple"}
                                 text={"Teams"}
@@ -185,7 +164,7 @@ const QuestionCard = ({
                             />
                         )}
                         {author?.skype && (
-                            <ContactButton
+                            <IconButton
                                 link={`${author?.skype}`}
                                 color={"lightBlue"}
                                 icon={faSkype}

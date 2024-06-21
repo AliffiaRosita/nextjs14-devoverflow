@@ -5,14 +5,25 @@ import NoResult from "@/components/shared/NoResult";
 import Modal from "./Modal";
 import { useRouter } from "next/navigation";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
-import CallList from "./CallList";
+import LiveVideoCall from "./LiveVideoCall";
+import { QuestionProps } from "@/types";
 
-const QuestionsContainer = ({ questions, clerkId }) => {
+const QuestionsContainer = ({
+  questions,
+  clerkId,
+}: {
+  questions: QuestionProps[];
+  clerkId: string;
+  handleClick: () => void;
+}) => {
   const router = useRouter();
   const client = useStreamVideoClient();
 
-  const [isVideoCallModalOpen, setIsVideoCallModalOpen] = useState(false);
-  const [selectedQuestionId, setSelectedQuestionId] = useState(null);
+  const [isVideoCallModalOpen, setIsVideoCallModalOpen] =
+    useState<boolean>(false);
+  const [selectedQuestionId, setSelectedQuestionId] = useState<null | string>(
+    null
+  );
 
   const startRoom = async () => {
     if (!client || !selectedQuestionId) return;
@@ -68,10 +79,10 @@ const QuestionsContainer = ({ questions, clerkId }) => {
           setIsVideoCallModalOpen(false);
           setSelectedQuestionId(null);
         }}
-        title="Start an Instant Meeting"
+        title="Start a Video Call"
         className="text-center"
       >
-        <CallList type="live" id={selectedQuestionId} handleClick={startRoom}/>
+        <LiveVideoCall id={selectedQuestionId} handleClick={startRoom} />
       </Modal>
     </>
   );

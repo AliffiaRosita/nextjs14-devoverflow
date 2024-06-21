@@ -2,28 +2,28 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 
-interface ContactButtonBaseProps {
+interface IconButtonBaseProps {
   color: string;
   icon?: IconProp;
   text: string;
   image?: string;
 }
 
-interface ContactButtonLinkProps extends ContactButtonBaseProps {
+interface IconButtonLinkProps extends IconButtonBaseProps {
   type?: "link";
   link: string;
   onClick?: never;
 }
 
-interface ContactButtonButtonProps extends ContactButtonBaseProps {
+interface IconButtonButtonProps extends IconButtonBaseProps {
   type: "button";
   onClick: () => void;
   link?: never;
 }
 
-type ContactButtonProps = ContactButtonLinkProps | ContactButtonButtonProps;
+type IconButtonProps = IconButtonLinkProps | IconButtonButtonProps;
 
-const ContactButton = ({
+const IconButton = ({
   color,
   icon,
   text,
@@ -31,7 +31,7 @@ const ContactButton = ({
   image,
   type = "link",
   onClick = () => {},
-}: ContactButtonProps) => {
+}: IconButtonProps) => {
   const renderButtonContent = (
     <div className=" flex-center flex flex-wrap gap-1">
       {icon && (
@@ -63,4 +63,4 @@ const ContactButton = ({
   return <div className="relative">{renderButton()}</div>;
 };
 
-export default ContactButton;
+export default IconButton;

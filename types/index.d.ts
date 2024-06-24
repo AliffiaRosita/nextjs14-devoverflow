@@ -75,3 +75,26 @@ export interface BadgeParams {
     count: number;
   }[];
 }
+
+export interface QuestionProps {
+  _id: string;
+  title: string;
+  skills: Array<{ _id: string; name: string }>;
+  author: {
+      _id: string;
+      name: string;
+      picture: string;
+      clerkId: string;
+      whatsapp?: string;
+      zoom?: string;
+      googleMeet?: string;
+      skype?: string;
+      teams: string;
+  };
+  upvotes: string[];
+  views: number;
+  answers: Array<object>;
+  createdAt: Date;
+  clerkId?: string | null;
+  handleOpenVideoCallModal?: () => void;
+}

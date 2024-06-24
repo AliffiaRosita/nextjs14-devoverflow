@@ -8,34 +8,18 @@ import EditDeleteAction from "@/components/shared/EditDeleteAction";
 import { getFormattedNumber, getTimestamp } from "@/lib/utils";
 
 import SocialShare from "../shared/SocialShare";
-import ContactButton from "../shared/ContactButton";
+import IconButton from "../shared/IconButton";
 import {
-    faMicrosoft,
     faSkype,
     faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons";
-import { faVideo } from "@fortawesome/free-solid-svg-icons";
-interface QuestionProps {
-    _id: string;
-    title: string;
-    skills: Array<{ _id: string; name: string }>;
-    author: {
-        _id: string;
-        name: string;
-        picture: string;
-        clerkId: string;
-        whatsapp?: string;
-        zoom?: string;
-        googleMeet?: string;
-        skype?: string;
-        teams: string;
-    };
-    upvotes: string[];
-    views: number;
-    answers: Array<object>;
-    createdAt: Date;
-    clerkId?: string | null;
-}
+import {
+  faVideo,
+  faPhoneAlt,
+  faVideoCamera,
+  faMessage,
+} from "@fortawesome/free-solid-svg-icons";
+import { QuestionProps } from "@/types";
 
 const QuestionCard = ({
     _id,
@@ -47,6 +31,7 @@ const QuestionCard = ({
     answers,
     createdAt,
     clerkId,
+    handleOpenVideoCallModal = () => {}
 }: QuestionProps) => {
     const showActionButtons = clerkId && clerkId === author.clerkId;
     return (
@@ -83,8 +68,8 @@ const QuestionCard = ({
                 ))}
             </div>
 
-            <div className=" mt-6 flex-col w-full flex-wrap ">
-                <div className="flex justify-between gap-3 mt-3 max-sm:flex-wrap max-sm:justify-start">
+            <div className=" mt-6 w-full flex-col flex-wrap ">
+                <div className="mt-3 flex justify-between gap-3 max-sm:flex-wrap max-sm:justify-start">
                     <Metric
                         imgUrl={author.picture}
                         alt="user"
@@ -94,9 +79,32 @@ const QuestionCard = ({
                         isAuthor
                         textStyles="body-medium text-dark400_light700"
                     />
+                    <div className="flex gap-3">       
+                        <IconButton
+                            onClick={handleOpenVideoCallModal}
+                            type="button"
+                            color={"blue"}
+                            icon={faVideoCamera}
+                            text={"Video Call"}
+                        />
+                        <IconButton
+                            onClick={() => {}}
+                            type="button"
+                            color={"green"}
+                            icon={faPhoneAlt}
+                            text={"Voice Call"}
+                        />
+                        <IconButton
+                            onClick={() => {}}
+                            type="button"
+                            color={"red"}
+                            icon={faMessage}
+                            text={"Message"}
+                        />
+                    </div>
                 </div>
 
-                <div className="flex items-center justify-between gap-3 mt-3 max-sm:flex-wrap max-sm:justify-start">
+                <div className="mt-3 flex items-center justify-between gap-3 max-sm:flex-wrap max-sm:justify-start">
                     <div className=" flex gap-3">
                         <Metric
                             imgUrl="/assets/icons/like.svg"
@@ -124,7 +132,7 @@ const QuestionCard = ({
 
                     <div className="flex gap-3">
                         {author?.whatsapp && (
-                            <ContactButton
+                            <IconButton
                                 link={`https://wa.me/${author?.whatsapp}`}
                                 color={"green"}
                                 icon={faWhatsapp}
@@ -132,7 +140,7 @@ const QuestionCard = ({
                             />
                         )}
                         {author?.googleMeet && (
-                            <ContactButton
+                            <IconButton
                                 image={"/assets/images/gMeet.png"}
                                 color={"lightBlue"}
                                 text={"Google Meet"}
@@ -140,7 +148,7 @@ const QuestionCard = ({
                             />
                         )}
                         {author?.zoom && (
-                            <ContactButton
+                            <IconButton
                                 link={`${author?.zoom}`}
                                 color={"blue"}
                                 icon={faVideo}
@@ -148,7 +156,7 @@ const QuestionCard = ({
                             />
                         )}
                         {author?.teams && (
-                            <ContactButton
+                            <IconButton
                                 image={"/assets/images/teams.png"}
                                 color={"purple"}
                                 text={"Teams"}
@@ -156,7 +164,7 @@ const QuestionCard = ({
                             />
                         )}
                         {author?.skype && (
-                            <ContactButton
+                            <IconButton
                                 link={`${author?.skype}`}
                                 color={"lightBlue"}
                                 icon={faSkype}

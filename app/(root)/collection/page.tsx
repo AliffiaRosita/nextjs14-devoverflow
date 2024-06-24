@@ -3,9 +3,8 @@ import { redirect } from "next/navigation";
 
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import Filter from "@/components/shared/Filter";
-import NoResult from "@/components/shared/NoResult";
 import Pagination from "@/components/shared/Pagination";
-import QuestionCard from "@/components/cards/QuestionCard";
+import QuestionsContainer from "@/components/shared/QuestionsContainer";
 
 import { getSavedQuestions, getUserById } from "@/lib/actions/user.action";
 
@@ -33,6 +32,9 @@ export default async function Collection({ searchParams }: SearchParamsProps) {
         page: searchParams.page ? +searchParams.page : 1,
     });
 
+
+    const questions = JSON.parse(JSON.stringify(result.questions));
+
     return (
         <>
             <h1 className="h1-bold text-dark100_light900">Saved Questions</h1>
@@ -51,31 +53,7 @@ export default async function Collection({ searchParams }: SearchParamsProps) {
                 />
             </div>
 
-            <div className="mt-10 flex w-full flex-col gap-6">
-                {result.questions.length > 0 ? (
-                    result.questions.map((question: any) => (
-                        <QuestionCard
-                            key={question._id}
-                            _id={question._id}
-                            clerkId={clerkId}
-                            title={question.title}
-                            skills={question.skills}
-                            author={question.author}
-                            upvotes={question.upvotes}
-                            views={question.views}
-                            answers={question.answers}
-                            createdAt={question.createdAt}
-                        />
-                    ))
-                ) : (
-                    <NoResult
-                        title="No Saved Questions Found"
-                        description="It appears that there are no saved questions in your collection at the moment 😔. Start exploring and saving questions that pique your interest 🌟"
-                        link="/"
-                        linkTitle="Explore Questions"
-                    />
-                )}
-            </div>
+            <QuestionsContainer type="collection" questions={questions} clerkId={clerkId} />
 
             <div className="mt-10">
                 <Pagination

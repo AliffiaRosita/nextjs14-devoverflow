@@ -7,6 +7,7 @@ import {
   CallingState,
   PaginatedGridLayout,
   SpeakerLayout,
+  useCall,
   useCallStateHooks,
 } from "@stream-io/video-react-sdk";
 import { useRouter } from "next/navigation";
@@ -29,6 +30,13 @@ const MeetingRoom = () => {
   const [layout, setLayout] = useState<CallLayoutType>("speaker-left");
   const [showParticipants, setShowParticipants] = useState(false);
   const { useCallCallingState } = useCallStateHooks();
+  const call = useCall();
+
+  if (!call) {
+    throw new Error(
+      "useStreamCall must be used within a StreamCall component."
+    );
+  }
 
   const callingState = useCallCallingState();
 
@@ -64,7 +72,13 @@ const MeetingRoom = () => {
 
       <div className="flex-center flex w-full">
         <div className="fixed bottom-0 flex flex-row items-center justify-center gap-5">
-          <CallControls onLeave={() => router.push(`/`)} />
+          <CallControls
+            onLeave={() => {
+              call.camera.disable();
+              call.microphone.disable();
+              router.push(`/`);
+            }}
+          />
 
           <DropdownMenu>
             <div className="flex items-center">

@@ -1,15 +1,19 @@
 "use client";
 
-import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
+import React, { useEffect, useState } from "react";
+import {
+  CallingState,
+  StreamCall,
+  StreamTheme,
+} from "@stream-io/video-react-sdk";
 import { useGetCallById } from "@/hooks/useGetCallById";
-import { useState } from "react";
-import MeetingSetup from "./MeetingSetup";
-import MeetingRoom from "./MeetingRoom";
-
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 
-import "@/styles/stream.css";
+import MeetingSetup from "./MeetingSetup";
+import MeetingRoom from "./MeetingRoom";
 import Loader from "./Loader";
+
+import "@/styles/stream.css";
 
 interface VideoCallRoomProps {
   roomId: string;
@@ -19,6 +23,21 @@ const VideoCallRoom = ({ roomId }: VideoCallRoomProps) => {
   const { call, isCallLoading } = useGetCallById(roomId!);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
 
+  useEffect(() => {
+    return () => {
+      if (!call || isCallLoading) {
+        return;
+      }
+
+      if (call.state.callingState === CallingState.JOINED) {
+        call.leave();
+      }
+
+      call.camera.disable();
+      call.microphone.disable();
+    };
+  }, [call, isCallLoading]);
+
   if (isCallLoading) return <Loader />;
 
   if (!call)
@@ -27,7 +46,6 @@ const VideoCallRoom = ({ roomId }: VideoCallRoomProps) => {
         Call Not Found
       </p>
     );
-
   return (
     <>
       <StreamCall call={call}>

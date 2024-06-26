@@ -1,4 +1,4 @@
-import { getUserById } from "@/lib/actions/user.action";
+import { streamTokenProvider } from "@/lib/actions/stream.actions";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { StreamChat } from "stream-chat";
@@ -22,19 +22,7 @@ export default function useInitializeChatClient() {
           image: user.imageUrl,
         },
         async () => {
-          const mongoUser = await getUserById({ userId: user.id });
-
-          if (!mongoUser.token) {
-            const response = await fetch("/api/get-token");
-            if (!response.ok) {
-              throw Error("Failed to get token");
-            }
-            const body = await response.json();
-
-            return body.token;
-          }
-
-          return mongoUser.token;
+          return await streamTokenProvider(user.id);
         }
       )
       .catch((error) => console.error("Failed to connect user", error))

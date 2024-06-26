@@ -179,3 +179,5 @@ const salaryFormatter = (num: number, digits: number) => {
 export function isValidImage(url: string) {
   return /\.(jpg|jpeg|png|webp||svg)$/.test(url);
 }
+
+export const isServer = () => typeof window === "undefined";

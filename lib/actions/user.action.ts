@@ -47,7 +47,9 @@ export async function updateUser(params: UpdateUserParams) {
             new: true,
         });
 
-        revalidatePath(path);
+        if (path) {
+          revalidatePath(path);
+        }
     } catch (error) {
         console.log(error);
         throw error;

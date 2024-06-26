@@ -3,7 +3,7 @@ import { ParamsProps } from "@/types";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Community — DevOverflow",
+  title: "Video Call — DevOverflow",
 };
 
 const Page = async ({ params }: ParamsProps) => {

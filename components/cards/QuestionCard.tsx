@@ -34,7 +34,7 @@ const QuestionCard = ({
     clerkId,
     handleOpenVideoCallModal = () => {}
 }: QuestionProps) => {
-    const showActionButtons = clerkId && clerkId === author.clerkId;
+    const isUserAuthor = clerkId && clerkId === author.clerkId;
 
     const router = useRouter();
 
@@ -53,7 +53,7 @@ const QuestionCard = ({
                 </div>
 
                 <SignedIn>
-                    {showActionButtons && (
+                    {isUserAuthor && (
                         <EditDeleteAction
                             type="Question"
                             itemId={JSON.stringify(_id)}
@@ -100,7 +100,7 @@ const QuestionCard = ({
                         />
                         <IconButton
                             onClick={() => {
-                                router.push(`/message?userId=${author.clerkId}`);
+                                router.push(`/message${!isUserAuthor ? `?userId=${author.clerkId}` : '' }`);
                             }}
                             type="button"
                             color={"red"}

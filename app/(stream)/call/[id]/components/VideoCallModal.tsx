@@ -5,9 +5,10 @@ import { Loader } from "lucide-react";
 
 import { useGetLiveCalls } from "@/hooks/useGetLiveCalls";
 
-import MeetingCard from "../cards/MeetingCard";
-import { Button } from "../ui/button";
-import Modal from "../shared/Modal";
+import { Button } from "@/components/ui/button";
+import Modal from "@/components/shared/Modal";
+
+import MeetingCard from "./MeetingCard";
 
 const LiveVideoCall = ({
   id,

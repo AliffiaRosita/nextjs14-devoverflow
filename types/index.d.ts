@@ -96,5 +96,4 @@ export interface QuestionProps {
   answers: Array<object>;
   createdAt: Date;
   clerkId?: string | null;
-  handleOpenVideoCallModal?: () => void;
 }

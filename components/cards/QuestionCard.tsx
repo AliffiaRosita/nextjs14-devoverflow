@@ -32,7 +32,6 @@ const QuestionCard = ({
     answers,
     createdAt,
     clerkId,
-    handleOpenVideoCallModal = () => {}
 }: QuestionProps) => {
     const isUserAuthor = clerkId && clerkId === author.clerkId;
 
@@ -85,7 +84,9 @@ const QuestionCard = ({
                     />
                     <div className="flex gap-3">       
                         <IconButton
-                            onClick={handleOpenVideoCallModal}
+                            onClick={() => {
+                                router.push(`/call/${_id}`);
+                            }}
                             type="button"
                             color={"blue"}
                             icon={faVideoCamera}

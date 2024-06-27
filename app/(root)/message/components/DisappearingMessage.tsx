@@ -6,11 +6,11 @@ interface DisappearingMessageProps {
   className?: string;
 }
 
-export default function DisappearingMessage({
+const DisappearingMessage = ({
   children,
   duration = 5000,
   className,
-}: DisappearingMessageProps) {
+}: DisappearingMessageProps) => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
@@ -27,4 +27,6 @@ export default function DisappearingMessage({
       {children}
     </div>
   );
-}
+};
+
+export default DisappearingMessage;

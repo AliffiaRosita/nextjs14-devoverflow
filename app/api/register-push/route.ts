@@ -2,7 +2,7 @@ import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { PushSubscription } from "web-push";
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
   try {
     const newSubscription: PushSubscription | undefined = await req.json();
 
@@ -48,9 +48,8 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-}
-
-export async function DELETE(req: Request) {
+};
+export const DELETE = async (req: Request) => {
   try {
     const subscriptionToDelete: PushSubscription | undefined = await req.json();
 
@@ -93,4 +92,4 @@ export async function DELETE(req: Request) {
       { status: 500 }
     );
   }
-}
+};

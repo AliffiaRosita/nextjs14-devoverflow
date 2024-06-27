@@ -13,11 +13,11 @@ interface ChatChannelProps {
   activeChannel: any;
 }
 
-export default function ChatChannel({
+const ChatChannel = ({
   show,
   hideChannelOnThread,
   activeChannel,
-}: ChatChannelProps) {
+}: ChatChannelProps) => {
   return (
     <div className={`size-full ${show ? "block" : "hidden"}`}>
       <Channel channel={activeChannel}>
@@ -30,4 +30,6 @@ export default function ChatChannel({
       </Channel>
     </div>
   );
-}
+};
+
+export default ChatChannel;

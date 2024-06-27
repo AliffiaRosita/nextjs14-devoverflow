@@ -13,7 +13,7 @@ import { registerServiceWorker } from "@/lib/serviceWorker";
 import {
   getCurrentPushSubscription,
   sendPushSubscriptionToServer,
-} from "@/notifications/pushService";
+} from "@/services/pushService";
 import { Menu, X } from "lucide-react";
 import { Chat, LoadingIndicator, Streami18n } from "stream-chat-react";
 import ChatChannel from "./ChatChannel";

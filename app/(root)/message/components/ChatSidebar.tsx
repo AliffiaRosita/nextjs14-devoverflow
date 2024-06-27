@@ -15,13 +15,13 @@ interface ChatSidebarProps {
   resetActiveChannel: () => void;
 }
 
-export default function ChatSidebar({
+const ChatSidebar = ({
   user,
   show,
   onClose,
   customActiveChannel,
   resetActiveChannel,
-}: ChatSidebarProps) {
+}: ChatSidebarProps) => {
   const ChannelPreviewCustom = useCallback(
     (props: ChannelPreviewUIComponentProps) => (
       <ChannelPreviewMessenger
@@ -64,4 +64,6 @@ export default function ChatSidebar({
       />
     </div>
   );
-}
+};
+
+export default ChatSidebar;

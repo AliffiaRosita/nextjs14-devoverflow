@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useChatContext } from "stream-chat-react";
 
-export default function PushMessageListener() {
+const PushMessageListener = () => {
   const { client, setActiveChannel } = useChatContext();
 
   useEffect(() => {
@@ -29,4 +29,6 @@ export default function PushMessageListener() {
   }, [client, setActiveChannel]);
 
   return null;
-}
+};
+
+export default PushMessageListener;

@@ -1,11 +1,12 @@
 import { getReadyServiceWorker } from "@/lib/serviceWorker";
 
-export async function getCurrentPushSubscription(): Promise<PushSubscription | null> {
-  const sw = await getReadyServiceWorker();
-  return sw.pushManager.getSubscription();
-}
+export const getCurrentPushSubscription =
+  async (): Promise<PushSubscription | null> => {
+    const sw = await getReadyServiceWorker();
+    return sw.pushManager.getSubscription();
+  };
 
-export async function registerPushNotifications() {
+export const registerPushNotifications = async () => {
   if (!("PushManager" in window)) {
     throw Error("Push notifications are not supported by this browser");
   }
@@ -24,9 +25,9 @@ export async function registerPushNotifications() {
   });
 
   await sendPushSubscriptionToServer(subscription);
-}
+};
 
-export async function unregisterPushNotifications() {
+export const unregisterPushNotifications = async () => {
   const existingSubscription = await getCurrentPushSubscription();
 
   if (!existingSubscription) {
@@ -36,11 +37,11 @@ export async function unregisterPushNotifications() {
   await deletePushSubscriptionFromServer(existingSubscription);
 
   await existingSubscription.unsubscribe();
-}
+};
 
-export async function sendPushSubscriptionToServer(
+export const sendPushSubscriptionToServer = async (
   subscription: PushSubscription
-) {
+) => {
   const response = await fetch("/api/register-push", {
     method: "POST",
     body: JSON.stringify(subscription),
@@ -49,11 +50,11 @@ export async function sendPushSubscriptionToServer(
   if (!response.ok) {
     throw Error("Failed to send push subscription to server");
   }
-}
+};
 
-export async function deletePushSubscriptionFromServer(
+export const deletePushSubscriptionFromServer = async (
   subscription: PushSubscription
-) {
+) => {
   const response = await fetch("/api/register-push", {
     method: "DELETE",
     body: JSON.stringify(subscription),
@@ -62,4 +63,4 @@ export async function deletePushSubscriptionFromServer(
   if (!response.ok) {
     throw Error("Failed to delete push subscription from server");
   }
-}
+};

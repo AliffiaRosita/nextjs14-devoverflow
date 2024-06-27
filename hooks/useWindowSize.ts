@@ -1,7 +1,7 @@
 import { isServer } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
-export default function useWindowSize() {
+const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState(() => {
     if (isServer()) return { width: 0, height: 0 };
     return {
@@ -24,4 +24,6 @@ export default function useWindowSize() {
   }, []);
 
   return windowSize;
-}
+};
+
+export default useWindowSize;

@@ -3,7 +3,7 @@ import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { StreamChat } from "stream-chat";
 
-export default function useInitializeChatClient() {
+const useInitializeChatClient = () => {
   const { user } = useUser();
   const [chatClient, setChatClient] = useState<StreamChat | null>(null);
 
@@ -38,4 +38,6 @@ export default function useInitializeChatClient() {
   }, [user]);
 
   return chatClient;
-}
+};
+
+export default useInitializeChatClient;

@@ -7,13 +7,13 @@ import {
   StreamTheme,
 } from "@stream-io/video-react-sdk";
 import { useGetCallById } from "@/hooks/useGetCallById";
-import "@stream-io/video-react-sdk/dist/css/styles.css";
+
+import Loader from "@/components/shared/Loader";
 
 import MeetingSetup from "./MeetingSetup";
 import MeetingRoom from "./MeetingRoom";
 
-import "@/styles/stream.css";
-import Loader from "@/components/shared/Loader";
+import "@/styles/stream-video.css";
 
 interface VideoCallRoomProps {
   roomId: string;

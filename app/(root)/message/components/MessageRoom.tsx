@@ -1,25 +1,31 @@
 "use client";
 
 import React, { useCallback, useEffect, useState } from "react";
-import "@stream-io/video-react-sdk/dist/css/styles.css";
 
-import "@/styles/stream.css";
-import useInitializeChatClient from "@/hooks/useInitializeChatClient";
 import { useUser } from "@clerk/nextjs";
+import type { Channel } from "stream-chat";
+import { Menu, X } from "lucide-react";
+import { Chat, LoadingIndicator, Streami18n } from "stream-chat-react";
+
+import useInitializeChatClient from "@/hooks/useInitializeChatClient";
+
 import { useTheme } from "@/context/ThemeProvider";
+
 import useWindowSize from "@/hooks/useWindowSize";
+
 import { mdBreakpoint } from "@/lib/tailwind";
 import { registerServiceWorker } from "@/lib/serviceWorker";
+
 import {
   getCurrentPushSubscription,
   sendPushSubscriptionToServer,
 } from "@/services/pushService";
-import { Menu, X } from "lucide-react";
-import { Chat, LoadingIndicator, Streami18n } from "stream-chat-react";
+
 import ChatChannel from "./ChatChannel";
 import ChatSidebar from "./ChatSidebar";
 import PushMessageListener from "./PushMessageListener";
-import type { Channel } from "stream-chat";
+
+import "@/styles/stream-chat.css";
 
 const i18Instance = new Streami18n({ language: "en" });
 

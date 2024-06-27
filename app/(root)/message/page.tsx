@@ -1,6 +1,6 @@
-import MessageRoom from "@/components/shared/MessageRoom";
 import { SearchParamsProps } from "@/types";
 import { Metadata } from "next";
+import MessageRoom from "./components/MessageRoom";
 
 export const metadata: Metadata = {
   title: "Message — DevOverflow",

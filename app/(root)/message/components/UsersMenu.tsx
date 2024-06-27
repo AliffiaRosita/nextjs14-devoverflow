@@ -7,9 +7,10 @@ import {
   LoadingChannels as LoadingUsers,
   useChatContext,
 } from "stream-chat-react";
-import Button from "./Button";
-import LoadingButton from "./LoadingButton";
+
 import useDebounce from "@/hooks/useDebounce";
+import LoadingButton from "@/components/shared/LoadingButton";
+import Button from "@/components/shared/Button";
 
 interface UsersMenuProps {
   loggedInUser: UserResource;

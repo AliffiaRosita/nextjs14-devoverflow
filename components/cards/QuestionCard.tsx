@@ -15,7 +15,7 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import {
   faVideo,
-  faPhoneAlt,
+//   faPhoneAlt,
   faVideoCamera,
   faMessage,
 } from "@fortawesome/free-solid-svg-icons";
@@ -91,13 +91,13 @@ const QuestionCard = ({
                             icon={faVideoCamera}
                             text={"Video Call"}
                         />
-                        <IconButton
+                        {/* <IconButton
                             onClick={() => {}}
                             type="button"
                             color={"green"}
                             icon={faPhoneAlt}
                             text={"Voice Call"}
-                        />
+                        /> */}
                         <IconButton
                             onClick={() => {
                                 router.push(`/message${!isUserAuthor ? `?userId=${author.clerkId}` : '' }`);

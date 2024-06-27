@@ -124,8 +124,8 @@ const MessageRoom = ({
   }
 
   return (
-    <div className="text-black dark:text-white">
-      <div className="m-auto flex h-full min-w-[350px] max-w-[1600px] flex-col shadow-sm">
+    <div className="h-full text-black dark:text-white">
+      <div className="m-auto flex h-full min-w-[350px] flex-col shadow-sm">
         <Chat
           client={chatClient}
           i18nInstance={i18Instance}

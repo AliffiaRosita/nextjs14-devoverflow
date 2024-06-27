@@ -1,12 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import QuestionCard from "@/components/cards/QuestionCard";
-import NoResult from "@/components/shared/NoResult";
-import Modal from "./Modal";
 import { useRouter } from "next/navigation";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
-import LiveVideoCall from "./LiveVideoCall";
+
 import { QuestionProps } from "@/types";
+
+import QuestionCard from "@/components/cards/QuestionCard";
+import NoResult from "@/components/shared/NoResult";
+import VideoCallModal from "@/components/modals/VideoCallModal";
 
 const QuestionsContainer = ({
   questions,
@@ -99,17 +100,15 @@ const QuestionsContainer = ({
           : renderNoResult()}
       </div>
 
-      <Modal
-        isOpen={isVideoCallModalOpen}
-        onClose={() => {
+      <VideoCallModal
+        handleOnConfirm={startRoom}
+        handleOnClose={() => {
           setIsVideoCallModalOpen(false);
           setSelectedQuestionId(null);
         }}
-        title="Start a Video Call"
-        className="text-center"
-      >
-        <LiveVideoCall id={selectedQuestionId} handleClick={startRoom} />
-      </Modal>
+        isOpen={isVideoCallModalOpen}
+        selectedQuestionId={selectedQuestionId}
+      />
     </>
   );
 };

@@ -18,7 +18,7 @@ export interface IUser extends Document {
     reputation?: number;
     saved: Schema.Types.ObjectId[];
     onboarded: boolean;
-    token?: string;
+    streamToken?: string;
     joinedAt: Date;
 }
 
@@ -40,7 +40,7 @@ const UserSchema = new Schema({
     reputation: { type: Number, default: 0 },
     saved: [{ type: Schema.Types.ObjectId, ref: "Question" }],
     onboarded: { type: Boolean, default: false },
-    token: { type: String },
+    streamToken: { type: String },
     joinedAt: { type: Date, default: Date.now },
 });
 

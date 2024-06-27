@@ -32,23 +32,23 @@ export const streamTokenProvider = async (userId: string) => {
     if (!STREAM_API_KEY) throw new Error("Stream API key secret is missing");
     if (!STREAM_API_SECRET) throw new Error("Stream API secret is missing");
 
-    if (user?.token) return user.token;
+    if (user?.streamToken) return user.streamToken;
 
     const streamClient = new StreamClient(STREAM_API_KEY, STREAM_API_SECRET);
 
     const issuedAt = Math.floor(Date.now() / 1000) - 60;
 
-    const token = streamClient.createToken(userId, issuedAt);
+    const streamToken = streamClient.createToken(userId, issuedAt);
 
     await updateUser({
       clerkId: userId,
       updateData: {
-        token,
+        streamToken,
       },
       path: "",
     });
 
-    return token;
+    return streamToken;
   } catch (error) {
     console.error(error);
     throw Error("Failed to get token");

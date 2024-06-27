@@ -5,8 +5,7 @@ import {
   VideoPreview,
   useCall,
 } from "@stream-io/video-react-sdk";
-
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 const MeetingSetup = ({
   setIsSetupComplete,

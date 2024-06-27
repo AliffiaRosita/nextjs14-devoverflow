@@ -1,6 +1,6 @@
-import VideoCallRoom from "@/components/shared/VideoCallRoom";
 import { ParamsProps } from "@/types";
 import { Metadata } from "next";
+import VideoCallRoom from "./components/VideoCallRoom";
 
 export const metadata: Metadata = {
   title: "Video Call — DevOverflow",

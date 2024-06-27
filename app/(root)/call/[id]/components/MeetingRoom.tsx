@@ -13,7 +13,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Users, LayoutList } from "lucide-react";
 
-import Loader from "./Loader";
+import Loader from "@/components/shared/Loader";
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -21,7 +21,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 
 type CallLayoutType = "grid" | "speaker-left" | "speaker-right";
 

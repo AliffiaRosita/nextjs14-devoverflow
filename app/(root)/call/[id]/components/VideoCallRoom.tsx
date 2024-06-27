@@ -11,9 +11,9 @@ import "@stream-io/video-react-sdk/dist/css/styles.css";
 
 import MeetingSetup from "./MeetingSetup";
 import MeetingRoom from "./MeetingRoom";
-import Loader from "./Loader";
 
 import "@/styles/stream.css";
+import Loader from "@/components/shared/Loader";
 
 interface VideoCallRoomProps {
   roomId: string;

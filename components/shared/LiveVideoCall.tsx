@@ -3,7 +3,7 @@
 import { Call, CallRecording } from "@stream-io/video-react-sdk";
 
 import { useGetLiveCalls } from "@/hooks/useGetLiveCalls";
-import MeetingCard from "./MeetingCard";
+import MeetingCard from "../cards/MeetingCard";
 import { Button } from "../ui/button";
 import { Loader } from "lucide-react";
 

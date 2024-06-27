@@ -40,7 +40,7 @@ const IconButton = ({
       {image && (
         <Image src={image} alt="profile picture" width={16} height={16} />
       )}
-      <span className="small-regular line-clamp-1">{text}</span>
+      <span className="small-regular text-dark200_light900 line-clamp-1">{text}</span>
     </div>
   );
 

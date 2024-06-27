@@ -2,7 +2,18 @@ import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { PushSubscription } from "web-push";
 
-export const POST = async (req: Request) => {
+interface PushSubscriptionWithSessionId extends PushSubscription {
+  sessionId: string;
+}
+
+interface UserWithSubscriptions {
+  privateMetadata: {
+    subscriptions?: PushSubscriptionWithSessionId[];
+  };
+  id: string;
+}
+
+export const POST = async (req: Request): Promise<NextResponse> => {
   try {
     const newSubscription: PushSubscription | undefined = await req.json();
 
@@ -15,7 +26,7 @@ export const POST = async (req: Request) => {
 
     console.log("Received push subscription to add: ", newSubscription);
 
-    const user = await currentUser();
+    const user = (await currentUser()) as UserWithSubscriptions;
     const { sessionId } = auth();
 
     if (!user || !sessionId) {
@@ -25,7 +36,11 @@ export const POST = async (req: Request) => {
       );
     }
 
-    const userSubscriptions = user.privateMetadata.subscriptions || [];
+    const userSubscriptions: PushSubscriptionWithSessionId[] = Array.isArray(
+      user.privateMetadata.subscriptions
+    )
+      ? user.privateMetadata.subscriptions
+      : [];
 
     const updatedSubscriptions = userSubscriptions.filter(
       (subscription) => subscription.endpoint !== newSubscription.endpoint
@@ -49,7 +64,8 @@ export const POST = async (req: Request) => {
     );
   }
 };
-export const DELETE = async (req: Request) => {
+
+export const DELETE = async (req: Request): Promise<NextResponse> => {
   try {
     const subscriptionToDelete: PushSubscription | undefined = await req.json();
 
@@ -62,7 +78,7 @@ export const DELETE = async (req: Request) => {
 
     console.log("Received push subscription to delete: ", subscriptionToDelete);
 
-    const user = await currentUser();
+    const user = (await currentUser()) as UserWithSubscriptions;
 
     if (!user) {
       return NextResponse.json(
@@ -71,7 +87,11 @@ export const DELETE = async (req: Request) => {
       );
     }
 
-    const userSubscriptions = user.privateMetadata.subscriptions || [];
+    const userSubscriptions: PushSubscriptionWithSessionId[] = Array.isArray(
+      user.privateMetadata.subscriptions
+    )
+      ? user.privateMetadata.subscriptions
+      : [];
 
     const updatedSubscriptions = userSubscriptions.filter(
       (subscription) => subscription.endpoint !== subscriptionToDelete.endpoint

@@ -19,6 +19,7 @@ import { Chat, LoadingIndicator, Streami18n } from "stream-chat-react";
 import ChatChannel from "./ChatChannel";
 import ChatSidebar from "./ChatSidebar";
 import PushMessageListener from "./PushMessageListener";
+import type { Channel } from "stream-chat";
 
 const i18Instance = new Streami18n({ language: "en" });
 
@@ -34,8 +35,12 @@ const MessageRoom = ({
   const { mode } = useTheme();
 
   const [chatSidebarOpen, setChatSidebarOpen] = useState(false);
-  const [activeChannel, setActiveChannel] = useState(undefined);
-  const [activeChannelId, setActiveChannelId] = useState(channelId);
+  const [activeChannel, setActiveChannel] = useState<Channel | undefined>(
+    undefined
+  );
+  const [activeChannelId, setActiveChannelId] = useState<string | undefined>(
+    channelId
+  );
 
   const windowSize = useWindowSize();
   const isLargeScreen = windowSize.width >= mdBreakpoint;
@@ -77,7 +82,7 @@ const MessageRoom = ({
 
   useEffect(() => {
     if (userId === undefined) {
-      setActiveChannelId(null);
+      setActiveChannelId("");
     }
   }, [userId]);
 

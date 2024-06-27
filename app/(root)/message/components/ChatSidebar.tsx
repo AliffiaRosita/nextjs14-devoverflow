@@ -33,7 +33,7 @@ const ChatSidebar = ({
         }}
       />
     ),
-    [onClose]
+    [onClose, resetActiveChannel]
   );
 
   return (

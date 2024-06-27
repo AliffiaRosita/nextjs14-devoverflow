@@ -3,23 +3,16 @@ import {
   registerPushNotifications,
   unregisterPushNotifications,
 } from "@/notifications/pushService";
-import { BellOff, BellRing, Users } from "lucide-react";
+import { BellOff, BellRing } from "lucide-react";
 import { useEffect, useState } from "react";
 import { LoadingIndicator } from "stream-chat-react";
 import DisappearingMessage from "./DisappearingMessage";
 
-interface MenuBarProps {
-  onUserMenuClick: () => void;
-}
-
-export default function MenuBar({ onUserMenuClick }: MenuBarProps) {
+export default function MenuBar() {
   return (
     <div className="flex items-center justify-between gap-3 border-e border-e-[#DBDDE1] bg-white p-3 dark:border-e-gray-800 dark:bg-[#17191c]">
       <div className="flex gap-6">
         <PushSubscriptionToggleButton />
-        {/* <span title="Show users">
-          <Users className="cursor-pointer" onClick={onUserMenuClick} />
-        </span> */}
       </div>
     </div>
   );

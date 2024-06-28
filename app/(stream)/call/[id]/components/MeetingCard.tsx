@@ -3,20 +3,19 @@
 import Image from "next/image";
 
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { UserResponse } from "@stream-io/video-react-sdk";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 interface MeetingCardProps {
   title: string;
   date: string;
+  createdBy: UserResponse | undefined;
+  onClick: () => void;
 }
 
-const MeetingCard = ({ title, date }: MeetingCardProps) => {
-  const avatarImages = [
-    "/assets/images/avatar-1.jpeg",
-    "/assets/images/avatar-2.jpeg",
-    "/assets/images/avatar-3.png",
-    "/assets/images/avatar-4.png",
-    "/assets/images/avatar-5.png",
-  ];
+const MeetingCard = ({ title, date, onClick, createdBy }: MeetingCardProps) => {
+  const avatarImg: string | StaticImport = createdBy?.image ?? "";
 
   return (
     <section className="flex min-h-[200px] w-full flex-col justify-between rounded-[14px] bg-light-700 px-5 py-8 xl:max-w-[568px]">
@@ -34,21 +33,24 @@ const MeetingCard = ({ title, date }: MeetingCardProps) => {
       </article>
       <article className={cn("flex justify-center relative", {})}>
         <div className="relative flex w-full max-sm:hidden">
-          {avatarImages.map((img, index) => (
-            <Image
-              key={index}
-              src={img}
-              alt="attendees"
-              width={40}
-              height={40}
-              className={cn("rounded-full", { absolute: index > 0 })}
-              style={{ top: 0, left: index * 28 }}
-            />
-          ))}
-          <div className="flex-center absolute left-[136px] size-10 rounded-full border-[5px] border-dark-500 bg-dark-500">
-            +5
-          </div>
+          <Image
+            src={avatarImg}
+            alt="attendees"
+            width={40}
+            height={40}
+            className="rounded-full"
+            style={{ top: 0, left: 0 }}
+          />
+          <div className="flex-center ml-2 flex">By {createdBy?.name}</div>
         </div>
+        <Button
+          type="submit"
+          className="bg-red-500 text-white"
+          disabled={false}
+          onClick={onClick}
+        >
+          Join
+        </Button>
       </article>
     </section>
   );

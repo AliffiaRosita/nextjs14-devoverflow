@@ -18,9 +18,10 @@ import "@/styles/stream-video.css";
 
 interface VideoCallRoomProps {
   roomId: string;
+  isUserAuthor: boolean;
 }
 
-const VideoCallRoom = ({ roomId }: VideoCallRoomProps) => {
+const VideoCallRoom = ({ roomId, isUserAuthor }: VideoCallRoomProps) => {
   const { call, isCallLoading } = useGetCallById(roomId!);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
 
@@ -44,10 +45,15 @@ const VideoCallRoom = ({ roomId }: VideoCallRoomProps) => {
   useEffect(() => {
     const startRoom = async () => {
       if (!client || !roomId) return;
-      const newCall = client.call("default", roomId!);
+
+      const newCall = client.call("default", roomId);
+
       await newCall.getOrCreate({
         data: {
           starts_at: new Date().toISOString(),
+          custom: {
+            questionId: roomId,
+          },
         },
       });
     };
@@ -67,10 +73,7 @@ const VideoCallRoom = ({ roomId }: VideoCallRoomProps) => {
       <StreamCall call={call}>
         <StreamTheme className="light">
           {!isSetupComplete ? (
-            <MeetingSetup
-              setIsSetupComplete={setIsSetupComplete}
-              roomId={roomId}
-            />
+            <MeetingSetup setIsSetupComplete={setIsSetupComplete} />
           ) : (
             <MeetingRoom />
           )}

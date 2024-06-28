@@ -5,15 +5,16 @@ import {
   CallingState,
   StreamCall,
   StreamTheme,
+  useStreamVideoClient,
 } from "@stream-io/video-react-sdk";
 import { useGetCallById } from "@/hooks/useGetCallById";
-import "@stream-io/video-react-sdk/dist/css/styles.css";
+
+import Loader from "@/components/shared/Loader";
 
 import MeetingSetup from "./MeetingSetup";
 import MeetingRoom from "./MeetingRoom";
-import Loader from "./Loader";
 
-import "@/styles/stream.css";
+import "@/styles/stream-video.css";
 
 interface VideoCallRoomProps {
   roomId: string;
@@ -22,6 +23,8 @@ interface VideoCallRoomProps {
 const VideoCallRoom = ({ roomId }: VideoCallRoomProps) => {
   const { call, isCallLoading } = useGetCallById(roomId!);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
+
+  const client = useStreamVideoClient();
 
   useEffect(() => {
     return () => {
@@ -38,6 +41,19 @@ const VideoCallRoom = ({ roomId }: VideoCallRoomProps) => {
     };
   }, [call, isCallLoading]);
 
+  useEffect(() => {
+    const startRoom = async () => {
+      if (!client || !roomId) return;
+      const newCall = client.call("default", roomId!);
+      await newCall.getOrCreate({
+        data: {
+          starts_at: new Date().toISOString(),
+        },
+      });
+    };
+    startRoom();
+  }, []);
+
   if (isCallLoading) return <Loader />;
 
   if (!call)
@@ -51,7 +67,10 @@ const VideoCallRoom = ({ roomId }: VideoCallRoomProps) => {
       <StreamCall call={call}>
         <StreamTheme className="light">
           {!isSetupComplete ? (
-            <MeetingSetup setIsSetupComplete={setIsSetupComplete} />
+            <MeetingSetup
+              setIsSetupComplete={setIsSetupComplete}
+              roomId={roomId}
+            />
           ) : (
             <MeetingRoom />
           )}

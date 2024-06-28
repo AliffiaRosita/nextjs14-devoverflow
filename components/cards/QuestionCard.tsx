@@ -15,11 +15,12 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import {
   faVideo,
-  faPhoneAlt,
+//   faPhoneAlt,
   faVideoCamera,
   faMessage,
 } from "@fortawesome/free-solid-svg-icons";
 import { QuestionProps } from "@/types";
+import { useRouter } from "next/navigation";
 
 const QuestionCard = ({
     _id,
@@ -31,9 +32,11 @@ const QuestionCard = ({
     answers,
     createdAt,
     clerkId,
-    handleOpenVideoCallModal = () => {}
 }: QuestionProps) => {
-    const showActionButtons = clerkId && clerkId === author.clerkId;
+    const isUserAuthor = clerkId && clerkId === author.clerkId;
+
+    const router = useRouter();
+
     return (
         <div className="card-wrapper rounded-[10px] p-9 sm:px-11">
             <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
@@ -49,7 +52,7 @@ const QuestionCard = ({
                 </div>
 
                 <SignedIn>
-                    {showActionButtons && (
+                    {isUserAuthor && (
                         <EditDeleteAction
                             type="Question"
                             itemId={JSON.stringify(_id)}
@@ -81,21 +84,25 @@ const QuestionCard = ({
                     />
                     <div className="flex gap-3">       
                         <IconButton
-                            onClick={handleOpenVideoCallModal}
+                            onClick={() => {
+                                router.push(`/call/${_id}`);
+                            }}
                             type="button"
                             color={"blue"}
                             icon={faVideoCamera}
                             text={"Video Call"}
                         />
-                        <IconButton
+                        {/* <IconButton
                             onClick={() => {}}
                             type="button"
                             color={"green"}
                             icon={faPhoneAlt}
                             text={"Voice Call"}
-                        />
+                        /> */}
                         <IconButton
-                            onClick={() => {}}
+                            onClick={() => {
+                                router.push(`/message${!isUserAuthor ? `?userId=${author.clerkId}` : '' }`);
+                            }}
                             type="button"
                             color={"red"}
                             icon={faMessage}

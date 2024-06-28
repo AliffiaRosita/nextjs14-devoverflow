@@ -1,11 +1,14 @@
 "use client";
 
 import { Call, CallRecording } from "@stream-io/video-react-sdk";
+import { Loader } from "lucide-react";
 
 import { useGetLiveCalls } from "@/hooks/useGetLiveCalls";
+
+import { Button } from "@/components/ui/button";
+import Modal from "@/components/shared/Modal";
+
 import MeetingCard from "./MeetingCard";
-import { Button } from "../ui/button";
-import { Loader } from "lucide-react";
 
 const LiveVideoCall = ({
   id,
@@ -53,4 +56,27 @@ const LiveVideoCall = ({
   );
 };
 
-export default LiveVideoCall;
+const VideoCallModal = ({
+  handleOnConfirm = () => {},
+  handleOnClose = () => {},
+  isOpen,
+  selectedQuestionId,
+}: {
+  handleOnConfirm: () => void;
+  handleOnClose: () => void;
+  isOpen: boolean;
+  selectedQuestionId: string | null;
+}) => {
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={handleOnClose}
+      title="Start a Video Call"
+      className="text-center"
+    >
+      <LiveVideoCall id={selectedQuestionId} handleClick={handleOnConfirm} />
+    </Modal>
+  );
+};
+
+export default VideoCallModal;

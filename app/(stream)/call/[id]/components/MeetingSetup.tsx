@@ -6,14 +6,25 @@ import {
   useCall,
 } from "@stream-io/video-react-sdk";
 
-import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+
+import VideoCallModal from "./VideoCallModal";
 
 const MeetingSetup = ({
   setIsSetupComplete,
+  roomId,
 }: {
   setIsSetupComplete: (value: boolean) => void;
+  roomId: string | null;
 }) => {
   const call = useCall();
+  const router = useRouter();
+
+  const [isVideoCallModalOpen, setIsVideoCallModalOpen] =
+    useState<boolean>(false);
 
   if (!call) {
     throw new Error(
@@ -34,8 +45,8 @@ const MeetingSetup = ({
   }, [isMicCamToggled, call.camera, call.microphone]);
 
   return (
-    <div className="text-dark100_light900 mx-auto flex size-full max-w-5xl flex-col items-center justify-center gap-3">
-      <div className="card-wrapper flex w-full flex-col items-center gap-2 rounded-[10px] p-9 sm:px-11">
+    <>
+      <div className="text-dark100_light900 mx-auto flex size-full max-w-5xl flex-col items-center justify-center gap-3">
         <h1 className="text-center text-2xl font-bold">Getting Ready</h1>
         <div className="px-12">
           <VideoPreview />
@@ -54,15 +65,37 @@ const MeetingSetup = ({
         <Button
           className="primary-gradient rounded-md px-4 py-2.5 text-white"
           onClick={() => {
-            call.join();
-
-            setIsSetupComplete(true);
+            setIsVideoCallModalOpen(true);
           }}
         >
           Join Video Call
         </Button>
+        or
+        <Button
+          className="rounded-md bg-red-500 px-4 py-2.5 text-white"
+          onClick={() => {
+            router.back();
+          }}
+        >
+          <ArrowLeft size={20} />
+          Go Back
+        </Button>
       </div>
-    </div>
+
+      <VideoCallModal
+        handleOnConfirm={() => {
+          call.join();
+
+          setIsSetupComplete(true);
+          setIsVideoCallModalOpen(false);
+        }}
+        handleOnClose={() => {
+          setIsVideoCallModalOpen(false);
+        }}
+        isOpen={isVideoCallModalOpen}
+        selectedQuestionId={roomId}
+      />
+    </>
   );
 };
 

@@ -45,8 +45,11 @@
     "react-dom": "^18",
     "react-hook-form": "^7.50.1",
     "react-share": "^5.1.0",
+    "stream-chat": "^8.36.0",
+    "stream-chat-react": "^11.22.0",
     "svix": "^1.19.0",
     "tailwind-merge": "^2.2.1",
+    "web-push": "^3.6.7",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -55,6 +58,7 @@
     "@types/prismjs": "^1.26.2",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/web-push": "^3.6.3",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.1",

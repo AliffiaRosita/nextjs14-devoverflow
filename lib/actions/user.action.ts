@@ -47,11 +47,13 @@ export async function updateUser(params: UpdateUserParams) {
 			new: true,
 		});
 
-		revalidatePath(path);
-	} catch (error) {
-		console.log(error);
-		throw error;
-	}
+        if (path) {
+          revalidatePath(path);
+        }
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
 }
 
 export async function deleteUser(params: DeleteUserParams) {

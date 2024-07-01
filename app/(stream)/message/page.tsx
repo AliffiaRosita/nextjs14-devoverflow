@@ -1,6 +1,6 @@
 import { SearchParamsProps } from "@/types";
 import { Metadata } from "next";
-import MessageRoom from "./components/MessageRoom";
+import Message from "./components/Message";
 
 export const metadata: Metadata = {
   title: "Message — DevOverflow",
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 const Page = async ({ searchParams }: SearchParamsProps) => {
   const { channelId, userId } = searchParams;
-  return <MessageRoom channelId={channelId} userId={userId} />;
+  return <Message channelId={channelId} userId={userId} />;
 };
 
 export default Page;

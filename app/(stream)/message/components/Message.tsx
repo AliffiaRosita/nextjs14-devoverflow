@@ -21,15 +21,16 @@ import {
   sendPushSubscriptionToServer,
 } from "@/services/pushService";
 
-import ChatChannel from "./ChatChannel";
-import ChatSidebar from "./ChatSidebar";
+
 import PushMessageListener from "./PushMessageListener";
+import MessageChannel from "./MessageChannel";
+import MessageSidebar from "./MessageSidebar";
 
 import "@/styles/stream-chat.css";
 
 const i18Instance = new Streami18n({ language: "en" });
 
-const MessageRoom = ({
+const Message = ({
   channelId,
   userId,
 }: {
@@ -117,7 +118,7 @@ const MessageRoom = ({
 
   if (!chatClient || !user) {
     return (
-      <div className="flex items-center justify-center bg-gray-100 dark:bg-black">
+      <div className="flex items-center justify-center dark:bg-black">
         <LoadingIndicator size={40} />
       </div>
     );
@@ -146,7 +147,7 @@ const MessageRoom = ({
           </div>
           <div className="flex h-full flex-row overflow-y-auto">
             {activeChannelId !== undefined && (
-              <ChatSidebar
+              <MessageSidebar
                 user={user}
                 show={isLargeScreen || chatSidebarOpen}
                 onClose={handleSidebarOnClose}
@@ -156,7 +157,7 @@ const MessageRoom = ({
                 }}
               />
             )}
-            <ChatChannel
+            <MessageChannel
               show={isLargeScreen || !chatSidebarOpen}
               hideChannelOnThread={!isLargeScreen}
               activeChannel={activeChannel}
@@ -169,4 +170,4 @@ const MessageRoom = ({
   );
 };
 
-export default MessageRoom;
+export default Message;

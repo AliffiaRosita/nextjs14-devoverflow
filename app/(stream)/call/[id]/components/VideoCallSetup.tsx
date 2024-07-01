@@ -7,12 +7,12 @@ import {
   useCall,
 } from "@stream-io/video-react-sdk";
 import { ArrowLeft } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { useUser } from "@clerk/nextjs";
 
-const MeetingSetup = ({
+const VideoCallSetup = ({
   setIsSetupComplete,
 }: {
   setIsSetupComplete: (value: boolean) => void;
@@ -97,4 +97,4 @@ const MeetingSetup = ({
   );
 };
 
-export default MeetingSetup;
+export default VideoCallSetup;

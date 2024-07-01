@@ -10,7 +10,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     <main className="background-light850_dark100 relative">
       <Navbar />
       <div className="flex">
-        <section className="flex min-h-screen flex-1 flex-col px-4 pb-6 pt-36 max-md:pb-14 sm:px-14">
+        <section className="flex max-h-screen min-h-screen flex-1 flex-col px-4 pb-6 pt-36 max-md:pb-14 sm:px-14">
           <div className="mx-auto size-full">
             <StreamVideoProvider>{children}</StreamVideoProvider>
           </div>

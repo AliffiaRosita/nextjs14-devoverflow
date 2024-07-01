@@ -15,7 +15,7 @@ interface ChatSidebarProps {
   resetActiveChannel: () => void;
 }
 
-const ChatSidebar = ({
+const MessageSidebar = ({
   user,
   show,
   onClose,
@@ -66,4 +66,4 @@ const ChatSidebar = ({
   );
 };
 
-export default ChatSidebar;
+export default MessageSidebar;

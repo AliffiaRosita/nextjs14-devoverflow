@@ -3,9 +3,10 @@ import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs";
 
 import { URLProps } from "@/types";
+
 import { getQuestionById } from "@/lib/actions/question.action";
 
-import VideoCallRoomSelector from "./components/VideoCallRoomSelector";
+import VideoCall from "./components/VideoCall";
 
 export const metadata: Metadata = {
   title: "Video Call — DevOverflow",
@@ -25,7 +26,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
   const inviteId = searchParams.invite;
 
   return (
-    <VideoCallRoomSelector
+    <VideoCall
       inviteId={inviteId}
       questionId={params.id}
       userAuthorId={result?.author.clerkId}

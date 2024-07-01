@@ -14,7 +14,7 @@ interface MeetingCardProps {
   onClick: () => void;
 }
 
-const MeetingCard = ({ title, date, onClick, createdBy }: MeetingCardProps) => {
+const VideoCallCard = ({ title, date, onClick, createdBy }: MeetingCardProps) => {
   const avatarImg: string | StaticImport = createdBy?.image ?? "";
 
   return (
@@ -56,4 +56,4 @@ const MeetingCard = ({ title, date, onClick, createdBy }: MeetingCardProps) => {
   );
 };
 
-export default MeetingCard;
+export default VideoCallCard;

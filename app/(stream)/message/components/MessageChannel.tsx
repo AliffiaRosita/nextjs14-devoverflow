@@ -1,3 +1,4 @@
+import { FC } from "react";
 import {
   Channel,
   MessageInput,
@@ -13,11 +14,11 @@ interface ChatChannelProps {
   activeChannel: any;
 }
 
-const ChatChannel = ({
+const MessageChannel: FC<ChatChannelProps> = ({
   show,
   hideChannelOnThread,
   activeChannel,
-}: ChatChannelProps) => {
+}) => {
   return (
     <div className={`size-full ${show ? "block" : "hidden"}`}>
       <Channel channel={activeChannel}>
@@ -32,4 +33,4 @@ const ChatChannel = ({
   );
 };
 
-export default ChatChannel;
+export default MessageChannel;

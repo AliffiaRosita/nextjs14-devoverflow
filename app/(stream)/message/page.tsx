@@ -7,8 +7,8 @@ export const metadata: Metadata = {
 };
 
 const Page = async ({ searchParams }: SearchParamsProps) => {
-  const { channelId, userId } = searchParams;
-  return <Message channelId={channelId} userId={userId} />;
+  const { userId } = searchParams;
+  return <Message userId={userId} />;
 };
 
 export default Page;

@@ -18,11 +18,10 @@ import "@/styles/stream-chat.css";
 
 const i18nInstance = new Streami18n({ language: "en" });
 interface MessageProps {
-  channelId?: string;
   userId?: string;
 }
 
-const Message = ({ channelId, userId }: MessageProps) => {
+const Message = ({ userId }: MessageProps) => {
   const chatClient = useInitializeChatClient();
   const { user } = useUser();
   const { mode } = useTheme();
@@ -31,9 +30,7 @@ const Message = ({ channelId, userId }: MessageProps) => {
   const [activeChannel, setActiveChannel] = useState<Channel | undefined>(
     undefined
   );
-  const [activeChannelId, setActiveChannelId] = useState<string | undefined>(
-    channelId
-  );
+  const [activeChannelId, setActiveChannelId] = useState<string | undefined>();
 
   const windowSize = useWindowSize();
   const isLargeScreen = useMemo(
@@ -44,12 +41,6 @@ const Message = ({ channelId, userId }: MessageProps) => {
   useEffect(() => {
     if (isLargeScreen) setChatSidebarOpen(false);
   }, [isLargeScreen]);
-
-  useEffect(() => {
-    if (channelId) {
-      history.replaceState(null, "", "/message");
-    }
-  }, [channelId]);
 
   useEffect(() => {
     if (!userId) {

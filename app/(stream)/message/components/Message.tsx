@@ -109,7 +109,7 @@ const Message = ({ channelId, userId }: MessageProps) => {
               )}
             </button>
           </div>
-          <div className="flex h-full flex-row overflow-y-auto">
+          <div className="flex h-full flex-row overflow-y-auto rounded-[10px]">
             {activeChannelId !== undefined && (
               <MessageSidebar
                 user={user}

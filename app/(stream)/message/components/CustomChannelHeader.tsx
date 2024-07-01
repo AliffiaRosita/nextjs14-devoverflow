@@ -13,7 +13,7 @@ const BackButton: FC<BackButtonProps> = ({ onClick = () => {} }) => {
       className="flex-center me-6 flex cursor-pointer flex-wrap gap-1"
       onClick={onClick}
     >
-      <span title="Unmute channel notifications">
+      <span title="go back">
         <ArrowLeft color="red" />
       </span>
       <span className="small-regular text-dark200_light900 line-clamp-1">

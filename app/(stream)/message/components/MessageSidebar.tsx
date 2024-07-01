@@ -6,8 +6,6 @@ import {
   ChannelPreviewUIComponentProps,
 } from "stream-chat-react";
 
-import MessageMenuBar from "./MessageMenuBar";
-
 interface ChatSidebarProps {
   user: UserResource;
   show: boolean;
@@ -63,7 +61,6 @@ const MessageSidebar: FC<ChatSidebarProps> = ({
         show ? "flex" : "hidden"
       }`}
     >
-      <MessageMenuBar />
       <ChannelList
         filters={filters}
         sort={{ last_message_at: -1 }}

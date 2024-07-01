@@ -10,13 +10,7 @@ import useInitializeChatClient from "@/hooks/useInitializeChatClient";
 import { useTheme } from "@/context/ThemeProvider";
 import useWindowSize from "@/hooks/useWindowSize";
 import { mdBreakpoint } from "@/lib/tailwind";
-import { registerServiceWorker } from "@/lib/serviceWorker";
-import {
-  getCurrentPushSubscription,
-  sendPushSubscriptionToServer,
-} from "@/services/pushService";
 
-import PushMessageListener from "./PushMessageListener";
 import MessageChannel from "./MessageChannel";
 import MessageSidebar from "./MessageSidebar";
 
@@ -50,31 +44,6 @@ const Message = ({ channelId, userId }: MessageProps) => {
   useEffect(() => {
     if (isLargeScreen) setChatSidebarOpen(false);
   }, [isLargeScreen]);
-
-  useEffect(() => {
-    async function setUpServiceWorker() {
-      try {
-        await registerServiceWorker();
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    setUpServiceWorker();
-  }, []);
-
-  useEffect(() => {
-    async function syncPushSubscription() {
-      try {
-        const subscription = await getCurrentPushSubscription();
-        if (subscription) {
-          await sendPushSubscriptionToServer(subscription);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    syncPushSubscription();
-  }, []);
 
   useEffect(() => {
     if (channelId) {
@@ -158,7 +127,6 @@ const Message = ({ channelId, userId }: MessageProps) => {
               activeChannel={activeChannel}
             />
           </div>
-          <PushMessageListener />
         </Chat>
       </div>
     </div>

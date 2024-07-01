@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   DeviceSettings,
@@ -12,11 +12,11 @@ import { useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 
-const VideoCallSetup = ({
-  setIsSetupComplete,
-}: {
+interface VideoCallSetupProps {
   setIsSetupComplete: (value: boolean) => void;
-}) => {
+}
+
+const VideoCallSetup = ({ setIsSetupComplete }: VideoCallSetupProps) => {
   const call = useCall();
   const router = useRouter();
   const { user } = useUser();
@@ -40,16 +40,34 @@ const VideoCallSetup = ({
     }
   }, [isMicCamToggled, call.camera, call.microphone]);
 
-  const invitationLink = `${window.location.href}?invite=${user.id}`;
+  const invitationLink = useMemo(
+    () => `${window.location.href}?invite=${user.id}`,
+    [user.id]
+  );
+
+  const handleJoin = useCallback(() => {
+    call.join();
+    setIsSetupComplete(true);
+  }, [call, setIsSetupComplete]);
+
+  const handleCopyLink = useCallback(() => {
+    navigator.clipboard.writeText(invitationLink);
+    toast({
+      title: "Link Copied",
+      variant: "default",
+    });
+  }, [invitationLink]);
+
+  const handleGoBack = useCallback(() => {
+    router.back();
+  }, [router]);
 
   return (
     <div className="flex flex-col">
       <div className="flex justify-end">
         <Button
           className="rounded-md bg-red-500 px-4 py-2.5 text-white"
-          onClick={() => {
-            router.back();
-          }}
+          onClick={handleGoBack}
         >
           <ArrowLeft size={20} />
           Go Back
@@ -73,22 +91,13 @@ const VideoCallSetup = ({
         </div>
         <Button
           className="primary-gradient rounded-md px-4 py-2.5 text-white"
-          onClick={() => {
-            call.join();
-            setIsSetupComplete(true);
-          }}
+          onClick={handleJoin}
         >
           Join Video Call
         </Button>
         <Button
           className="rounded-md bg-dark-500 px-4 py-2.5 text-white"
-          onClick={() => {
-            navigator.clipboard.writeText(invitationLink);
-            toast({
-              title: "Link Copied",
-              variant: "default",
-            });
-          }}
+          onClick={handleCopyLink}
         >
           Copy Invitation Link
         </Button>

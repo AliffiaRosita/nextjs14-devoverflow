@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import {
   CallingState,
   StreamCall,
@@ -10,7 +10,6 @@ import {
 import { useGetCallById } from "@/hooks/useGetCallById";
 
 import Loader from "@/components/shared/Loader";
-
 import VideoCallRoom from "./VideoCallRoom";
 import VideoCallSetup from "./VideoCallSetup";
 
@@ -57,6 +56,18 @@ const VideoCallStarter = ({ roomId }: VideoCallRoomProps) => {
       });
     };
     startRoom();
+  }, [client, roomId]);
+
+  const handleSetupComplete = useCallback(() => {
+    setIsSetupComplete(true);
+  }, []);
+
+  const setupComponent = useMemo(() => {
+    return <VideoCallSetup setIsSetupComplete={handleSetupComplete} />;
+  }, [handleSetupComplete]);
+
+  const roomComponent = useMemo(() => {
+    return <VideoCallRoom />;
   }, []);
 
   if (isCallLoading) return <Loader />;
@@ -67,15 +78,12 @@ const VideoCallStarter = ({ roomId }: VideoCallRoomProps) => {
         Call Not Found
       </p>
     );
+
   return (
     <>
       <StreamCall call={call}>
         <StreamTheme className="light">
-          {!isSetupComplete ? (
-            <VideoCallSetup setIsSetupComplete={setIsSetupComplete} />
-          ) : (
-            <VideoCallRoom />
-          )}
+          {!isSetupComplete ? setupComponent : roomComponent}
         </StreamTheme>
       </StreamCall>
     </>

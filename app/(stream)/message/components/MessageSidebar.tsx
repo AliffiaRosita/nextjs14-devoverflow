@@ -1,11 +1,12 @@
 import { UserResource } from "@clerk/types";
-import { useCallback } from "react";
+import { useCallback, useMemo, FC } from "react";
 import {
   ChannelList,
   ChannelPreviewMessenger,
   ChannelPreviewUIComponentProps,
 } from "stream-chat-react";
-import MenuBar from "./MenuBar";
+
+import MessageMenuBar from "./MessageMenuBar";
 
 interface ChatSidebarProps {
   user: UserResource;
@@ -15,13 +16,13 @@ interface ChatSidebarProps {
   resetActiveChannel: () => void;
 }
 
-const MessageSidebar = ({
+const MessageSidebar: FC<ChatSidebarProps> = ({
   user,
   show,
   onClose,
   customActiveChannel,
   resetActiveChannel,
-}: ChatSidebarProps) => {
+}) => {
   const ChannelPreviewCustom = useCallback(
     (props: ChannelPreviewUIComponentProps) => (
       <ChannelPreviewMessenger
@@ -36,30 +37,40 @@ const MessageSidebar = ({
     [onClose, resetActiveChannel]
   );
 
+  const filters = useMemo(
+    () => ({
+      type: "messaging",
+      members: { $in: [user.id] },
+    }),
+    [user.id]
+  );
+
+  const additionalChannelSearchProps = useMemo(
+    () => ({
+      searchForChannels: true,
+      searchQueryParams: {
+        channelFilters: {
+          filters: { members: { $in: [user.id] } },
+        },
+      },
+    }),
+    [user.id]
+  );
+
   return (
     <div
       className={`relative w-full flex-col md:max-w-[360px] ${
         show ? "flex" : "hidden"
       }`}
     >
-      <MenuBar />
+      <MessageMenuBar />
       <ChannelList
-        filters={{
-          type: "messaging",
-          members: { $in: [user.id] },
-        }}
+        filters={filters}
         sort={{ last_message_at: -1 }}
         options={{ state: true, presence: true, limit: 10 }}
         customActiveChannel={customActiveChannel}
         showChannelSearch
-        additionalChannelSearchProps={{
-          searchForChannels: true,
-          searchQueryParams: {
-            channelFilters: {
-              filters: { members: { $in: [user.id] } },
-            },
-          },
-        }}
+        additionalChannelSearchProps={additionalChannelSearchProps}
         Preview={ChannelPreviewCustom}
       />
     </div>

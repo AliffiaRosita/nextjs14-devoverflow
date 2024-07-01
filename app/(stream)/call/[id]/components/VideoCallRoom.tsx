@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import {
   CallControls,
   CallParticipantsList,
@@ -14,7 +14,6 @@ import { useRouter } from "next/navigation";
 import { Users, LayoutList } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-
 import Loader from "@/components/shared/Loader";
 import {
   DropdownMenu,
@@ -41,9 +40,7 @@ const VideoCallRoom = () => {
 
   const callingState = useCallCallingState();
 
-  if (callingState !== CallingState.JOINED) return <Loader />;
-
-  const CallLayout = () => {
+  const CallLayout = useMemo(() => {
     switch (layout) {
       case "grid":
         return <PaginatedGridLayout />;
@@ -52,13 +49,23 @@ const VideoCallRoom = () => {
       default:
         return <SpeakerLayout participantsBarPosition="right" />;
     }
-  };
+  }, [layout]);
+
+  const handleLayoutChange = useCallback((layout: CallLayoutType) => {
+    setLayout(layout);
+  }, []);
+
+  const handleToggleParticipants = useCallback(() => {
+    setShowParticipants((prev) => !prev);
+  }, []);
+
+  if (callingState !== CallingState.JOINED) return <Loader />;
 
   return (
     <section className="text-dark100_light900 relative size-full overflow-hidden pt-4">
       <div className="relative flex size-full items-center justify-center">
-        <div className=" flex size-full max-w-[1000px] items-center">
-          <CallLayout />
+        <div className="flex size-full max-w-[1000px] items-center">
+          {CallLayout}
         </div>
         <div
           className={cn("h-[calc(80vh-86px)] hidden ml-2", {
@@ -70,10 +77,9 @@ const VideoCallRoom = () => {
       </div>
       <div className="fixed bottom-0 flex w-full items-center justify-center gap-5">
         <CallControls onLeave={() => router.push(`/`)} />
-
         <DropdownMenu>
           <div className="flex items-center">
-            <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]  ">
+            <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
               <LayoutList size={20} className="text-white" />
             </DropdownMenuTrigger>
           </div>
@@ -82,7 +88,7 @@ const VideoCallRoom = () => {
               <div key={index}>
                 <DropdownMenuItem
                   onClick={() =>
-                    setLayout(item.toLowerCase() as CallLayoutType)
+                    handleLayoutChange(item.toLowerCase() as CallLayoutType)
                   }
                 >
                   {item}
@@ -93,8 +99,8 @@ const VideoCallRoom = () => {
           </DropdownMenuContent>
         </DropdownMenu>
         <CallStatsButton />
-        <button onClick={() => setShowParticipants((prev) => !prev)}>
-          <div className=" cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]  ">
+        <button onClick={handleToggleParticipants}>
+          <div className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
             <Users size={20} className="text-white" />
           </div>
         </button>

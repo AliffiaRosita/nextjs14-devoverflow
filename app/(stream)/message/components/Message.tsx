@@ -1,26 +1,20 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import type { Channel } from "stream-chat";
 import { Menu, X } from "lucide-react";
 import { Chat, LoadingIndicator, Streami18n } from "stream-chat-react";
 
 import useInitializeChatClient from "@/hooks/useInitializeChatClient";
-
 import { useTheme } from "@/context/ThemeProvider";
-
 import useWindowSize from "@/hooks/useWindowSize";
-
 import { mdBreakpoint } from "@/lib/tailwind";
 import { registerServiceWorker } from "@/lib/serviceWorker";
-
 import {
   getCurrentPushSubscription,
   sendPushSubscriptionToServer,
 } from "@/services/pushService";
-
 
 import PushMessageListener from "./PushMessageListener";
 import MessageChannel from "./MessageChannel";
@@ -28,15 +22,13 @@ import MessageSidebar from "./MessageSidebar";
 
 import "@/styles/stream-chat.css";
 
-const i18Instance = new Streami18n({ language: "en" });
-
-const Message = ({
-  channelId,
-  userId,
-}: {
+const i18nInstance = new Streami18n({ language: "en" });
+interface MessageProps {
   channelId?: string;
   userId?: string;
-}) => {
+}
+
+const Message = ({ channelId, userId }: MessageProps) => {
   const chatClient = useInitializeChatClient();
   const { user } = useUser();
   const { mode } = useTheme();
@@ -50,11 +42,14 @@ const Message = ({
   );
 
   const windowSize = useWindowSize();
-  const isLargeScreen = windowSize.width >= mdBreakpoint;
+  const isLargeScreen = useMemo(
+    () => windowSize.width >= mdBreakpoint,
+    [windowSize.width]
+  );
 
   useEffect(() => {
-    if (windowSize.width >= mdBreakpoint) setChatSidebarOpen(false);
-  }, [windowSize.width]);
+    if (isLargeScreen) setChatSidebarOpen(false);
+  }, [isLargeScreen]);
 
   useEffect(() => {
     async function setUpServiceWorker() {
@@ -88,7 +83,7 @@ const Message = ({
   }, [channelId]);
 
   useEffect(() => {
-    if (userId === undefined) {
+    if (!userId) {
       setActiveChannelId("");
     }
   }, [userId]);
@@ -129,7 +124,7 @@ const Message = ({
       <div className="m-auto flex h-full min-w-[350px] flex-col shadow-sm">
         <Chat
           client={chatClient}
-          i18nInstance={i18Instance}
+          i18nInstance={i18nInstance}
           theme={
             mode === "dark" ? "str-chat__theme-dark" : "str-chat__theme-light"
           }

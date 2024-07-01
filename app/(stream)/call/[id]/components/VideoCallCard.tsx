@@ -1,21 +1,28 @@
 "use client";
 
+import { useMemo, useCallback } from "react";
 import Image from "next/image";
+import { UserResponse } from "@stream-io/video-react-sdk";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { UserResponse } from "@stream-io/video-react-sdk";
-import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
-interface MeetingCardProps {
+import { Button } from "@/components/ui/button";
+
+interface VideoCallCardProps {
   title: string;
   date: string;
   createdBy: UserResponse | undefined;
   onClick: () => void;
 }
 
-const VideoCallCard = ({ title, date, onClick, createdBy }: MeetingCardProps) => {
-  const avatarImg: string | StaticImport = createdBy?.image ?? "";
+const VideoCallCard = ({
+  title,
+  date,
+  onClick,
+  createdBy,
+}: VideoCallCardProps) => {
+  const avatarImg = useMemo(() => createdBy?.image ?? "", [createdBy]);
+  const handleClick = useCallback(onClick, [onClick]);
 
   return (
     <section className="flex min-h-[200px] w-full flex-col justify-between rounded-[14px] bg-light-700 px-5 py-8 xl:max-w-[568px]">
@@ -47,7 +54,7 @@ const VideoCallCard = ({ title, date, onClick, createdBy }: MeetingCardProps) =>
           type="submit"
           className="bg-red-500 text-white"
           disabled={false}
-          onClick={onClick}
+          onClick={handleClick}
         >
           Join
         </Button>

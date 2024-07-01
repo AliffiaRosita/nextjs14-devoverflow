@@ -16,7 +16,7 @@ export const useGetLiveCalls = (questionId: string | null) => {
         const { calls } = await client.queryCalls({
           sort: [{ field: "starts_at", direction: -1 }],
           filter_conditions: {
-            // ongoing: true,
+            ongoing: true,
             "custom.questionId": questionId,
           },
         });

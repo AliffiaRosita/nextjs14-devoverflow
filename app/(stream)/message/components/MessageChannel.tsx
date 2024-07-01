@@ -6,12 +6,14 @@ import {
   Thread,
   Window,
 } from "stream-chat-react";
+import type { Channel as StreamChannel } from "stream-chat";
+
 import CustomChannelHeader from "./CustomChannelHeader";
 
 interface ChatChannelProps {
   show: boolean;
   hideChannelOnThread: boolean;
-  activeChannel: any;
+  activeChannel: StreamChannel | undefined;
 }
 
 const MessageChannel: FC<ChatChannelProps> = ({

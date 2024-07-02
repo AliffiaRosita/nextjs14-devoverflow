@@ -60,11 +60,21 @@ const LeftSidebar = () => {
                     );
                 })}
                 <Link href="/" className="bottom-0 mt-auto">
-                    <Button className="paragraph-medium bg-green-500 text-white min-h-[46px] min-w-[175px] px-4 py-3">
+                    <Button className="paragraph-medium min-h-[46px] min-w-[175px] bg-green-500 px-4 py-3 text-white">
                         <FontAwesomeIcon icon={faWhatsapp} className="mr-2" />{" "}
                         Help & Support
                     </Button>
                 </Link>
+
+                <div className="flex flex-row text-xs text-gray-600">
+                    <Link href="/privacy-policy" className="bottom-0 mt-auto hover:text-primary-500">
+                        Privacy Policy
+                    </Link>
+                    &nbsp;&&nbsp;
+                    <Link href="/terms-of-service" className="bottom-0 mt-auto hover:text-primary-500">
+                        Terms of Service
+                    </Link>
+                </div>
             </div>
         </section>
     );

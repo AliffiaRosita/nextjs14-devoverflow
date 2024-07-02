@@ -111,12 +111,12 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
             const skillValue = skillInput.value.trim();
 
             if (skillValue !== "") {
-                if (skillValue.length > 15) {
-                    return form.setError("skills", {
-                        type: "required",
-                        message: "Skill must be less than 15 characters.",
-                    });
-                }
+                // if (skillValue.length > 15) {
+                //     return form.setError("skills", {
+                //         type: "required",
+                //         message: "Skill must be less than 15 characters.",
+                //     });
+                // }
 
                 if (!field.value.includes(skillValue as never)) {
                     form.setValue("skills", [...field.value, skillValue]);

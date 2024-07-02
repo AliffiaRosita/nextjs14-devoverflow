@@ -9,7 +9,7 @@ const Loading = () => {
             Privacy Policy
           </h1>
           <div className="flex flex-wrap gap-4">
-            {[...Array(6)].map((_, i) => (
+            {[...Array(3)].map((_, i) => (
               <Skeleton key={i} className="h-60 w-full rounded-2xl" />
             ))}
           </div>

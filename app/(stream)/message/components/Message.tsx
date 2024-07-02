@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import type { Channel } from "stream-chat";
 import { Menu, X } from "lucide-react";
-import { Chat, LoadingIndicator, Streami18n } from "stream-chat-react";
+import { Chat, Streami18n } from "stream-chat-react";
 
 import useInitializeChatClient from "@/hooks/useInitializeChatClient";
 import { useTheme } from "@/context/ThemeProvider";
@@ -15,6 +15,7 @@ import MessageChannel from "./MessageChannel";
 import MessageSidebar from "./MessageSidebar";
 
 import "@/styles/stream-chat.css";
+import Loader from "@/components/shared/Loader";
 
 const i18nInstance = new Streami18n({ language: "en" });
 interface MessageProps {
@@ -72,11 +73,7 @@ const Message = ({ userId }: MessageProps) => {
   }, []);
 
   if (!chatClient || !user) {
-    return (
-      <div className="flex items-center justify-center dark:bg-black">
-        <LoadingIndicator size={40} />
-      </div>
-    );
+    return <Loader />;
   }
 
   return (

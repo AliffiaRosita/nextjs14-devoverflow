@@ -9,7 +9,7 @@ const Loading = () => {
             Terms of Service
           </h1>
           <div className="flex flex-wrap gap-4">
-            {[...Array(5)].map((_, i) => (
+            {[...Array(3)].map((_, i) => (
               <Skeleton key={i} className="h-60 w-full rounded-2xl" />
             ))}
           </div>

@@ -4,8 +4,8 @@ import BackButton from "@/components/shared/BackButton";
 
 const Page = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
-      <div className="w-full max-w-4xl rounded-lg bg-white p-8 shadow-md">
+    <div className="flex min-h-screen items-center justify-center p-6">
+      <div className="text-dark100_light900 card-wrapper w-full max-w-4xl rounded-lg p-8 shadow-md">
         <h1 className="mb-6 text-center text-4xl font-bold">
           Terms of Service
         </h1>

@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import Message from "./components/Message";
 
 export const metadata: Metadata = {
-  title: "Message — DevOverflow",
+  title: "Message — TheSkillGuru",
 };
 
 const Page = async ({ searchParams }: SearchParamsProps) => {

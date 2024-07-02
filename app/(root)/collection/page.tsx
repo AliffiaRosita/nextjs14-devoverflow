@@ -14,7 +14,7 @@ import type { SearchParamsProps } from "@/types";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Collection — DevOverflow",
+    title: "Collection — TheSkillGuru",
 };
 
 export default async function Collection({ searchParams }: SearchParamsProps) {

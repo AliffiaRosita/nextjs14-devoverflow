@@ -18,7 +18,7 @@ export async function generateMetadata({
     const tag = await getSkillById({ skillId: params.id });
 
     return {
-        title: `Posts by skill '${tag.name}' — DevOverflow`,
+        title: `Posts by skill '${tag.name}' — TheSkillGuru`,
         description: tag.description || `Questions tagged with ${tag.name}`,
     };
 }

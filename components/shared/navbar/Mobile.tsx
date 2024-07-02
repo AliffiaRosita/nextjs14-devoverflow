@@ -72,10 +72,10 @@ const Mobile = () => {
       >
         <Link href="/" className="flex items-center gap-1">
           <Image
-            src="/assets/images/site-logo.svg"
+            src="/assets/images/site-logo.png"
             width={23}
             height={23}
-            alt="DevOverflow"
+            alt="TheSkillGuru"
           />
 
           <p className="h2-bold text-dark100_light900 font-spaceGrotesk">

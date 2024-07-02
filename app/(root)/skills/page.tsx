@@ -13,7 +13,7 @@ import type { SearchParamsProps } from "@/types";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Skills — DevOverflow",
+    title: "Skills — TheSkillGuru",
 };
 
 const Page = async ({ searchParams }: SearchParamsProps) => {

@@ -19,7 +19,7 @@ import {
 } from "@/lib/actions/question.action";
 
 export const metadata: Metadata = {
-    title: "Home — DevOverflow",
+    title: "Home — TheSkillGuru",
 };
 
 export default async function Home({ searchParams }: SearchParamsProps) {

@@ -52,7 +52,7 @@ const JobCard = ({
 }: JobProps) => {
   const imageUrl = isValidImage(employerLogo)
     ? employerLogo
-    : "/assets/images/site-logo.svg";
+    : "/assets/images/site-logo.png";
 
   const location = `${city ? `${city}${state ? ", " : ""}` : ""}${state || ""}${
     city && state && country ? ", " : ""

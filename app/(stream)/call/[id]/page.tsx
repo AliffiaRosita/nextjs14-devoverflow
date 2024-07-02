@@ -9,7 +9,7 @@ import { getQuestionById } from "@/lib/actions/question.action";
 import VideoCall from "./components/VideoCall";
 
 export const metadata: Metadata = {
-  title: "Video Call — DevOverflow",
+  title: "Video Call — TheSkillGuru",
 };
 
 const Page = async ({ params, searchParams }: URLProps) => {

@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
 
-export const useGetLiveCalls = (id: string | null) => {
+export const useGetLiveCalls = (questionId: string | null) => {
   const client = useStreamVideoClient();
   const [calls, setCalls] = useState<Call[]>();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const loadCalls = async () => {
-      if (!client || !id) return;
+      if (!client || !questionId) return;
 
       setIsLoading(true);
 
@@ -17,7 +17,7 @@ export const useGetLiveCalls = (id: string | null) => {
           sort: [{ field: "starts_at", direction: -1 }],
           filter_conditions: {
             ongoing: true,
-            id,
+            "custom.questionId": questionId,
           },
         });
 
@@ -30,7 +30,7 @@ export const useGetLiveCalls = (id: string | null) => {
     };
 
     loadCalls();
-  }, [id, client]);
+  }, [questionId, client]);
 
   return { liveCalls: calls, isLoading };
 };

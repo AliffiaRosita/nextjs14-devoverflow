@@ -1,41 +1,27 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import type { Channel } from "stream-chat";
 import { Menu, X } from "lucide-react";
 import { Chat, LoadingIndicator, Streami18n } from "stream-chat-react";
 
 import useInitializeChatClient from "@/hooks/useInitializeChatClient";
-
 import { useTheme } from "@/context/ThemeProvider";
-
 import useWindowSize from "@/hooks/useWindowSize";
-
 import { mdBreakpoint } from "@/lib/tailwind";
-import { registerServiceWorker } from "@/lib/serviceWorker";
 
-import {
-  getCurrentPushSubscription,
-  sendPushSubscriptionToServer,
-} from "@/services/pushService";
-
-import ChatChannel from "./ChatChannel";
-import ChatSidebar from "./ChatSidebar";
-import PushMessageListener from "./PushMessageListener";
+import MessageChannel from "./MessageChannel";
+import MessageSidebar from "./MessageSidebar";
 
 import "@/styles/stream-chat.css";
 
-const i18Instance = new Streami18n({ language: "en" });
-
-const MessageRoom = ({
-  channelId,
-  userId,
-}: {
-  channelId?: string;
+const i18nInstance = new Streami18n({ language: "en" });
+interface MessageProps {
   userId?: string;
-}) => {
+}
+
+const Message = ({ userId }: MessageProps) => {
   const chatClient = useInitializeChatClient();
   const { user } = useUser();
   const { mode } = useTheme();
@@ -44,50 +30,20 @@ const MessageRoom = ({
   const [activeChannel, setActiveChannel] = useState<Channel | undefined>(
     undefined
   );
-  const [activeChannelId, setActiveChannelId] = useState<string | undefined>(
-    channelId
-  );
+  const [activeChannelId, setActiveChannelId] = useState<string | undefined>();
 
   const windowSize = useWindowSize();
-  const isLargeScreen = windowSize.width >= mdBreakpoint;
+  const isLargeScreen = useMemo(
+    () => windowSize.width >= mdBreakpoint,
+    [windowSize.width]
+  );
 
   useEffect(() => {
-    if (windowSize.width >= mdBreakpoint) setChatSidebarOpen(false);
-  }, [windowSize.width]);
+    if (isLargeScreen) setChatSidebarOpen(false);
+  }, [isLargeScreen]);
 
   useEffect(() => {
-    async function setUpServiceWorker() {
-      try {
-        await registerServiceWorker();
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    setUpServiceWorker();
-  }, []);
-
-  useEffect(() => {
-    async function syncPushSubscription() {
-      try {
-        const subscription = await getCurrentPushSubscription();
-        if (subscription) {
-          await sendPushSubscriptionToServer(subscription);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    syncPushSubscription();
-  }, []);
-
-  useEffect(() => {
-    if (channelId) {
-      history.replaceState(null, "", "/message");
-    }
-  }, [channelId]);
-
-  useEffect(() => {
-    if (userId === undefined) {
+    if (!userId) {
       setActiveChannelId("");
     }
   }, [userId]);
@@ -117,7 +73,7 @@ const MessageRoom = ({
 
   if (!chatClient || !user) {
     return (
-      <div className="flex items-center justify-center bg-gray-100 dark:bg-black">
+      <div className="flex items-center justify-center dark:bg-black">
         <LoadingIndicator size={40} />
       </div>
     );
@@ -128,7 +84,7 @@ const MessageRoom = ({
       <div className="m-auto flex h-full min-w-[350px] flex-col shadow-sm">
         <Chat
           client={chatClient}
-          i18nInstance={i18Instance}
+          i18nInstance={i18nInstance}
           theme={
             mode === "dark" ? "str-chat__theme-dark" : "str-chat__theme-light"
           }
@@ -144,9 +100,9 @@ const MessageRoom = ({
               )}
             </button>
           </div>
-          <div className="flex h-full flex-row overflow-y-auto">
+          <div className="flex h-full flex-row overflow-y-auto rounded-[10px]">
             {activeChannelId !== undefined && (
-              <ChatSidebar
+              <MessageSidebar
                 user={user}
                 show={isLargeScreen || chatSidebarOpen}
                 onClose={handleSidebarOnClose}
@@ -156,17 +112,16 @@ const MessageRoom = ({
                 }}
               />
             )}
-            <ChatChannel
+            <MessageChannel
               show={isLargeScreen || !chatSidebarOpen}
               hideChannelOnThread={!isLargeScreen}
               activeChannel={activeChannel}
             />
           </div>
-          <PushMessageListener />
         </Chat>
       </div>
     </div>
   );
 };
 
-export default MessageRoom;
+export default Message;

@@ -14,6 +14,7 @@ export default authMiddleware({
         "/profile/:id",
         "/community",
         "/jobs",
+        "/post-problem",
     ],
     ignoredRoutes: [
         "/terms-of-service",

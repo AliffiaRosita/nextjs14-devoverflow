@@ -79,7 +79,7 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
                 });
 
                 // navigate to home page
-                router.push("/");
+                router.push("/home");
             }
         } catch (error) {
             toast({

@@ -54,7 +54,7 @@ const GlobalResult = () => {
             case "tag":
                 return `/skills/${id}`;
             default:
-                return "/";
+                return "/home";
         }
     };
 

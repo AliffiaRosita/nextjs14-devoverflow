@@ -67,7 +67,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
 
             <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
                 <LocalSearchbar
-                    route="/"
+                    route="/home"
                     iconPosition="left"
                     imgSrc="/assets/icons/search.svg"
                     placeholder="Search for questions"

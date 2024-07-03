@@ -73,7 +73,7 @@ const Profile = ({ clerkId, user }: Props) => {
                 path: pathname,
             });
 
-            router.push("/");
+            router.push("/home");
         } catch (error) {
             toast({
                 title: "Error updating profile ⚠️",

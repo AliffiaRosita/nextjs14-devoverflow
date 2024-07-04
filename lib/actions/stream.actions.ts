@@ -1,6 +1,6 @@
 "use server";
 
-import { StreamClient } from "@stream-io/node-sdk";
+import { StreamClient, UserObjectRequest } from "@stream-io/node-sdk";
 import { getUserById, updateUser } from "./user.action";
 
 const STREAM_API_KEY = process.env.NEXT_PUBLIC_STREAM_API_KEY;
@@ -14,13 +14,26 @@ export const streamTokenProvider = async (userId: string) => {
     if (!STREAM_API_KEY) throw new Error("Stream API key secret is missing");
     if (!STREAM_API_SECRET) throw new Error("Stream API secret is missing");
 
-    if (user?.streamToken) return user.streamToken;
-
     const streamClient = new StreamClient(STREAM_API_KEY, STREAM_API_SECRET);
 
-    const issuedAt = Math.floor(Date.now() / 1000) - 60;
+    const newUser: UserObjectRequest = {
+      id: userId,
+      role: "user",
+      custom: {
+        email: user.email,
+        username: user.username,
+      },
+      name: user.name || user.username || user.id,
+      image: user.pictures,
+    };
 
-    const streamToken = streamClient.createToken(userId, issuedAt);
+    await streamClient.upsertUsers({
+      users: {
+        [newUser.id]: newUser,
+      },
+    });
+
+    const streamToken = streamClient.createToken(userId);
 
     await updateUser({
       clerkId: userId,

@@ -419,3 +419,22 @@ export async function getUserQuestions(params: GetUserStatsParams) {
 		throw error;
 	}
 }
+
+export async function getStreamUserData(clerkId: string) {
+  const mongoUser = await getUserById({ userId: clerkId });
+  
+  if(!mongoUser) return null;
+
+  const streamUser = {
+    id: mongoUser.clerkId,
+    role: "user",
+    custom: {
+      email: mongoUser.email,
+      username: mongoUser.username,
+    },
+    name: mongoUser.name || mongoUser.username,
+    image: mongoUser.pictures,
+  };
+
+  return streamUser;
+}

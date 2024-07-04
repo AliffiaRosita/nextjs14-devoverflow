@@ -1,4 +1,5 @@
 import { streamTokenProvider } from "@/lib/actions/stream.actions";
+import { getStreamUserData } from "@/lib/actions/user.action";
 import { useUser } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { StreamChat } from "stream-chat";
@@ -14,19 +15,31 @@ const useInitializeChatClient = () => {
       process.env.NEXT_PUBLIC_STREAM_API_KEY || ""
     );
 
-    client
-      .connectUser(
-        {
-          id: user.id,
-          name: user.fullName || user.username || user.id,
-          image: user.imageUrl,
-        },
-        async () => {
-          return await streamTokenProvider(user.id);
-        }
-      )
-      .catch((error) => console.error("Failed to connect user", error))
-      .then(() => setChatClient(client));
+    const createStreamUser = async () => {
+      try {
+        const streamUser = await getStreamUserData(user.id);
+
+        if (!streamUser) throw new Error("Stream User is not exist");
+
+        client
+          .connectUser(
+            {
+              id: streamUser.id,
+              name: streamUser.name,
+              image: streamUser.image,
+            },
+            async () => {
+              return await streamTokenProvider(user.id);
+            }
+          )
+          .catch((error) => console.error("Failed to connect user", error))
+          .then(() => setChatClient(client));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    createStreamUser();
 
     return () => {
       setChatClient(null);

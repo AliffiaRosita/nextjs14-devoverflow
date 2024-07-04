@@ -13,7 +13,7 @@ import {
 } from "react-share";
 
 const SocialShare = ({ id }: { id: String }) => {
-	const baseUrl = process.env.BASE_URL;
+	const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 	const [show, setShow] = useState<boolean>(false);
 	const shareUrl = `${baseUrl}/question/${id}`;
 	const handleToggle = () => setShow(!show);

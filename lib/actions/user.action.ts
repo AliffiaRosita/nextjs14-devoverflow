@@ -47,13 +47,13 @@ export async function updateUser(params: UpdateUserParams) {
 			new: true,
 		});
 
-        if (path) {
-          revalidatePath(path);
-        }
-    } catch (error) {
-        console.log(error);
-        throw error;
-    }
+		if (path) {
+			revalidatePath(path);
+		}
+	} catch (error) {
+		console.log(error);
+		throw error;
+	}
 }
 
 export async function deleteUser(params: DeleteUserParams) {
@@ -421,20 +421,25 @@ export async function getUserQuestions(params: GetUserStatsParams) {
 }
 
 export async function getStreamUserData(clerkId: string) {
-  const mongoUser = await getUserById({ userId: clerkId });
-  
-  if(!mongoUser) return null;
+	try {
+		const mongoUser = await getUserById({ userId: clerkId });
 
-  const streamUser = {
-    id: mongoUser.clerkId,
-    role: "user",
-    custom: {
-      email: mongoUser.email,
-      username: mongoUser.username,
-    },
-    name: mongoUser.name || mongoUser.username,
-    image: mongoUser.pictures,
-  };
+		if (!mongoUser) return null;
 
-  return streamUser;
+		const streamUser = {
+			id: mongoUser.clerkId,
+			role: "user",
+			custom: {
+				email: mongoUser.email,
+				username: mongoUser.username,
+			},
+			name: mongoUser.name || mongoUser.username,
+			image: mongoUser.pictures,
+		};
+
+		return streamUser;
+	} catch (error) {
+		console.log(error);
+		throw error;
+	}
 }

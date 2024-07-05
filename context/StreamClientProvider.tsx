@@ -21,7 +21,7 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
 				if (!isLoaded || !userId) return;
 				if (!API_KEY) throw new Error("Stream API key is missing");
 
-				const streamUser = await getStreamUserData(userId);
+				const streamUser = await getStreamUserData({ userId });
 				console.log("streamUser :", streamUser);
 				if (!streamUser) throw new Error("Stream User is not exist");
 

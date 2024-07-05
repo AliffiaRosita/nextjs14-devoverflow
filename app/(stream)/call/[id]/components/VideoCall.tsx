@@ -39,7 +39,7 @@ const VideoCall = ({
 
   const videoCallContent = useMemo(() => {
     return isShowCallRoom ? (
-      <VideoCallStarter roomId={callRoomId} />
+      <VideoCallStarter questionId={questionId} roomId={callRoomId} />
     ) : (
       <VideoCallList
         liveCalls={liveCalls}
@@ -49,6 +49,7 @@ const VideoCall = ({
     );
   }, [
     isShowCallRoom,
+    questionId,
     callRoomId,
     liveCalls,
     handleShowCallRoom,

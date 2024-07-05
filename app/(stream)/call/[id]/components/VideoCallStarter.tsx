@@ -16,10 +16,11 @@ import VideoCallSetup from "./VideoCallSetup";
 import "@/styles/stream-video.css";
 
 interface VideoCallRoomProps {
+  questionId: string | null;
   roomId: string;
 }
 
-const VideoCallStarter = ({ roomId }: VideoCallRoomProps) => {
+const VideoCallStarter = ({ questionId, roomId }: VideoCallRoomProps) => {
   const { call, isCallLoading } = useGetCallById(roomId!);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
 
@@ -50,13 +51,13 @@ const VideoCallStarter = ({ roomId }: VideoCallRoomProps) => {
         data: {
           starts_at: new Date().toISOString(),
           custom: {
-            questionId: roomId,
+            questionId,
           },
         },
       });
     };
     startRoom();
-  }, [client, roomId]);
+  }, [client, roomId, questionId]);
 
   const handleSetupComplete = useCallback(() => {
     setIsSetupComplete(true);

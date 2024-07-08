@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import Question from "@/components/forms/Question";
@@ -10,31 +10,31 @@ import type { ParamsProps } from "@/types";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Edit Question — TheSkillGuru",
+	title: "Edit Question — TheSkillGuru",
 };
 
 const Page = async ({ params }: ParamsProps) => {
-  const { userId } = auth();
+	const { userId } = auth();
 
-  if (!userId) return null;
+	if (!userId) return null;
 
-  const mongoUser = await getUserById({ userId });
-  if (!mongoUser?.onboarded) redirect("/onboarding");
+	const mongoUser = await getUserById({ userId });
+	if (!mongoUser?.onboarded) redirect("/onboarding");
 
-  const result = await getQuestionById({ questionId: params.id });
+	const result = await getQuestionById({ questionId: params.id });
 
-  return (
-    <>
-      <h1 className="h1-bold text-dark100_light900">Edit Question</h1>
-      <div className="mt-9">
-        <Question
-          type="Edit"
-          mongoUserId={mongoUser._id}
-          questionDetails={JSON.stringify(result)}
-        />
-      </div>
-    </>
-  );
+	return (
+		<>
+			<h1 className="h1-bold text-dark100_light900">Edit Question</h1>
+			<div className="mt-9">
+				<Question
+					type="Edit"
+					mongoUserId={mongoUser._id}
+					questionDetails={JSON.stringify(result)}
+				/>
+			</div>
+		</>
+	);
 };
 
 export default Page;

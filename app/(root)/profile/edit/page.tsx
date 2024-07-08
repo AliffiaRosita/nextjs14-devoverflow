@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import Profile from "@/components/forms/Profile";
@@ -9,25 +9,25 @@ import type { ParamsProps } from "@/types";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Edit Profile — TheSkillGuru",
+	title: "Edit Profile — TheSkillGuru",
 };
 
 const Page = async ({ params }: ParamsProps) => {
-  const { userId } = auth();
+	const { userId } = auth();
 
-  if (!userId) return null;
+	if (!userId) return null;
 
-  const mongoUser = await getUserById({ userId });
-  if (!mongoUser?.onboarded) redirect("/onboarding");
+	const mongoUser = await getUserById({ userId });
+	if (!mongoUser?.onboarded) redirect("/onboarding");
 
-  return (
-    <>
-      <h1 className="h1-bold text-dark100_light900">Edit Profile</h1>
-      <div className="mt-9">
-        <Profile clerkId={userId} user={JSON.stringify(mongoUser)} />
-      </div>
-    </>
-  );
+	return (
+		<>
+			<h1 className="h1-bold text-dark100_light900">Edit Profile</h1>
+			<div className="mt-9">
+				<Profile clerkId={userId} user={JSON.stringify(mongoUser)} />
+			</div>
+		</>
+	);
 };
 
 export default Page;

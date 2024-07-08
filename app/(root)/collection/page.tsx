@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
@@ -14,53 +14,56 @@ import type { SearchParamsProps } from "@/types";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: "Collection — TheSkillGuru",
+	title: "Collection — TheSkillGuru",
 };
 
 export default async function Collection({ searchParams }: SearchParamsProps) {
-    const { userId: clerkId } = auth();
+	const { userId: clerkId } = auth();
 
-    if (!clerkId) return null;
+	if (!clerkId) return null;
 
-    const mongoUser = await getUserById({ userId: clerkId });
-    if (!mongoUser?.onboarded) redirect("/onboarding");
+	const mongoUser = await getUserById({ userId: clerkId });
+	if (!mongoUser?.onboarded) redirect("/onboarding");
 
-    const result = await getSavedQuestions({
-        clerkId,
-        searchQuery: searchParams.q,
-        filter: searchParams.filter,
-        page: searchParams.page ? +searchParams.page : 1,
-    });
+	const result = await getSavedQuestions({
+		clerkId,
+		searchQuery: searchParams.q,
+		filter: searchParams.filter,
+		page: searchParams.page ? +searchParams.page : 1,
+	});
 
+	const questions = JSON.parse(JSON.stringify(result.questions));
 
-    const questions = JSON.parse(JSON.stringify(result.questions));
+	return (
+		<>
+			<h1 className="h1-bold text-dark100_light900">Saved Questions</h1>
+			<div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
+				<LocalSearchbar
+					route="/collection"
+					iconPosition="left"
+					imgSrc="/assets/icons/search.svg"
+					placeholder="Search for questions"
+					otherClasses="flex-1"
+				/>
 
-    return (
-        <>
-            <h1 className="h1-bold text-dark100_light900">Saved Questions</h1>
-            <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
-                <LocalSearchbar
-                    route="/collection"
-                    iconPosition="left"
-                    imgSrc="/assets/icons/search.svg"
-                    placeholder="Search for questions"
-                    otherClasses="flex-1"
-                />
+				<Filter
+					filters={QuestionFilters}
+					otherClasses="min-h-[56px] sm:min-w-[170px]"
+				/>
+			</div>
 
-                <Filter
-                    filters={QuestionFilters}
-                    otherClasses="min-h-[56px] sm:min-w-[170px]"
-                />
-            </div>
+			<QuestionsContainer
+				type="collection"
+				questions={questions}
+				clerkId={clerkId}
+			/>
 
-            <QuestionsContainer type="collection" questions={questions} clerkId={clerkId} />
-
-            <div className="mt-10">
-                <Pagination
-                    pageNumber={searchParams?.page ? +searchParams.page : 1}
-                    isNext={result.isNext}
-                />
-            </div>
-        </>
-    );
+			<div className="mt-10">
+				<Pagination
+					pageNumber={searchParams?.page ? +searchParams.page : 1}
+					isNext={result.isNext}
+				/>
+			</div>
+		</>
+	);
 }

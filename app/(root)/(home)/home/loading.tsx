@@ -10,6 +10,7 @@ const Loading = () => {
                 <h1 className="h1-bold text-dark100_light900">All Questions</h1>
 
                 <Link
+                	prefetch={false}
                     href="/post-problem"
                     className="flex justify-end max-sm:w-full"
                 >

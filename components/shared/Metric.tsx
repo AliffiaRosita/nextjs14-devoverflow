@@ -46,7 +46,7 @@ const Metric = ({
 
     if (href) {
         return (
-            <Link href={href} className="flex-start gap-1">
+            <Link prefetch={false} href={href} className="flex-start gap-1">
                 {metricContent}
             </Link>
         );

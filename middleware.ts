@@ -20,7 +20,6 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 // });
 
 const protectedRoutes = createRouteMatcher([
-	"/api/webhook/clerk",
 	"/api/rapidapi",
 	"/question/:id",
 	"/skills(.*)",

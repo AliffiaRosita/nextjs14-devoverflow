@@ -3,7 +3,6 @@
 import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
-
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,13 +31,14 @@ interface Props {
 	type: string;
 	mongoUserId: string;
 	questionDetails?: string;
+	skills?: string;
 }
 interface Option {
 	label: string;
 	value: string;
 }
 
-const Question = ({ type, mongoUserId, questionDetails }: Props) => {
+const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
 	const { mode } = useTheme();
 	const editorRef = useRef(null);
 	const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -55,6 +55,8 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
 		},
 	];
 
+	const parsedSkills = skills && JSON.parse(skills || "");
+
 	const parsedQuestionDetails =
 		questionDetails && JSON.parse(questionDetails || "");
 
@@ -62,8 +64,10 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
 		(option) => option.value === parsedQuestionDetails?.mark
 	);
 	const [optionValue, setOptionValue] = useState<Option | undefined>(
-		checkMark
+		checkMark || options[1]
 	);
+
+	const [listSkills, setListSkills] = useState(parsedSkills);
 
 	const groupedSkills = parsedQuestionDetails?.skills?.map(
 		(skill: any) => skill.name
@@ -81,7 +85,7 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
 
 	async function onSubmit(values: z.infer<typeof QuestionValidation>) {
 		setIsSubmitting(true);
-
+		console.log(values);
 		try {
 			if (type === "Edit") {
 				await editQuestion({
@@ -123,15 +127,39 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
 		}
 	}
 
+	const handleSkillPress = (name: string) => {
+		const lists = form.getValues("skills");
+		// Only add the skill if it doesn't already exist in the list
+		if (!lists.includes(name)) {
+			const updatedSkills = [...lists, name];
+			form.setValue("skills", updatedSkills);
+
+			// Update the displayed list of skills
+			setListSkills(
+				parsedSkills.filter(
+					(skill: any) => !updatedSkills.includes(skill.name)
+				)
+			);
+		} else {
+			// Filter out the skill if it already exists
+			const filteredSkill = lists.filter((skill: any) => skill !== name);
+			form.setValue("skills", filteredSkill);
+			setListSkills(filteredSkill);
+		}
+	};
+
 	const handleInputKeyDown = (
 		e: React.KeyboardEvent<HTMLInputElement>,
 		field: any
 	) => {
+		const skillInput = e.target as HTMLInputElement;
+		const skillValue = skillInput.value.trim();
+
 		if (e.key === "Enter" && field.name === "skills") {
 			e.preventDefault();
 
-			const skillInput = e.target as HTMLInputElement;
-			const skillValue = skillInput.value.trim();
+			// const skillInput = e.target as HTMLInputElement;
+			// const skillValue = skillInput.value.trim();
 
 			if (skillValue !== "") {
 				// if (skillValue.length > 15) {
@@ -149,14 +177,31 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
 					form.trigger();
 				}
 			}
+		} else {
+			// setSkillName(skillValue);
+
+			// Filter skills based on input value and skills already in the form
+			const skillValueForm = form.getValues("skills");
+			const filteredSkill = parsedSkills.filter((skill: any) => {
+				return (
+					skill.name.includes(skillValue) &&
+					!skillValueForm.includes(skill.name)
+				);
+			});
+
+			setListSkills(filteredSkill);
 		}
 	};
 
 	const handleSkillRemove = (skill: string, field: any) => {
-		form.setValue(
-			"skills",
-			field.value.filter((t: string) => t !== skill)
+		const updatedSkills = field.value.filter((t: string) => t !== skill);
+		form.setValue("skills", updatedSkills);
+
+		// Mengembalikan skill yang dihapus ke daftar listSkills
+		const filteredSkillAll = parsedSkills.filter(
+			(s: any) => !updatedSkills.includes(s.name)
 		);
+		setListSkills(filteredSkillAll);
 	};
 
 	const handleMarkChange = (event: any) => {
@@ -309,6 +354,7 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
 							<FormControl className="mt-3.5">
 								<>
 									<Input
+										type="text"
 										disabled={type === "Edit"}
 										className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
 										placeholder="Add skills..."
@@ -316,6 +362,19 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
 											handleInputKeyDown(e, field)
 										}
 									/>
+									<ul className="h-50 overflow-y-auto ">
+										{listSkills?.map((skill: any) => (
+											<li
+												className=" border p-5"
+												key={skill._id}
+												onClick={() =>
+													handleSkillPress(skill.name)
+												}
+											>
+												{skill.name}
+											</li>
+										))}
+									</ul>
 
 									{field.value.length > 0 && (
 										<div className="flex-start mt-2.5 gap-2.5">
@@ -346,6 +405,15 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
 											))}
 										</div>
 									)}
+									{/* <SelectSearch
+										options={skillOptions}
+										search
+										name="language"
+										placeholder="Choose your language"
+										onKeyDown={(e) =>
+											handleInputKeyDown(e, field)
+										}
+									/> */}
 								</>
 							</FormControl>
 							<FormDescription className="body-regular mt-2.5 text-light-500">

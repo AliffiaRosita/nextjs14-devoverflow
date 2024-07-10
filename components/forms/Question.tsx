@@ -57,8 +57,12 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
 
 	const parsedQuestionDetails =
 		questionDetails && JSON.parse(questionDetails || "");
-	const [optionValue, setOptionValue] = useState<Option>(
-		parsedQuestionDetails?.mark || options[1]
+
+	const checkMark = options.find(
+		(option) => option.value === parsedQuestionDetails?.mark
+	);
+	const [optionValue, setOptionValue] = useState<Option | undefined>(
+		checkMark
 	);
 
 	const groupedSkills = parsedQuestionDetails?.skills?.map(
@@ -71,7 +75,7 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
 			title: parsedQuestionDetails?.title || "",
 			explanation: parsedQuestionDetails?.content || "",
 			skills: groupedSkills || [],
-			mark: parsedQuestionDetails?.mark || optionValue.value,
+			mark: parsedQuestionDetails?.mark || optionValue?.value,
 		},
 	});
 
@@ -180,7 +184,7 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
 									<select
 										className=" no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] rounded-md border px-2"
 										id="dropdown"
-										value={optionValue.value}
+										value={optionValue?.value}
 										onChange={handleMarkChange}
 									>
 										{options.map((option, index) => (

@@ -11,12 +11,17 @@ import { useUser } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
+import { notify } from "@/lib/actions/knock.action";
 
 interface VideoCallSetupProps {
   setIsSetupComplete: (value: boolean) => void;
 }
 
-const VideoCallSetup = ({ setIsSetupComplete }: VideoCallSetupProps) => {
+const VideoCallSetup = ({
+  setIsSetupComplete,
+  userAuthorId,
+  knockUser,
+}: VideoCallSetupProps) => {
   const call = useCall();
   const router = useRouter();
   const { user } = useUser();
@@ -45,10 +50,19 @@ const VideoCallSetup = ({ setIsSetupComplete }: VideoCallSetupProps) => {
     [user.id]
   );
 
-  const handleJoin = useCallback(() => {
+  const handleJoin = useCallback(async () => {
+    await notify({
+      message: "new notification",
+      sender: knockUser.name,
+      showToast: true,
+      userId: userAuthorId,
+      tenant: "team-a",
+    });
+
     call.join();
+
     setIsSetupComplete(true);
-  }, [call, setIsSetupComplete]);
+  }, [call, setIsSetupComplete, userAuthorId, knockUser]);
 
   const handleCopyLink = useCallback(() => {
     navigator.clipboard.writeText(invitationLink);

@@ -20,7 +20,12 @@ interface VideoCallRoomProps {
   roomId: string;
 }
 
-const VideoCallStarter = ({ questionId, roomId }: VideoCallRoomProps) => {
+const VideoCallStarter = ({
+  questionId,
+  roomId,
+  userAuthorId,
+  knockUser,
+}: VideoCallRoomProps) => {
   const { call, isCallLoading } = useGetCallById(roomId!);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
 
@@ -64,7 +69,13 @@ const VideoCallStarter = ({ questionId, roomId }: VideoCallRoomProps) => {
   }, []);
 
   const setupComponent = useMemo(() => {
-    return <VideoCallSetup setIsSetupComplete={handleSetupComplete} />;
+    return (
+      <VideoCallSetup
+        setIsSetupComplete={handleSetupComplete}
+        userAuthorId={userAuthorId}
+        knockUser={knockUser}
+      />
+    );
   }, [handleSetupComplete]);
 
   const roomComponent = useMemo(() => {

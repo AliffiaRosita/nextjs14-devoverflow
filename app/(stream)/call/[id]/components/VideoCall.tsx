@@ -20,10 +20,14 @@ const VideoCall = ({
   userAuthorId,
   questionId,
   userId,
+  knockUser,
 }: VideoCallProps) => {
   const isUserAuthor = userId === userAuthorId;
 
-  const { liveCalls, isLoading: isLiveLoading } = useGetLiveCalls(questionId);
+  const { liveCalls, isLoading: isLiveLoading } = useGetLiveCalls(
+    questionId,
+    isUserAuthor
+  );
   const [isShowCallRoom, setIsShowCallRoom] = useState<boolean>(
     !isUserAuthor || !!inviteId
   );
@@ -39,7 +43,12 @@ const VideoCall = ({
 
   const videoCallContent = useMemo(() => {
     return isShowCallRoom ? (
-      <VideoCallStarter questionId={questionId} roomId={callRoomId} />
+      <VideoCallStarter
+        questionId={questionId}
+        roomId={callRoomId}
+        userAuthorId={userAuthorId}
+        knockUser={knockUser}
+      />
     ) : (
       <VideoCallList
         liveCalls={liveCalls}
@@ -52,6 +61,8 @@ const VideoCall = ({
     questionId,
     callRoomId,
     liveCalls,
+    userAuthorId,
+    knockUser,
     handleShowCallRoom,
     handleSetCallRoomId,
   ]);

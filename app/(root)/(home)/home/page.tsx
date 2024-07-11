@@ -17,6 +17,7 @@ import {
 	getQuestions,
 	getRecommendedQuestions,
 } from "@/lib/actions/question.action";
+import { identifyKnockUser } from "@/lib/actions/knock.action";
 
 export const metadata: Metadata = {
 	title: "Home — TheSkillGuru",
@@ -24,6 +25,10 @@ export const metadata: Metadata = {
 
 export default async function Home({ searchParams }: SearchParamsProps) {
 	const { userId: clerkId } = auth();
+
+	if (clerkId) {
+		await identifyKnockUser(clerkId)
+	}
 
 	let result;
 

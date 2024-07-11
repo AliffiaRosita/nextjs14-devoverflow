@@ -22,7 +22,7 @@ interface MessageProps {
   userId?: string;
 }
 
-const Message = ({ userId }: MessageProps) => {
+const Message = ({ userId, knockUser }: MessageProps) => {
   const chatClient = useInitializeChatClient();
   const { user } = useUser();
   const { mode } = useTheme();
@@ -113,6 +113,7 @@ const Message = ({ userId }: MessageProps) => {
               show={isLargeScreen || !chatSidebarOpen}
               hideChannelOnThread={!isLargeScreen}
               activeChannel={activeChannel}
+              knockUser={knockUser}
             />
           </div>
         </Chat>

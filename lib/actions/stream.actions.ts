@@ -4,7 +4,7 @@ import { StreamClient } from "@stream-io/node-sdk";
 import { getStreamUserData, updateUser } from "./user.action";
 
 const STREAM_API_KEY = process.env.NEXT_PUBLIC_STREAM_API_KEY;
-const STREAM_API_SECRET = process.env.NEXT_STREAM_SECRET_KEY;
+const STREAM_API_SECRET = process.env.STREAM_SECRET_KEY;
 
 export const streamTokenProvider = async (userId: string) => {
 	try {

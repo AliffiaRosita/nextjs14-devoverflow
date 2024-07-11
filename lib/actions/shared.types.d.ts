@@ -194,3 +194,17 @@ export interface GetFormattedSalaryParams {
     currency: string;
     period: string;
 }
+
+export interface SendNotificationParams {
+    message: string,
+    showToast?: boolean,
+    userId: string,
+    tenant: string,
+    templateType?: {
+        Standard: string,
+        SingleAction: string
+        MultiAction: string
+    },
+    sender?: string,
+    type?: string,
+}

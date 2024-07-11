@@ -7,6 +7,7 @@ import { URLProps } from "@/types";
 import { getQuestionById } from "@/lib/actions/question.action";
 
 import VideoCall from "./components/VideoCall";
+import { identifyKnockUser } from "@/lib/actions/knock.action";
 
 export const metadata: Metadata = {
 	title: "Video Call — TheSkillGuru",
@@ -18,6 +19,8 @@ const Page = async ({ params, searchParams }: URLProps) => {
 	if (!clerkId) {
 		return redirect("/sign-in");
 	}
+
+	const knockUser = await identifyKnockUser(clerkId)
 
 	const result = await getQuestionById({ questionId: params.id });
 
@@ -31,6 +34,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
 			questionId={params.id}
 			userAuthorId={result?.author.clerkId}
 			userId={clerkId}
+			knockUser={knockUser}
 		/>
 	);
 };

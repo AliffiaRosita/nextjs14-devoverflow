@@ -158,17 +158,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
 		if (e.key === "Enter" && field.name === "skills") {
 			e.preventDefault();
 
-			// const skillInput = e.target as HTMLInputElement;
-			// const skillValue = skillInput.value.trim();
-
 			if (skillValue !== "") {
-				// if (skillValue.length > 15) {
-				//     return form.setError("skills", {
-				//         type: "required",
-				//         message: "Skill must be less than 15 characters.",
-				//     });
-				// }
-
 				if (!field.value.includes(skillValue as never)) {
 					form.setValue("skills", [...field.value, skillValue]);
 					skillInput.value = "";
@@ -178,8 +168,6 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
 				}
 			}
 		} else {
-			// setSkillName(skillValue);
-
 			// Filter skills based on input value and skills already in the form
 			const skillValueForm = form.getValues("skills");
 			const filteredSkill = parsedSkills.filter((skill: any) => {
@@ -405,15 +393,6 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
 											))}
 										</div>
 									)}
-									{/* <SelectSearch
-										options={skillOptions}
-										search
-										name="language"
-										placeholder="Choose your language"
-										onKeyDown={(e) =>
-											handleInputKeyDown(e, field)
-										}
-									/> */}
 								</>
 							</FormControl>
 							<FormDescription className="body-regular mt-2.5 text-light-500">

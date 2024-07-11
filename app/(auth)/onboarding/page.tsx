@@ -4,11 +4,13 @@ import { redirect } from "next/navigation";
 import Profile from "@/components/forms/Profile";
 
 import { getUserById } from "@/lib/actions/user.action";
+import { getSkillsForForm } from "@/lib/actions/skill.action";
 
 const Page = async () => {
 	const { userId } = auth();
 	if (!userId) return null;
 
+	const skills = await getSkillsForForm();
 	const mongoUser = await getUserById({ userId });
 	if (mongoUser?.onboarded) redirect("/home");
 
@@ -24,6 +26,7 @@ const Page = async () => {
 					<Profile
 						clerkId={userId}
 						user={JSON.stringify(mongoUser)}
+						skills={JSON.stringify(skills)}
 					/>
 				</div>
 			</main>

@@ -64,6 +64,7 @@ export interface CreateUserParams extends ClerkId {
 	username: string;
 	email: string;
 	picture: string;
+	skills: string[];
 }
 
 export interface GetUserByIdParams extends UserId {}
@@ -79,6 +80,7 @@ export interface GetJobsParams extends Searchable {
 
 export interface UpdateUserParams extends ClerkId, Path {
 	updateData: Partial<IUser>;
+	skills: string[];
 }
 
 export interface DeleteUserParams extends ClerkId {}

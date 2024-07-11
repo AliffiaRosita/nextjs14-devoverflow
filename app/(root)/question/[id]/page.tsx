@@ -149,12 +149,14 @@ const Page = async ({ params, searchParams }: URLProps) => {
 				page={searchParams?.page ? +searchParams.page : 1}
 			/>
 
-			<Answer
-				type="Create"
-				question={result.content}
-				questionId={JSON.stringify(result._id)}
-				authorId={JSON.stringify(mongoUser._id)}
-			/>
+			{result.mark === "unsolved" && (
+				<Answer
+					type="Create"
+					question={result.content}
+					questionId={JSON.stringify(result._id)}
+					authorId={JSON.stringify(mongoUser._id)}
+				/>
+			)}
 		</>
 	);
 };

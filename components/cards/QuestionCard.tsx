@@ -86,35 +86,37 @@ const QuestionCard = ({
 						isAuthor
 						textStyles="body-medium text-dark400_light700"
 					/>
-					<div className="flex gap-3">
-						<IconButton
-							onClick={() => {
-								router.push(`/call/${_id}`);
-							}}
-							type="button"
-							color={"blue"}
-							icon={faVideoCamera}
-							text={"Video Call"}
-						/>
-						{/* <IconButton
+					{mark === "unsolved" && (
+						<div className="flex gap-3">
+							<IconButton
+								onClick={() => {
+									router.push(`/call/${_id}`);
+								}}
+								type="button"
+								color={"blue"}
+								icon={faVideoCamera}
+								text={"Video Call"}
+							/>
+							{/* <IconButton
                             onClick={() => {}}
                             type="button"
                             color={"green"}
                             icon={faPhoneAlt}
                             text={"Voice Call"}
                         /> */}
-						<IconButton
-							onClick={() => {
-								router.push(
-									`/message${!isUserAuthor ? `?userId=${author.clerkId}` : ""}`
-								);
-							}}
-							type="button"
-							color={"red"}
-							icon={faMessage}
-							text={"Message"}
-						/>
-					</div>
+							<IconButton
+								onClick={() => {
+									router.push(
+										`/message${!isUserAuthor ? `?userId=${author.clerkId}` : ""}`
+									);
+								}}
+								type="button"
+								color={"red"}
+								icon={faMessage}
+								text={"Message"}
+							/>
+						</div>
+					)}
 				</div>
 
 				<div className="mt-3 flex items-center justify-between gap-3 max-sm:flex-wrap max-sm:justify-start">

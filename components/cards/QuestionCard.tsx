@@ -86,7 +86,7 @@ const QuestionCard = ({
 						isAuthor
 						textStyles="body-medium text-dark400_light700"
 					/>
-					{mark === "unsolved" && (
+					{mark !== "solved" && (
 						<div className="flex gap-3">
 							<IconButton
 								onClick={() => {

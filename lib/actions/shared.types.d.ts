@@ -196,10 +196,9 @@ export interface GetFormattedSalaryParams {
 }
 
 export interface SendNotificationParams {
+    title: string,
     message: string,
-    showToast?: boolean,
     userId: string,
-    tenant: string,
     templateType?: {
         Standard: string,
         SingleAction: string
@@ -207,4 +206,5 @@ export interface SendNotificationParams {
     },
     sender?: string,
     type?: string,
+    url: string,
 }

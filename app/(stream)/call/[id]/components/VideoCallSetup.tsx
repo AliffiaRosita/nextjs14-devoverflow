@@ -52,11 +52,12 @@ const VideoCallSetup = ({
 
   const handleJoin = useCallback(async () => {
     await notify({
-      message: "new notification",
+      title: "New Video Call Invitation",
+      type: "video_call",
+      message: `You have a New Video Call Invitation from ${knockUser.name || "A User"}`,
       sender: knockUser.name,
-      showToast: true,
       userId: userAuthorId,
-      tenant: "team-a",
+      url: invitationLink,
     });
 
     call.join();

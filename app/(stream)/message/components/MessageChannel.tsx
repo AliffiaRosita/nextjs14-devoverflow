@@ -38,12 +38,18 @@ const ChannelInner: FC = ({ hideChannelOnThread, knockUser }) => {
     sendMessage(message);
 
     if (receiverUserId) {
+      const origin =
+        typeof window !== "undefined" && window.location.origin
+          ? window.location.origin
+          : "";
+
       await notify({
-        message: "new notification",
+        title: "New Message",
+        type: "message",
+        message: `You have a New Message from ${knockUser.name || "A User"}`,
         sender: knockUser.name,
-        showToast: true,
         userId: receiverUserId,
-        tenant: "team-a",
+        url: `${origin}/message`,
       });
     }
   };

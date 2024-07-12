@@ -45,13 +45,13 @@ export async function notify(params: SendNotificationParams) {
       MultiAction: "multi-action",
     };
     const {
+      title,
       message,
-      showToast = true,
       userId,
-      tenant,
       templateType = TemplateTypeDefault,
       sender = "A User",
       type = "message",
+      url,
     } = params;
 
     const knockClient = new Knock(process.env.KNOCK_SECRET_API_KEY);
@@ -59,13 +59,14 @@ export async function notify(params: SendNotificationParams) {
     return await knockClient.workflows.trigger(KNOCK_WORKFLOW, {
       recipients: [userId],
       actor: userId,
-      tenant,
+      tenant: "user",
       data: {
+        title,
         type,
         sender,
         message,
-        showToast,
         templateType,
+        url,
       },
     });
   } catch (e) {

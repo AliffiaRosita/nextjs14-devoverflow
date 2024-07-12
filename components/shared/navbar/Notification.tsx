@@ -35,52 +35,68 @@ const AppNotification = ({ isUnreadExist = true }) => {
   const [feed, setFeed] = useState<FeedStoreState>({} as FeedStoreState);
   const { toast } = useToast();
 
-  const pushBrowserNotifications = (message: string) => {
+  const showNotification = (notification) => {
+    const pushNotification = new Notification(notification.title, {
+      body: notification.message,
+    });
+
+    setTimeout(() => {
+      pushNotification.close();
+    }, 10 * 1000);
+
+    pushNotification.onclick = function () {
+      window.open(notification.url);
+    };
+  };
+
+  const pushBrowserNotifications = (notification) => {
     if (Notification.permission === "granted") {
-      new Notification(message);
+      showNotification(notification);
     } else if (Notification.permission !== "denied") {
       Notification.requestPermission().then((permission) => {
         if (permission === "granted") {
-          new Notification(message);
+          showNotification(notification);
         }
       });
     }
   };
 
   useEffect(() => {
-    knockFeed.listenForUpdates();
     const fetchFeed = async () => {
       await knockFeed.fetch();
-      const feedState = knockFeed.getState();
-      setFeed(feedState);
-    };
-    fetchFeed();
-    knockFeed.on(
-      "items.received.realtime",
-      ({ items }: { items: FeedItem[] }) => {
-        items.forEach((item) => {
-          if (item.data && item.data.showToast) {
-            const notificationType =
-              item.data?.type === "message"
-                ? "New Message"
-                : "New Video Call Invitation";
-
-            pushBrowserNotifications(notificationType);
-            toast({
-              title: `📨 ${notificationType}`,
-              description: `You have a ${notificationType} from ${item.data?.sender || "A User"}`,
-            });
-          }
-        });
-        setFeed(knockFeed.getState());
-      }
-    );
-
-    knockFeed.on("items.*", () => {
       setFeed(knockFeed.getState());
-    });
-  }, []);
+    };
 
+    knockFeed.listenForUpdates();
+    fetchFeed();
+
+    const handleItemsReceived = ({ items }: { items: FeedItem[] }) => {
+      items.forEach((item) => {
+        if (item.data) {
+          pushBrowserNotifications(item.data);
+
+          toast({
+            title: `📨 ${item.data.title}`,
+            description: item.data.message,
+          });
+        }
+      });
+      setFeed(knockFeed.getState());
+    };
+
+    const handleItemsChanged = () => {
+      console.log("calling items.*");
+      setFeed(knockFeed.getState());
+    };
+
+    knockFeed.on("items.received.realtime", handleItemsReceived);
+    knockFeed.on("items.*", handleItemsChanged);
+
+    return () => {
+      knockFeed.off("items.received.realtime", handleItemsReceived);
+      knockFeed.off("items.*", handleItemsChanged);
+    };
+  }, [toast]);
   // async function markAllAsRead() {
   //   await knockFeed.markAllAsRead();
   // }
@@ -125,17 +141,15 @@ const AppNotification = ({ isUnreadExist = true }) => {
               : "text-light400_light500";
 
             const iconColor = !notification.read_at ? "#008DDA" : "#858ead";
-            const notificationType =
-              notification.data?.type === "message"
-                ? "New Message"
-                : "New Video Call Invitation";
 
             return (
               <MenubarItem
                 key={index}
                 className="flex cursor-pointer items-center gap-4 px-2.5 py-2 focus:bg-light-800 dark:focus:bg-dark-400"
                 onClick={() => {
+                  const url = notification.data?.url;
                   knockFeed.markAsRead(notification);
+                  window.open(url);
                 }}
               >
                 <div className="flex flex-col gap-1">
@@ -146,12 +160,11 @@ const AppNotification = ({ isUnreadExist = true }) => {
                       <Video size={15} color={iconColor} />
                     )}
                     <p className={`body-semibold ${textColor}`}>
-                      {notificationType}
+                      {notification.data?.title}
                     </p>
                   </div>
                   <span className={`inline-block text-xs ${textColor}`}>
-                    {" "}
-                    {`You have a ${notificationType} from ${notification.data?.sender || "A User"}`}
+                    {notification.data?.message}
                   </span>
                 </div>
               </MenubarItem>

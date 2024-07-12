@@ -61,6 +61,7 @@ const QuestionsContainer = ({
 							views={question.views}
 							answers={question.answers}
 							createdAt={new Date(question.createdAt)}
+							mark={question.mark}
 						/>
 					))
 				: renderNoResult()}

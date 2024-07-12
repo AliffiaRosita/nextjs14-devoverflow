@@ -20,6 +20,7 @@ import { getFormattedNumber, getTimestamp } from "@/lib/utils";
 import type { URLProps } from "@/types";
 import type { Metadata } from "next";
 import { SignedIn } from "@clerk/nextjs";
+import { Badge } from "@/components/ui/badge";
 
 export async function generateMetadata({
 	params,
@@ -81,6 +82,13 @@ const Page = async ({ params, searchParams }: URLProps) => {
 						/>
 					</div>
 				</div>
+				<div className="mt-4 w-full">
+					<Badge
+						className={`subtle-medium  ${result.mark === "solved" ? "bg-emerald-500 text-white" : "background-light800_dark300 text-light400_light500"}  rounded-md border-none px-4 py-2 uppercase`}
+					>
+						{result.mark}
+					</Badge>
+				</div>
 				<h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
 					{result.title}
 				</h2>
@@ -141,12 +149,14 @@ const Page = async ({ params, searchParams }: URLProps) => {
 				page={searchParams?.page ? +searchParams.page : 1}
 			/>
 
-			<Answer
-				type="Create"
-				question={result.content}
-				questionId={JSON.stringify(result._id)}
-				authorId={JSON.stringify(mongoUser._id)}
-			/>
+			{result.mark === "unsolved" && (
+				<Answer
+					type="Create"
+					question={result.content}
+					questionId={JSON.stringify(result._id)}
+					authorId={JSON.stringify(mongoUser._id)}
+				/>
+			)}
 		</>
 	);
 };

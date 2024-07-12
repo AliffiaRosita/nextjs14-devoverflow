@@ -6,64 +6,66 @@ import { IUser } from "@/database/user.model";
  * Common interfaces used in actions
  */
 interface ClerkId {
-    clerkId: string;
+	clerkId: string;
 }
 
 interface UserId {
-    userId: string;
+	userId: string;
 }
 
 interface QuestionId {
-    questionId: string;
+	questionId: string;
 }
 
 interface AnswerId {
-    answerId: string;
+	answerId: string;
 }
 
 interface OptionalPage {
-    page?: number;
+	page?: number;
 }
 
 interface OptionalPageSize {
-    pageSize?: number;
+	pageSize?: number;
 }
 
 interface OptionalSearch {
-    searchQuery?: string;
+	searchQuery?: string;
 }
 
 interface OptionalFilter {
-    filter?: string;
+	filter?: string;
 }
 
 interface Path {
-    path: string;
+	path: string;
 }
 
 interface Content {
-    content: string;
+	content: string;
 }
 
 interface Voting {
-    hasupVoted: boolean;
-    hasdownVoted: boolean;
+	hasupVoted: boolean;
+	hasdownVoted: boolean;
 }
 
 interface Searchable
-    extends OptionalPage,
-        OptionalPageSize,
-        OptionalSearch,
-        OptionalFilter {}
+	extends OptionalPage,
+		OptionalPageSize,
+		OptionalSearch,
+		ClerkId,
+		OptionalFilter {}
 
 /**
  * Interfaces for user actions
  */
 export interface CreateUserParams extends ClerkId {
-    name: string;
-    username: string;
-    email: string;
-    picture: string;
+	name: string;
+	username: string;
+	email: string;
+	picture: string;
+	skills: string[];
 }
 
 export interface GetUserByIdParams extends UserId {}
@@ -71,31 +73,32 @@ export interface GetUserByIdParams extends UserId {}
 export interface GetAllUsersParams extends Searchable {}
 
 export interface GetJobsParams extends Searchable {
-    location?: string;
-    remote?: boolean | string;
-    wage?: boolean | string;
-    skills?: boolean | string;
+	location?: string;
+	remote?: boolean | string;
+	wage?: boolean | string;
+	skills?: boolean | string;
 }
 
 export interface UpdateUserParams extends ClerkId, Path {
-    updateData: Partial<IUser>;
+	updateData: Partial<IUser>;
+	skills: string[];
 }
 
 export interface DeleteUserParams extends ClerkId {}
 
 export interface GetUserStatsParams
-    extends UserId,
-        OptionalPage,
-        OptionalPageSize {}
+	extends UserId,
+		OptionalPage,
+		OptionalPageSize {}
 
 export interface ToggleSaveQuestionParams extends UserId, QuestionId, Path {}
 
 export interface GetSavedQuestionParams
-    extends ClerkId,
-        OptionalPage,
-        OptionalPageSize,
-        OptionalSearch,
-        OptionalFilter {}
+	extends ClerkId,
+		OptionalPage,
+		OptionalPageSize,
+		OptionalSearch,
+		OptionalFilter {}
 
 /**
  * Interfaces for question actions
@@ -103,9 +106,9 @@ export interface GetSavedQuestionParams
 export interface GetQuestionsParams extends Searchable {}
 
 export interface CreateQuestionParams extends Path, Content {
-    title: string;
-    skills: string[];
-    author: Schema.Types.ObjectId | IUser;
+	title: string;
+	skills: string[];
+	author: Schema.Types.ObjectId | IUser;
 }
 
 export interface GetQuestionByIdParams extends QuestionId {}
@@ -113,27 +116,28 @@ export interface GetQuestionByIdParams extends QuestionId {}
 export interface QuestionVoteParams extends QuestionId, UserId, Path, Voting {}
 
 export interface DeleteQuestionParams extends QuestionId, Path {
-    isQuestionPath?: boolean;
+	isQuestionPath?: boolean;
 }
 
 export interface EditQuestionParams extends QuestionId, Path, Content {
-    title: string;
-    skills?: string[];
+	title: string;
+	skills?: string[];
+	mark: string;
 }
 
 /**
  * Interfaces for answer actions
  */
 export interface CreateAnswerParams extends Path, Content {
-    author: string;
-    question: string;
+	author: string;
+	question: string;
 }
 
 export interface GetAnswersParams
-    extends OptionalPage,
-        OptionalPageSize,
-        QuestionId {
-    sortBy?: string;
+	extends OptionalPage,
+		OptionalPageSize,
+		QuestionId {
+	sortBy?: string;
 }
 
 export interface GetAnswerByIdParams extends AnswerId {}
@@ -153,44 +157,44 @@ export interface ViewQuestionParams extends UserId, QuestionId {}
  * Interfaces for tag actions
  */
 export interface GetTopInteractedTagsParams extends UserId {
-    limit?: number;
+	limit?: number;
 }
 
 export interface GetAllTagsParams extends Searchable {}
 
 export interface GetQuestionByTagIdParams
-    extends OptionalPage,
-        OptionalPageSize,
-        OptionalSearch {
-    skillId: string;
+	extends OptionalPage,
+		OptionalPageSize,
+		OptionalSearch {
+	skillId: string;
 }
 
 export interface GetTagByIdParams {
-    skillId: string;
+	skillId: string;
 }
 
 /**
  *
  */
 export interface SearchParams {
-    query?: string | null;
-    type?: string | null;
+	query?: string | null;
+	type?: string | null;
 }
 
 export interface RecommendedParams
-    extends UserId,
-        OptionalPage,
-        OptionalPageSize,
-        OptionalSearch {}
+	extends UserId,
+		OptionalPage,
+		OptionalPageSize,
+		OptionalSearch {}
 
 export interface JobFilterParams {
-    query: string;
-    page: string;
+	query: string;
+	page: string;
 }
 
 export interface GetFormattedSalaryParams {
-    min: number;
-    max: number;
-    currency: string;
-    period: string;
+	min: number;
+	max: number;
+	currency: string;
+	period: string;
 }

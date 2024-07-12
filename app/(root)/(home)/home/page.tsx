@@ -50,6 +50,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
 			searchQuery: searchParams.q,
 			filter: searchParams.filter,
 			page: searchParams.page ? +searchParams.page : 1,
+			clerkId: clerkId || "",
 		});
 	}
 
@@ -83,7 +84,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
 				<Filter
 					filters={HomePageFilters}
 					otherClasses="min-h-[56px] sm:min-w-[170px]"
-					containerClasses="hidden max-md:flex"
+					containerClasses=" max-md:flex"
 				/>
 			</div>
 

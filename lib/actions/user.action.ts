@@ -41,11 +41,30 @@ export async function updateUser(params: UpdateUserParams) {
 	try {
 		connectToDatabase();
 
-		const { clerkId, updateData, path } = params;
+		const { clerkId, updateData, path, skills } = params;
 
-		await User.findOneAndUpdate({ clerkId }, updateData, {
-			new: true,
-		});
+		const skillDocuments = [];
+		// create the skills or get them if they already exist
+		for (const skill of skills) {
+			const existingSkill = await Skill.findOneAndUpdate(
+				{ name: { $regex: new RegExp(`^${skill}$`, "i") } },
+				{
+					$setOnInsert: { name: skill },
+				},
+				{ upsert: true, new: true }
+			);
+
+			skillDocuments.push(existingSkill._id);
+		}
+		await User.findOneAndUpdate(
+			{ clerkId },
+			{
+				$set: { ...updateData, skills: skillDocuments },
+			},
+			{
+				new: true,
+			}
+		);
 
 		if (path) {
 			revalidatePath(path);
@@ -96,7 +115,7 @@ export async function getUserById(params: { userId: string }) {
 
 		const user = await User.findOne({
 			clerkId: userId,
-		});
+		}).populate({ path: "skills", model: Skill, select: "_id name" });
 
 		return user;
 	} catch (error) {

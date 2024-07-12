@@ -43,7 +43,7 @@ const QuestionCard = ({
 					<Badge
 						className={`subtle-medium mb-5 ${mark === "solved" ? "bg-emerald-500 text-white" : "background-light800_dark300 text-light400_light500"}  rounded-md border-none px-4 py-2 uppercase`}
 					>
-						{mark}
+						{mark || "unsolved"}
 					</Badge>
 					<span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
 						{getTimestamp(createdAt)}

@@ -54,6 +54,7 @@ interface Searchable
 	extends OptionalPage,
 		OptionalPageSize,
 		OptionalSearch,
+		ClerkId,
 		OptionalFilter {}
 
 /**

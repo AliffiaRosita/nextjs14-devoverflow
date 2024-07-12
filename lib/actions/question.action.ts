@@ -178,12 +178,20 @@ export async function getQuestions(params: GetQuestionsParams) {
 	try {
 		connectToDatabase();
 
-		const { page = 1, pageSize = 10, filter, searchQuery } = params;
+		const {
+			page = 1,
+			pageSize = 10,
+			filter,
+			searchQuery,
+			clerkId,
+		} = params;
 
 		// Calculate the number of questions to skip based on the page number and page size
 		const skipAmount = (page - 1) * pageSize;
 
 		const query: FilterQuery<typeof Question> = {};
+		let user;
+		let questions;
 
 		if (searchQuery) {
 			query.$or = [
@@ -193,9 +201,7 @@ export async function getQuestions(params: GetQuestionsParams) {
 				},
 			];
 		}
-
-		let sortOptions = {};
-
+		let sortOptions;
 		switch (filter) {
 			case "newest":
 				sortOptions = { createdAt: -1 };
@@ -207,15 +213,69 @@ export async function getQuestions(params: GetQuestionsParams) {
 				query.answers = { $size: 0 };
 				break;
 			default:
+				sortOptions = { createdAt: -1 };
 				break;
 		}
+		if (clerkId !== "") {
+			user = await User.findOne({ clerkId });
 
-		const questions = await Question.find(query)
-			.populate({ path: "skills", model: Skill })
-			.populate({ path: "author", model: User })
-			.sort(sortOptions)
-			.skip(skipAmount)
-			.limit(pageSize);
+			const pipeline = [
+				{
+					$addFields: {
+						hasUserSkill: {
+							$anyElementTrue: {
+								$map: {
+									input: "$skills",
+									as: "skill",
+									in: { $in: ["$$skill", user.skills] },
+								},
+							},
+						},
+					},
+				},
+				{
+					$sort: {
+						hasUserSkill: -1,
+						...sortOptions,
+					},
+				},
+				{
+					$skip: skipAmount,
+				},
+				{
+					$limit: pageSize,
+				},
+				{
+					$lookup: {
+						from: "skills",
+						localField: "skills",
+						foreignField: "_id",
+						as: "skills",
+					},
+				},
+				{
+					$lookup: {
+						from: "users",
+						localField: "author",
+						foreignField: "_id",
+						as: "author",
+					},
+				},
+				{
+					$unwind: {
+						path: "$author",
+					},
+				},
+			];
+			questions = await Question.aggregate(pipeline);
+		} else {
+			questions = await Question.find(query)
+				.populate({ path: "skills", model: Skill })
+				.populate({ path: "author", model: User })
+				.sort(sortOptions)
+				.skip(skipAmount)
+				.limit(pageSize);
+		}
 
 		const totalQuestions = await Question.countDocuments(query);
 

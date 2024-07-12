@@ -206,5 +206,5 @@ export interface SendNotificationParams {
     },
     sender?: string,
     type?: string,
-    url: string,
+    path: string,
 }

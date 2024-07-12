@@ -18,7 +18,9 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
     return redirect("/sign-in");
   }
 
-  const knockUser = await identifyKnockUser(clerkId);
+	const knockUserData = await identifyKnockUser(clerkId)
+
+	const knockUser = JSON.parse(JSON.stringify(knockUserData));
 
   return <Message userId={userId} knockUser={knockUser} />;
 };

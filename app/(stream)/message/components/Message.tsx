@@ -16,11 +16,9 @@ import MessageSidebar from "./MessageSidebar";
 
 import "@/styles/stream-chat.css";
 import Loader from "@/components/shared/Loader";
+import { MessageProps } from "@/types";
 
 const i18nInstance = new Streami18n({ language: "en" });
-interface MessageProps {
-  userId?: string;
-}
 
 const Message = ({ userId, knockUser }: MessageProps) => {
   const chatClient = useInitializeChatClient();

@@ -7,13 +7,7 @@ import { useGetLiveCalls } from "@/hooks/useGetLiveCalls";
 import Loader from "@/components/shared/Loader";
 import VideoCallStarter from "./VideoCallStarter";
 import VideoCallList from "./VideoCallList";
-
-interface VideoCallProps {
-  inviteId?: string;
-  userAuthorId: string;
-  questionId: string | null;
-  userId: string;
-}
+import { VideoCallProps } from "@/types";
 
 const VideoCall = ({
   inviteId,

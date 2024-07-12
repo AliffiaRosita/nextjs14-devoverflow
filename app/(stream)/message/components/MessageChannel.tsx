@@ -9,18 +9,15 @@ import {
   useChannelStateContext,
   Window,
 } from "stream-chat-react";
-import type { Channel as StreamChannel } from "stream-chat";
 
 import CustomChannelHeader from "./CustomChannelHeader";
-import { notify } from "@/lib/actions/knock.action";
+import { sendNotification } from "@/lib/actions/knock.action";
+import { ChannelInnerProps, ChatChannelProps } from "@/types";
 
-interface ChatChannelProps {
-  show: boolean;
-  hideChannelOnThread: boolean;
-  activeChannel: StreamChannel | undefined;
-}
-
-const ChannelInner: FC = ({ hideChannelOnThread, knockUser }) => {
+const ChannelInner: FC<ChannelInnerProps> = ({
+  hideChannelOnThread,
+  knockUser,
+}) => {
   const { sendMessage } = useChannelActionContext();
 
   const { members } = useChannelStateContext();
@@ -38,18 +35,13 @@ const ChannelInner: FC = ({ hideChannelOnThread, knockUser }) => {
     sendMessage(message);
 
     if (receiverUserId) {
-      const origin =
-        typeof window !== "undefined" && window.location.origin
-          ? window.location.origin
-          : "";
-
-      await notify({
+      await sendNotification({
         title: "New Message",
         type: "message",
         message: `You have a New Message from ${knockUser.name || "A User"}`,
         sender: knockUser.name,
         userId: receiverUserId,
-        url: `${origin}/message`,
+        path: `/message`,
       });
     }
   };

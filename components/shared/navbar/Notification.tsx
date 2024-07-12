@@ -8,121 +8,146 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { useToast } from "@/components/ui/use-toast";
+import { SendNotificationParams } from "@/lib/actions/shared.types";
 import { useAuth } from "@clerk/nextjs";
-
 import Knock, { FeedItem, FeedStoreState } from "@knocklabs/client";
-
 import { Bell, BellRing, MessageSquarePlus, Video } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
+
+const knockClient = new Knock(
+  process.env.NEXT_PUBLIC_KNOCK_PUBLIC_API_KEY as string
+);
 
 const AppNotification = ({ isUnreadExist = true }) => {
-  const { userId } = useAuth();
-
-  const knockClient = new Knock(
-    process.env.NEXT_PUBLIC_KNOCK_PUBLIC_API_KEY as string
-  );
-
-  knockClient.authenticate(userId);
-
-  const knockFeed = knockClient.feeds.initialize(
-    process.env.NEXT_PUBLIC_KNOCK_FEED_CHANNEL_ID as string,
-    {
-      page_size: 10,
-      archived: "include",
-    }
-  );
-
+  const { userId, isLoaded } = useAuth();
   const [feed, setFeed] = useState<FeedStoreState>({} as FeedStoreState);
   const { toast } = useToast();
+  const router = useRouter();
 
-  const showNotification = (notification) => {
-    const pushNotification = new Notification(notification.title, {
-      body: notification.message,
-    });
-
-    setTimeout(() => {
-      pushNotification.close();
-    }, 10 * 1000);
-
-    pushNotification.onclick = function () {
-      window.open(notification.url);
-    };
-  };
-
-  const pushBrowserNotifications = (notification) => {
-    if (Notification.permission === "granted") {
-      showNotification(notification);
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission().then((permission) => {
-        if (permission === "granted") {
-          showNotification(notification);
-        }
+  const showNotification = (notification: SendNotificationParams) => {
+    try {
+      const pushNotification = new Notification(notification.title, {
+        body: notification.message,
       });
+
+      setTimeout(() => {
+        pushNotification.close();
+      }, 10 * 1000);
+
+      pushNotification.onclick = () => {
+        router.push(notification.path);
+      };
+    } catch (error) {
+      console.error("Error showing notification:", error);
     }
   };
 
+  const pushBrowserNotifications = useCallback(
+    (notification: SendNotificationParams) => {
+      try {
+        if (Notification.permission === "granted") {
+          showNotification(notification);
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+              showNotification(notification);
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error pushing browser notifications:", error);
+      }
+    },
+    []
+  );
+
+  const showInAppNotification = useCallback(
+    (title: string, description: string) => {
+      try {
+        toast({
+          title: `📨 ${title}`,
+          description,
+        });
+      } catch (error) {
+        console.error("Error showing in-app notification:", error);
+      }
+    },
+    [toast]
+  );
+
+  const knockFeed = useMemo(() => {
+    if (!isLoaded || !userId) return null;
+
+    try {
+      knockClient.authenticate(userId);
+
+      const feed = knockClient.feeds.initialize(
+        process.env.NEXT_PUBLIC_KNOCK_FEED_CHANNEL_ID as string,
+        {
+          page_size: 5,
+          archived: "include",
+        }
+      );
+
+      return feed;
+    } catch (error) {
+      console.error("Error initializing Knock feed:", error);
+      return null;
+    }
+  }, [userId, isLoaded]);
+
   useEffect(() => {
+    if (!knockFeed) return;
+
     const fetchFeed = async () => {
-      await knockFeed.fetch();
-      setFeed(knockFeed.getState());
+      try {
+        await knockFeed.fetch();
+        setFeed(knockFeed.getState());
+      } catch (error) {
+        console.error("Error fetching feed:", error);
+      }
+    };
+
+    const handleItemsReceived = ({ items }: { items: FeedItem[] }) => {
+      try {
+        items.forEach((item) => {
+          if (item.data) {
+            pushBrowserNotifications(item.data as SendNotificationParams);
+            showInAppNotification(item.data.title, item.data.message);
+          }
+        });
+        setFeed(knockFeed.getState());
+      } catch (error) {
+        console.error("Error handling items received:", error);
+      }
+    };
+
+    const handleItemsChanged = () => {
+      try {
+        setFeed(knockFeed.getState());
+      } catch (error) {
+        console.error("Error handling items changed:", error);
+      }
     };
 
     knockFeed.listenForUpdates();
     fetchFeed();
 
-    const handleItemsReceived = ({ items }: { items: FeedItem[] }) => {
-      items.forEach((item) => {
-        if (item.data) {
-          pushBrowserNotifications(item.data);
-
-          toast({
-            title: `📨 ${item.data.title}`,
-            description: item.data.message,
-          });
-        }
-      });
-      setFeed(knockFeed.getState());
-    };
-
-    const handleItemsChanged = () => {
-      console.log("calling items.*");
-      setFeed(knockFeed.getState());
-    };
-
     knockFeed.on("items.received.realtime", handleItemsReceived);
     knockFeed.on("items.*", handleItemsChanged);
 
     return () => {
-      knockFeed.off("items.received.realtime", handleItemsReceived);
-      knockFeed.off("items.*", handleItemsChanged);
+      try {
+        knockFeed.off("items.received.realtime", handleItemsReceived);
+        knockFeed.off("items.*", handleItemsChanged);
+      } catch (error) {
+        console.error("Error cleaning up event listeners:", error);
+      }
     };
-  }, [toast]);
-  // async function markAllAsRead() {
-  //   await knockFeed.markAllAsRead();
-  // }
+  }, [knockFeed, showInAppNotification, pushBrowserNotifications]);
 
-  // async function markAllAsArchived() {
-  //   knockFeed.markAllAsArchived();
-  // }
-
-  // const dummyNotifications = [
-  //   {
-  //     id: 1,
-  //     title: "New Message",
-  //     type: "message",
-  //     content: "You have a new message from John Doe",
-  //     isRead: false,
-  //     createdAt: new Date("2022-07-15T14:30:00"),
-  //   },
-  //   {
-  //     id: 1,
-  //     title: "New Video Call Invitation",
-  //     type: "video_call",
-  //     content: "You have a new Call Invitation from John Doe",
-  //     isRead: true,
-  //     createdAt: new Date("2022-07-15T14:30:00"),
-  //   },
-  // ];
+  if (!knockFeed) return null;
 
   return (
     <Menubar className="relative border-none bg-transparent shadow-none">
@@ -139,7 +164,6 @@ const AppNotification = ({ isUnreadExist = true }) => {
             const textColor = !notification.read_at
               ? "text-primary-500"
               : "text-light400_light500";
-
             const iconColor = !notification.read_at ? "#008DDA" : "#858ead";
 
             return (
@@ -147,9 +171,13 @@ const AppNotification = ({ isUnreadExist = true }) => {
                 key={index}
                 className="flex cursor-pointer items-center gap-4 px-2.5 py-2 focus:bg-light-800 dark:focus:bg-dark-400"
                 onClick={() => {
-                  const url = notification.data?.url;
-                  knockFeed.markAsRead(notification);
-                  window.open(url);
+                  try {
+                    const path = notification.data?.path;
+                    knockFeed.markAsRead(notification);
+                    router.push(path);
+                  } catch (error) {
+                    console.error("Error marking notification as read:", error);
+                  }
                 }}
               >
                 <div className="flex flex-col gap-1">

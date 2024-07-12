@@ -14,11 +14,7 @@ import VideoCallRoom from "./VideoCallRoom";
 import VideoCallSetup from "./VideoCallSetup";
 
 import "@/styles/stream-video.css";
-
-interface VideoCallRoomProps {
-  questionId: string | null;
-  roomId: string;
-}
+import { VideoCallRoomProps } from "@/types";
 
 const VideoCallStarter = ({
   questionId,
@@ -76,7 +72,7 @@ const VideoCallStarter = ({
         knockUser={knockUser}
       />
     );
-  }, [handleSetupComplete]);
+  }, [handleSetupComplete, userAuthorId, knockUser]);
 
   const roomComponent = useMemo(() => {
     return <VideoCallRoom />;

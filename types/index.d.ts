@@ -1,4 +1,5 @@
 import { BADGE_CRITERIA } from "@/constants";
+import type { Channel as StreamChannel } from "stream-chat";
 
 export interface FilterProps {
   name: string;
@@ -96,4 +97,50 @@ export interface QuestionProps {
   answers: Array<object>;
   createdAt: Date;
   clerkId?: string | null;
+}
+
+interface KnockUser {
+  __typename: string;
+  created_at: string;
+  id: string;
+  updated_at: string;
+  name: string;
+}
+
+export interface VideoCallProps {
+  inviteId?: string;
+  userAuthorId: string;
+  questionId: string | null;
+  userId: string;
+  knockUser: KnockUser;
+}
+
+export interface VideoCallSetupProps {
+  userAuthorId: string;
+  setIsSetupComplete: (value: boolean) => void;
+  knockUser: KnockUser;
+}
+
+export interface VideoCallRoomProps {
+  questionId: string | null;
+  userAuthorId: string;
+  roomId: string;
+  knockUser: KnockUser;
+}
+
+export interface MessageProps {
+  userId?: string;
+  knockUser: KnockUser;
+}
+
+export interface ChatChannelProps {
+  show: boolean;
+  hideChannelOnThread: boolean;
+  activeChannel: StreamChannel | undefined;
+  knockUser: KnockUser;
+}
+
+export interface ChannelInnerProps {
+  hideChannelOnThread: boolean;
+  knockUser: KnockUser;
 }

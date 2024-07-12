@@ -11,7 +11,14 @@ export const useGetLiveCalls = (
 
   useEffect(() => {
     const loadCalls = async () => {
-      if (!client || !questionId || !isUserAuthor) return;
+      if (!isUserAuthor) {
+        setIsLoading(false);
+        setCalls([]);
+
+        return;
+      }
+
+      if (!client || !questionId) return;
 
       setIsLoading(true);
 

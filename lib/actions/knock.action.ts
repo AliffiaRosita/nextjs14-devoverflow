@@ -1,60 +1,53 @@
 "use server";
 
 import { Knock } from "@knocklabs/node";
-import { error } from "console";
 import { SendNotificationParams } from "./shared.types";
 import { getUserById } from "./user.action";
 
 const KNOCK_WORKFLOW = "in-app";
+const KNOCK_API_KEY = process.env.KNOCK_SECRET_API_KEY;
+
+if (!KNOCK_API_KEY) {
+  throw new Error("Knock API key secret is missing");
+}
+
+const knockClient = new Knock(KNOCK_API_KEY);
 
 export async function identifyKnockUser(userId: string) {
   try {
     const mongoUser = await getUserById({ userId });
-    if (!mongoUser) throw new Error("User is not exist");
-    if (!process.env.KNOCK_SECRET_API_KEY)
-      throw new Error("Knock API key secret is missing");
-
-    // if (mongoUser.knockUserId) return mongoUser.knockUserId;
-
-    const knockClient = new Knock(process.env.KNOCK_SECRET_API_KEY);
+    if (!mongoUser) {
+      throw new Error("User does not exist");
+    }
 
     const knockUser = await knockClient.users.identify(userId, {
       name: mongoUser.name,
     });
 
-    // await updateUser({
-    //   clerkId: userId,
-    //   updateData: {
-    //     knockUserId: knockUser.id,
-    //   },
-    //   path: "",
-    // });
-
     return knockUser;
   } catch (e) {
-    console.error(e);
-    throw error;
+    console.error("Error identifying Knock user:", e);
+    throw e;
   }
 }
 
-export async function notify(params: SendNotificationParams) {
+export async function sendNotification(params: SendNotificationParams) {
   try {
-    const TemplateTypeDefault = {
+    const DEFAULT_TEMPLATE_TYPE = {
       Standard: "standard",
       SingleAction: "single-action",
       MultiAction: "multi-action",
     };
+
     const {
       title,
       message,
       userId,
-      templateType = TemplateTypeDefault,
+      templateType = DEFAULT_TEMPLATE_TYPE,
       sender = "A User",
       type = "message",
-      url,
+      path,
     } = params;
-
-    const knockClient = new Knock(process.env.KNOCK_SECRET_API_KEY);
 
     return await knockClient.workflows.trigger(KNOCK_WORKFLOW, {
       recipients: [userId],
@@ -66,11 +59,11 @@ export async function notify(params: SendNotificationParams) {
         sender,
         message,
         templateType,
-        url,
+        path,
       },
     });
   } catch (e) {
-    console.error(e);
-    throw error;
+    console.error("Error sending notification:", e);
+    throw e;
   }
 }

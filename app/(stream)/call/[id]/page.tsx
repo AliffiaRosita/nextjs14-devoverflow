@@ -20,7 +20,9 @@ const Page = async ({ params, searchParams }: URLProps) => {
 		return redirect("/sign-in");
 	}
 
-	const knockUser = await identifyKnockUser(clerkId)
+	const knockUserData = await identifyKnockUser(clerkId)
+
+	const knockUser = JSON.parse(JSON.stringify(knockUserData));
 
 	const result = await getQuestionById({ questionId: params.id });
 

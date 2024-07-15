@@ -7,6 +7,7 @@ import { WebhookEvent } from "@clerk/nextjs/server";
 
 import { createUser, deleteUser, updateUser } from "@/lib/actions/user.action";
 import { streamTokenProvider } from "@/lib/actions/stream.actions";
+import { identifyKnockUser } from "@/lib/actions/knock.action";
 
 export async function POST(req: Request) {
 	// You can find this in the Clerk Dashboard -> Webhooks -> choose the webhook
@@ -87,7 +88,8 @@ export async function POST(req: Request) {
 
 		await streamTokenProvider(id);
 
-		console.log(mongoUser);
+    await streamTokenProvider(id);
+    await identifyKnockUser(id);
 
 		return NextResponse.json({ message: "User created", user: mongoUser });
 	}

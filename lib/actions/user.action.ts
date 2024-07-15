@@ -41,7 +41,7 @@ export async function updateUser(params: UpdateUserParams) {
 	try {
 		connectToDatabase();
 
-		const { clerkId, updateData, path, skills } = params;
+		const { clerkId, updateData, path, skills = [] } = params;
 
 		const skillDocuments = [];
 		// create the skills or get them if they already exist

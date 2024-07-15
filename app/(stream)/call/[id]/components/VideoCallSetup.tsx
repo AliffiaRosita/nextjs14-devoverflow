@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   DeviceSettings,
   VideoPreview,
@@ -11,14 +11,18 @@ import { useUser } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
+import { sendNotification } from "@/lib/actions/knock.action";
+import { VideoCallSetupProps } from "@/types";
 
-interface VideoCallSetupProps {
-  setIsSetupComplete: (value: boolean) => void;
-}
-
-const VideoCallSetup = ({ setIsSetupComplete }: VideoCallSetupProps) => {
+const VideoCallSetup = ({
+  setIsSetupComplete,
+  userAuthorId,
+  knockUser,
+}: VideoCallSetupProps) => {
   const call = useCall();
   const router = useRouter();
+  const pathname = usePathname();
+
   const { user } = useUser();
 
   if (!call) {
@@ -45,10 +49,20 @@ const VideoCallSetup = ({ setIsSetupComplete }: VideoCallSetupProps) => {
     [user.id]
   );
 
-  const handleJoin = useCallback(() => {
+  const handleJoin = useCallback(async () => {
+    await sendNotification({
+      title: "New Video Call Invitation",
+      type: "video_call",
+      message: `You have a New Video Call Invitation from ${knockUser.name || "A User"}`,
+      sender: knockUser.name,
+      userId: userAuthorId,
+      path: `${pathname}?invite=${knockUser.id}`,
+    });
+
     call.join();
+
     setIsSetupComplete(true);
-  }, [call, setIsSetupComplete]);
+  }, [call, setIsSetupComplete, userAuthorId, knockUser, pathname]);
 
   const handleCopyLink = useCallback(() => {
     navigator.clipboard.writeText(invitationLink);

@@ -1,13 +1,23 @@
 import { useEffect, useState } from "react";
 import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
 
-export const useGetLiveCalls = (questionId: string | null) => {
+export const useGetLiveCalls = (
+  questionId: string | null,
+  isUserAuthor: boolean
+) => {
   const client = useStreamVideoClient();
-  const [calls, setCalls] = useState<Call[]>();
+  const [calls, setCalls] = useState<Call[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const loadCalls = async () => {
+      if (!isUserAuthor) {
+        setIsLoading(false);
+        setCalls([]);
+
+        return;
+      }
+
       if (!client || !questionId) return;
 
       setIsLoading(true);
@@ -30,7 +40,7 @@ export const useGetLiveCalls = (questionId: string | null) => {
     };
 
     loadCalls();
-  }, [questionId, client]);
+  }, [questionId, client, isUserAuthor]);
 
   return { liveCalls: calls, isLoading };
 };

@@ -81,7 +81,7 @@ export interface GetJobsParams extends Searchable {
 
 export interface UpdateUserParams extends ClerkId, Path {
 	updateData: Partial<IUser>;
-	skills: string[];
+	skills?: string[];
 }
 
 export interface DeleteUserParams extends ClerkId {}
@@ -197,4 +197,18 @@ export interface GetFormattedSalaryParams {
 	max: number;
 	currency: string;
 	period: string;
+}
+
+export interface SendNotificationParams {
+    title: string,
+    message: string,
+    userId: string,
+    templateType?: {
+        Standard: string,
+        SingleAction: string
+        MultiAction: string
+    },
+    sender?: string,
+    type?: string,
+    path: string,
 }

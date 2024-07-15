@@ -14,13 +14,14 @@ import VideoCallRoom from "./VideoCallRoom";
 import VideoCallSetup from "./VideoCallSetup";
 
 import "@/styles/stream-video.css";
+import { VideoCallRoomProps } from "@/types";
 
-interface VideoCallRoomProps {
-  questionId: string | null;
-  roomId: string;
-}
-
-const VideoCallStarter = ({ questionId, roomId }: VideoCallRoomProps) => {
+const VideoCallStarter = ({
+  questionId,
+  roomId,
+  userAuthorId,
+  knockUser,
+}: VideoCallRoomProps) => {
   const { call, isCallLoading } = useGetCallById(roomId!);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
 
@@ -64,8 +65,14 @@ const VideoCallStarter = ({ questionId, roomId }: VideoCallRoomProps) => {
   }, []);
 
   const setupComponent = useMemo(() => {
-    return <VideoCallSetup setIsSetupComplete={handleSetupComplete} />;
-  }, [handleSetupComplete]);
+    return (
+      <VideoCallSetup
+        setIsSetupComplete={handleSetupComplete}
+        userAuthorId={userAuthorId}
+        knockUser={knockUser}
+      />
+    );
+  }, [handleSetupComplete, userAuthorId, knockUser]);
 
   const roomComponent = useMemo(() => {
     return <VideoCallRoom />;

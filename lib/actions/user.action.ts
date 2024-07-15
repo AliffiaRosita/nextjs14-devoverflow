@@ -442,7 +442,7 @@ export async function getUserQuestions(params: GetUserStatsParams) {
 export async function getStreamUserData(params: { userId: string }) {
 	try {
 		connectToDatabase();
-		const mongoUser = await User.findOne({ userId: params.userId });
+		const mongoUser = await User.findOne({ clerkId: params.userId });
 
 		if (!mongoUser) return null;
 

@@ -8,6 +8,7 @@ import Mobile from "@/components/shared/navbar/Mobile";
 import GlobalSearch from "@/components/shared/search/GlobalSearch";
 import { Button } from "@/components/ui/button";
 import Notification from "./Notification";
+import UserAvailability from "./UserAvailability";
 
 const Navbar = () => {
     return (
@@ -64,7 +65,7 @@ const Navbar = () => {
 
                 <SignedIn>
                     <Notification />
-
+                    <UserAvailability />
                     <UserButton
                         afterSignOutUrl="/home"
                         appearance={{

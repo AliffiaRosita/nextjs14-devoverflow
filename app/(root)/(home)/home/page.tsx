@@ -18,6 +18,7 @@ import {
 	getRecommendedQuestions,
 } from "@/lib/actions/question.action";
 import { identifyKnockUser } from "@/lib/actions/knock.action";
+import { getUserById } from "@/lib/actions/user.action";
 
 export const metadata: Metadata = {
 	title: "Home — TheSkillGuru",
@@ -25,9 +26,12 @@ export const metadata: Metadata = {
 
 export default async function Home({ searchParams }: SearchParamsProps) {
 	const { userId: clerkId } = auth();
+	let mongoUserId;
 
 	if (clerkId) {
 		await identifyKnockUser(clerkId)
+		const mongoUser = await getUserById({ userId: clerkId });
+		mongoUserId = mongoUser ? mongoUser._id : null;
 	}
 
 	let result;
@@ -89,7 +93,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
 			</div>
 
 			<HomeFilters filters={HomePageFilters} />
-			<QuestionsContainer questions={questions} clerkId={clerkId} />
+			<QuestionsContainer questions={questions} clerkId={clerkId} mongoUserId={mongoUserId} />
 
 			<div className="mt-10">
 				<Pagination

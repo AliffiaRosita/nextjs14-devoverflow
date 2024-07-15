@@ -20,7 +20,7 @@ const QuestionsTab = async ({ searchParams, userId, clerkId }: Props) => {
 
     return (
         <>
-            <QuestionsContainer questions={questions} clerkId={clerkId} />
+            <QuestionsContainer questions={questions} clerkId={clerkId} mongoUserId={userId} />
 
             <div className="mt-10">
                 <Pagination

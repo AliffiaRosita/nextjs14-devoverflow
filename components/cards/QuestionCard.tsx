@@ -9,6 +9,7 @@ import { getFormattedNumber, getTimestamp } from "@/lib/utils";
 
 import SocialShare from "../shared/SocialShare";
 import IconButton from "../shared/IconButton";
+import QuickVotes from "../shared/QuickVotes";
 import { faSkype, faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import {
 	faVideo,
@@ -26,10 +27,12 @@ const QuestionCard = ({
 	skills,
 	author,
 	upvotes,
+	downvotes,
 	views,
 	answers,
 	createdAt,
 	clerkId,
+	mongoUserId,
 	mark,
 }: QuestionProps) => {
 	const isUserAuthor = clerkId && clerkId === author.clerkId;
@@ -121,14 +124,15 @@ const QuestionCard = ({
 
 				<div className="mt-3 flex items-center justify-between gap-3 max-sm:flex-wrap max-sm:justify-start">
 					<div className=" flex gap-3">
-						<Metric
-							imgUrl="/assets/icons/like.svg"
-							alt="Upvotes"
-							value={getFormattedNumber(upvotes.length)}
-							title=" Votes"
-							textStyles="small-medium text-dark400_light800"
+						<QuickVotes 
+							questionId={_id} 
+							mongoUserId={mongoUserId}
+							upVotes={upvotes} 
+							downVotes={downvotes} 
 						/>
+
 						<Metric
+							href={`/question/${_id}`}
 							imgUrl="/assets/icons/message.svg"
 							alt="Message"
 							value={getFormattedNumber(answers.length)}

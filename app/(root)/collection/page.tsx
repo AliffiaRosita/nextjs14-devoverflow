@@ -23,6 +23,9 @@ export default async function Collection({ searchParams }: SearchParamsProps) {
 	if (!clerkId) return null;
 
 	const mongoUser = await getUserById({ userId: clerkId });
+
+	const mongoUserId = mongoUser ? mongoUser._id : null;
+
 	if (!mongoUser?.onboarded) redirect("/onboarding");
 
 	const result = await getSavedQuestions({
@@ -56,6 +59,7 @@ export default async function Collection({ searchParams }: SearchParamsProps) {
 				type="collection"
 				questions={questions}
 				clerkId={clerkId}
+				mongoUserId={mongoUserId}
 			/>
 
 			<div className="mt-10">

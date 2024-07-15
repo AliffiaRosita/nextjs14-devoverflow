@@ -9,10 +9,12 @@ const QuestionsContainer = ({
 	questions,
 	clerkId,
 	type,
+	mongoUserId,
 }: {
 	questions: QuestionProps[];
 	clerkId: string | null | undefined;
 	type?: "collection" | "skill";
+	mongoUserId?: string;
 }) => {
 	const renderNoResult = () => {
 		if (type === "collection") {
@@ -54,10 +56,12 @@ const QuestionsContainer = ({
 							key={question._id}
 							_id={question._id}
 							clerkId={clerkId}
+							mongoUserId={mongoUserId}
 							title={question.title}
 							skills={question.skills}
 							author={question.author}
 							upvotes={question.upvotes}
+							downvotes={question.downvotes}
 							views={question.views}
 							answers={question.answers}
 							createdAt={new Date(question.createdAt)}

@@ -332,7 +332,14 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
 			});
 		}
 
-		revalidatePath(path);
+		if (path) {
+			revalidatePath(path);
+		}
+
+		return {
+			upvotes: question.upvotes,
+			downvotes: question.downvotes,
+		};
 	} catch (error) {
 		console.log(error);
 		throw error;
@@ -384,7 +391,14 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
 			});
 		}
 
-		revalidatePath(path);
+		if (path) {
+			revalidatePath(path);
+		}
+
+		return {
+			upvotes: question.upvotes,
+			downvotes: question.downvotes,
+		};
 	} catch (error) {
 		console.log(error);
 		throw error;

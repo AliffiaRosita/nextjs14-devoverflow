@@ -11,6 +11,7 @@ import {
 
 import type { URLProps } from "@/types";
 import type { Metadata } from "next";
+import { getUserById } from "@/lib/actions/user.action";
 
 export async function generateMetadata({
 	params,
@@ -25,6 +26,12 @@ export async function generateMetadata({
 
 const Page = async ({ params, searchParams }: URLProps) => {
 	const { userId: clerkId } = auth();
+
+	if (!clerkId) return null;
+
+	const mongoUser = await getUserById({ userId: clerkId });
+
+	const mongoUserId = mongoUser ? mongoUser._id : null;
 
 	const result = await getQuestionsBySkillId({
 		skillId: params.id,
@@ -53,6 +60,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
 				type="skill"
 				questions={questions}
 				clerkId={clerkId}
+				mongoUserId={mongoUserId}
 			/>
 
 			<div className="mt-10">

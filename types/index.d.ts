@@ -93,10 +93,12 @@ export interface QuestionProps {
 		teams: string;
 	};
 	upvotes: string[];
+	downvotes: string[];
 	views: number;
 	answers: Array<object>;
 	createdAt: Date;
 	clerkId?: string | null;
+	mongoUserId?: string;
 	mark: string;
 }
 

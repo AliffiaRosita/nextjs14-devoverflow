@@ -19,6 +19,7 @@ import type {
 	GetQuestionsParams,
 	QuestionVoteParams,
 	RecommendedParams,
+	SortOptions,
 } from "./shared.types";
 import Skill from "@/database/skill.model";
 import Question from "@/database/question.model";
@@ -201,7 +202,7 @@ export async function getQuestions(params: GetQuestionsParams) {
 				},
 			];
 		}
-		let sortOptions;
+		let sortOptions: SortOptions = { createdAt: -1 };
 		switch (filter) {
 			case "newest":
 				sortOptions = { createdAt: -1 };
@@ -213,13 +214,12 @@ export async function getQuestions(params: GetQuestionsParams) {
 				query.answers = { $size: 0 };
 				break;
 			default:
-				sortOptions = { createdAt: -1 };
 				break;
 		}
 		if (clerkId !== "") {
 			user = await User.findOne({ clerkId });
 
-			const pipeline = [
+			questions = await Question.aggregate([
 				{
 					$addFields: {
 						hasUserSkill: {
@@ -235,8 +235,8 @@ export async function getQuestions(params: GetQuestionsParams) {
 				},
 				{
 					$sort: {
-						hasUserSkill: -1,
 						...sortOptions,
+						hasUserSkill: -1,
 					},
 				},
 				{
@@ -266,8 +266,7 @@ export async function getQuestions(params: GetQuestionsParams) {
 						path: "$author",
 					},
 				},
-			];
-			questions = await Question.aggregate(pipeline);
+			]);
 		} else {
 			questions = await Question.find(query)
 				.populate({ path: "skills", model: Skill })

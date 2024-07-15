@@ -105,6 +105,7 @@ export interface GetSavedQuestionParams
  */
 export interface GetQuestionsParams extends Searchable {}
 
+export type SortOptions = Record<string, 1 | -1>;
 export interface CreateQuestionParams extends Path, Content {
 	title: string;
 	skills: string[];
@@ -200,15 +201,15 @@ export interface GetFormattedSalaryParams {
 }
 
 export interface SendNotificationParams {
-    title: string,
-    message: string,
-    userId: string,
-    templateType?: {
-        Standard: string,
-        SingleAction: string
-        MultiAction: string
-    },
-    sender?: string,
-    type?: string,
-    path: string,
+	title: string;
+	message: string;
+	userId: string;
+	templateType?: {
+		Standard: string;
+		SingleAction: string;
+		MultiAction: string;
+	};
+	sender?: string;
+	type?: string;
+	path: string;
 }

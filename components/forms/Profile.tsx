@@ -28,6 +28,9 @@ import type { ClerkId } from "@/lib/actions/shared.types";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+
 interface Props extends ClerkId {
 	user: string;
 	skills: string;
@@ -286,9 +289,13 @@ const Profile = ({ clerkId, user, skills }: Props) => {
 								Whatsapp
 							</FormLabel>
 							<FormControl>
-								<Input
+								{/* <Input
 									placeholder="phone number"
 									className="no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700 min-h-[56px] border"
+									{...field}
+								/> */}
+								<PhoneInput
+									inputClass=" !w-full no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700 min-h-[56px] border"
 									{...field}
 								/>
 							</FormControl>

@@ -87,7 +87,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
 					<SignedIn>
 						{clerkId === userInfo.user.clerkId && (
 							<Link href="/profile/edit">
-								<Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[175px] px-4 py-3">
+								<Button className="primary-gradient paragraph-medium btn-secondary min-h-[46px] min-w-[175px] px-4 py-3 text-light-900">
 									Edit Profile
 								</Button>
 							</Link>

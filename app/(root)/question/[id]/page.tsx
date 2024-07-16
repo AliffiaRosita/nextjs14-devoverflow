@@ -10,6 +10,7 @@ import RenderTag from "@/components/shared/RenderTag";
 import AllAnswers from "@/components/shared/AllAnswers";
 import Votes from "@/components/shared/Votes";
 import EditDeleteAction from "@/components/shared/EditDeleteAction";
+import CompletionBadge from "@/components/shared/CompletionBadge";
 import Answer from "@/components/forms/Answer";
 
 import { getUserById } from "@/lib/actions/user.action";
@@ -20,7 +21,6 @@ import { getFormattedNumber, getTimestamp } from "@/lib/utils";
 import type { URLProps } from "@/types";
 import type { Metadata } from "next";
 import { SignedIn } from "@clerk/nextjs";
-import { Badge } from "@/components/ui/badge";
 
 export async function generateMetadata({
 	params,
@@ -83,11 +83,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
 					</div>
 				</div>
 				<div className="mt-4 w-full">
-					<Badge
-						className={`subtle-medium  ${result.mark === "solved" ? "bg-emerald-500 text-white" : "background-light800_dark300 text-light400_light500"}  rounded-md border-none px-4 py-2 uppercase`}
-					>
-						{result.mark}
-					</Badge>
+					<CompletionBadge mark={result.mark} />
 				</div>
 				<h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
 					{result.title}

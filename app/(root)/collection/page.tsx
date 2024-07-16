@@ -45,7 +45,7 @@ export default async function Collection({ searchParams }: SearchParamsProps) {
 					route="/collection"
 					iconPosition="left"
 					imgSrc="/assets/icons/search.svg"
-					placeholder="Search for questions"
+					placeholder="Search for problems"
 					otherClasses="flex-1"
 				/>
 

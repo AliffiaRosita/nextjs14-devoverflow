@@ -29,6 +29,7 @@ const QuestionCard = ({
 	upvotes,
 	downvotes,
 	views,
+	shares,
 	answers,
 	createdAt,
 	clerkId,
@@ -146,7 +147,7 @@ const QuestionCard = ({
 							title=" Views"
 							textStyles="small-medium text-dark400_light800"
 						/>
-						<SocialShare id={_id} />
+						<SocialShare id={_id} shares={shares} />
 					</div>
 
 					<div className="flex gap-3">

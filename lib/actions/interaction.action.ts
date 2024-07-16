@@ -37,3 +37,20 @@ export async function viewQuestion(params: ViewQuestionParams) {
         throw error;
     }
 }
+
+export async function shareQuestion(questionId: String) {
+    try {
+        connectToDatabase();
+
+        const question = await Question.findByIdAndUpdate(
+            questionId,
+            { $inc: { shares: 1 } },
+            { new: true }
+        );
+
+        return question?.shares;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}

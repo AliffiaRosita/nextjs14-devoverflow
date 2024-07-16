@@ -1,6 +1,8 @@
 "use client";
+
+import { shareQuestion } from "@/lib/actions/interaction.action";
 import Image from "next/image";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
 	FacebookIcon,
 	FacebookShareButton,
@@ -11,12 +13,37 @@ import {
 	WhatsappIcon,
 	WhatsappShareButton,
 } from "react-share";
+import { toast } from "../ui/use-toast";
 
-const SocialShare = ({ id }: { id: String }) => {
+const SocialShare = ({ id, shares }: { id: String, shares: number }) => {
 	const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
 	const [show, setShow] = useState<boolean>(false);
+	const [shareCount, setShareCount] = useState<number>(shares);
 	const shareUrl = `${baseUrl}/question/${id}`;
 	const handleToggle = () => setShow(!show);
+
+	const handleShare = useCallback(
+		async () => {
+		  try {
+			const shareCount = await shareQuestion(id);
+
+			setShareCount(shareCount);
+	
+			toast({
+			  title: `Question shared successfully 🎉`,
+			});
+
+		  } catch (error) {
+			toast({
+			  title: "Error",
+			  description: `Failed to share the question. Please try again later.`,
+			  variant: "destructive",
+			});
+		  }
+		},
+		[id]
+	  );
+
 	return (
 		<div className="relative">
 			<div className="flex-center flex-wrap gap-1">
@@ -31,22 +58,22 @@ const SocialShare = ({ id }: { id: String }) => {
 					className="small-medium text-dark400_light800 hover:cursor-pointer"
 					onClick={handleToggle}
 				>
-					Share
+					{shareCount} Share
 				</a>
 			</div>
 			{show && (
 				<div className="absolute right-0 mt-2 w-48 rounded-lg bg-white py-2 shadow-lg">
 					<div className="flex justify-around px-2">
-						<FacebookShareButton url={shareUrl}>
+						<FacebookShareButton url={shareUrl} onClick={handleShare}>
 							<FacebookIcon size={40} round />
 						</FacebookShareButton>
-						<TwitterShareButton url={shareUrl}>
+						<TwitterShareButton url={shareUrl} onClick={handleShare}>
 							<TwitterIcon size={40} round />
 						</TwitterShareButton>
-						<LinkedinShareButton url={shareUrl}>
+						<LinkedinShareButton url={shareUrl} onClick={handleShare}>
 							<LinkedinIcon size={40} round />
 						</LinkedinShareButton>
-						<WhatsappShareButton url={shareUrl}>
+						<WhatsappShareButton url={shareUrl} onClick={handleShare}>
 							<WhatsappIcon size={40} round />
 						</WhatsappShareButton>
 					</div>

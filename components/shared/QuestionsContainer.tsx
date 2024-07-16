@@ -63,6 +63,7 @@ const QuestionsContainer = ({
 							upvotes={question.upvotes}
 							downvotes={question.downvotes}
 							views={question.views}
+							shares={question.shares}
 							answers={question.answers}
 							createdAt={new Date(question.createdAt)}
 							mark={question.mark}

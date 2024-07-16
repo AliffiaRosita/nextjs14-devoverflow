@@ -95,6 +95,7 @@ export interface QuestionProps {
 	upvotes: string[];
 	downvotes: string[];
 	views: number;
+	shares: number;
 	answers: Array<object>;
 	createdAt: Date;
 	clerkId?: string | null;

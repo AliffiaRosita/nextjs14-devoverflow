@@ -5,6 +5,7 @@ export interface IQuestion extends Document {
 	content: string;
 	skills: Schema.Types.ObjectId[];
 	views: number;
+	shares: number;
 	upvotes: Schema.Types.ObjectId[];
 	downvotes: Schema.Types.ObjectId[];
 	author: Schema.Types.ObjectId;
@@ -18,6 +19,7 @@ const QuestionSchema = new Schema({
 	content: { type: String, required: true },
 	skills: [{ type: Schema.Types.ObjectId, ref: "Skill" }],
 	views: { type: Number, default: 0 },
+	shares: { type: Number, default: 0 },
 	upvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
 	downvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
 	author: { type: Schema.Types.ObjectId, ref: "User" },

@@ -93,13 +93,16 @@ const QuickVotes = ({
         className="small-medium text-dark400_light800 hover:cursor-pointer"
         onClick={() => handleVote("upvote")}
       >
-        <div className="flex-center flex flex-wrap gap-1">
+        <div className="flex-center flex flex-wrap gap-1 text-center">
           <ThumbsUp
             color={!votesState.isUpVoted ? "#697C89" : "none"}
             fill={votesState.isUpVoted ? "#008DDA" : "none"}
             size={16}
           />
-          {upVotesCountFormatted} Up
+          <p>
+            {upVotesCountFormatted}
+            <span className="max-[405px]:hidden"> Up</span>
+          </p>
         </div>
       </a>
 
@@ -107,13 +110,16 @@ const QuickVotes = ({
         className="small-medium text-dark400_light800 hover:cursor-pointer"
         onClick={() => handleVote("downvote")}
       >
-        <div className="flex-center flex flex-wrap gap-1">
+        <div className="flex-center flex flex-wrap gap-1 text-center">
           <ThumbsDown
             color={!votesState.isDownVoted ? "#697C89" : "none"}
             fill={votesState.isDownVoted ? "#ef4444" : "none"}
             size={16}
           />
-          {downVotesCountFormatted} Down
+          <p>
+            {downVotesCountFormatted}
+            <span className="max-[405px]:hidden"> Down</span>
+          </p>
         </div>
       </a>
     </div>

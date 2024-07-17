@@ -46,7 +46,7 @@ const SocialShare = ({ id, shares }: { id: String, shares: number }) => {
 
 	return (
 		<div className="relative">
-			<div className="flex-center flex-wrap gap-1">
+			<div className="flex-center flex-wrap gap-1 text-center">
 				<Image
 					src={"/assets/icons/link.svg"}
 					alt={"share"}
@@ -58,7 +58,10 @@ const SocialShare = ({ id, shares }: { id: String, shares: number }) => {
 					className="small-medium text-dark400_light800 hover:cursor-pointer"
 					onClick={handleToggle}
 				>
-					{shareCount} Share
+					<p>
+						{shareCount}
+						<span className="max-[405px]:hidden"> Share</span>
+					</p>
 				</a>
 			</div>
 			{show && (

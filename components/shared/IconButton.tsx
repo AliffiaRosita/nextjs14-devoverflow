@@ -38,7 +38,9 @@ const IconButton = ({
         <FontAwesomeIcon color={color} width={16} height={16} icon={icon} />
       )}
       {image && (
-        <Image src={image} alt="profile picture" width={16} height={16} />
+        <div className="py-0.5">
+          <Image src={image} alt={text} width={0} height={0} style={{ width: 'auto', height: '12px' }} />
+        </div>
       )}
       <span className="small-regular text-dark200_light900 line-clamp-1">{text}</span>
     </div>

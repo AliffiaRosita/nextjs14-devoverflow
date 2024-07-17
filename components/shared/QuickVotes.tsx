@@ -88,36 +88,34 @@ const QuickVotes = ({
   );
 
   return (
-    <div className="relative">
-      <div className="flex-center flex-wrap gap-3">
-        <a
-          className="small-medium text-dark400_light800 hover:cursor-pointer"
-          onClick={() => handleVote("upvote")}
-        >
-          <div className="flex-center flex flex-wrap gap-1">
-            <ThumbsUp
-              color={!votesState.isUpVoted ? "#697C89" : "none"}
-              fill={votesState.isUpVoted ? "#008DDA" : "none"}
-              size={14}
-            />
-            {upVotesCountFormatted} Up
-          </div>
-        </a>
+    <div className="flex flex-row gap-3">
+      <a
+        className="small-medium text-dark400_light800 hover:cursor-pointer"
+        onClick={() => handleVote("upvote")}
+      >
+        <div className="flex-center flex flex-wrap gap-1">
+          <ThumbsUp
+            color={!votesState.isUpVoted ? "#697C89" : "none"}
+            fill={votesState.isUpVoted ? "#008DDA" : "none"}
+            size={16}
+          />
+          {upVotesCountFormatted} Up
+        </div>
+      </a>
 
-        <a
-          className="small-medium text-dark400_light800 hover:cursor-pointer"
-          onClick={() => handleVote("downvote")}
-        >
-          <div className="flex-center flex flex-wrap gap-1">
-            <ThumbsDown
-              color={!votesState.isDownVoted ? "#697C89" : "none"}
-              fill={votesState.isDownVoted ? "#ef4444" : "none"}
-              size={14}
-            />
-            {downVotesCountFormatted} Down
-          </div>
-        </a>
-      </div>
+      <a
+        className="small-medium text-dark400_light800 hover:cursor-pointer"
+        onClick={() => handleVote("downvote")}
+      >
+        <div className="flex-center flex flex-wrap gap-1">
+          <ThumbsDown
+            color={!votesState.isDownVoted ? "#697C89" : "none"}
+            fill={votesState.isDownVoted ? "#ef4444" : "none"}
+            size={16}
+          />
+          {downVotesCountFormatted} Down
+        </div>
+      </a>
     </div>
   );
 };

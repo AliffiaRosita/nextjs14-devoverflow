@@ -45,7 +45,7 @@ const SocialShare = ({ id, shares }: { id: String, shares: number }) => {
 	  );
 
 	return (
-		<div className="relative">
+		<>
 			<div className="flex-center flex-wrap gap-1">
 				<Image
 					src={"/assets/icons/link.svg"}
@@ -79,7 +79,7 @@ const SocialShare = ({ id, shares }: { id: String, shares: number }) => {
 					</div>
 				</div>
 			)}
-		</div>
+		</>
 	);
 };
 

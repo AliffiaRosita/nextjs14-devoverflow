@@ -52,7 +52,7 @@ const QuestionCard = ({
 				)}
 			</SignedIn>
 
-			<div className="mt-2 flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
+			<div className="mt-2 flex flex-col-reverse items-start justify-between sm:flex-row">
 				<div>
 					<span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
 						{getTimestamp(createdAt)}
@@ -122,7 +122,7 @@ const QuestionCard = ({
 					)}
 				</div>
 
-				<div className="mt-3 flex items-center justify-between gap-3 max-sm:flex-wrap max-sm:justify-start">
+				<div className="mt-3 flex items-center justify-between gap-6 max-sm:flex-wrap max-sm:justify-start">
 					<div className=" flex gap-3">
 						<QuickVotes
 							questionId={_id}

@@ -43,11 +43,16 @@ const QuestionCard = ({
 
 	return (
 		<div className="card-wrapper rounded-[10px] p-9 sm:px-11">
-			<div className="flex justify-end">
-				<CompletionBadge mark={mark}/>
-			</div>
+			<SignedIn>
+				{isUserAuthor && (
+					<EditDeleteAction
+						type="Question"
+						itemId={JSON.stringify(_id)}
+					/>
+				)}
+			</SignedIn>
 
-			<div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
+			<div className="mt-2 flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
 				<div>
 					<span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
 						{getTimestamp(createdAt)}
@@ -58,15 +63,9 @@ const QuestionCard = ({
 						</h3>
 					</Link>
 				</div>
-
-				<SignedIn>
-					{isUserAuthor && (
-						<EditDeleteAction
-							type="Question"
-							itemId={JSON.stringify(_id)}
-						/>
-					)}
-				</SignedIn>
+				<div className="flex justify-end">
+					<CompletionBadge mark={mark} />
+				</div>
 			</div>
 
 			<div className="mt-3.5 flex flex-wrap gap-2">
@@ -125,11 +124,11 @@ const QuestionCard = ({
 
 				<div className="mt-3 flex items-center justify-between gap-3 max-sm:flex-wrap max-sm:justify-start">
 					<div className=" flex gap-3">
-						<QuickVotes 
-							questionId={_id} 
+						<QuickVotes
+							questionId={_id}
 							mongoUserId={mongoUserId}
-							upVotes={upvotes} 
-							downVotes={downvotes} 
+							upVotes={upvotes}
+							downVotes={downvotes}
 						/>
 
 						<Metric

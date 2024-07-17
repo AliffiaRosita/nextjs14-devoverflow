@@ -350,7 +350,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
 											handleInputKeyDown(e, field)
 										}
 									/>
-									<ul className="h-50 overflow-y-auto ">
+									<ul className="h-40 overflow-y-auto  ">
 										{listSkills?.map((skill: any) => (
 											<li
 												className=" border p-5"

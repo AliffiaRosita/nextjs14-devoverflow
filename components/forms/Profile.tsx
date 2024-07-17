@@ -304,7 +304,7 @@ const Profile = ({ clerkId, user, skills }: Props) => {
 					)}
 				/>
 
-				{parsedUser.onboarded && (
+				{parsedUser?.onboarded && (
 					<>
 						<FormField
 							control={form.control}

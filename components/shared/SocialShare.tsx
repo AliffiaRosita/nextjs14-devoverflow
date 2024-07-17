@@ -45,7 +45,7 @@ const SocialShare = ({ id, shares }: { id: String, shares: number }) => {
 	  );
 
 	return (
-		<>
+		<div className="relative">
 			<div className="flex-center flex-wrap gap-1">
 				<Image
 					src={"/assets/icons/link.svg"}
@@ -62,7 +62,7 @@ const SocialShare = ({ id, shares }: { id: String, shares: number }) => {
 				</a>
 			</div>
 			{show && (
-				<div className="absolute right-0 mt-2 w-48 rounded-lg bg-white py-2 shadow-lg">
+				<div className="absolute right-0 z-10 mt-2 w-48 rounded-lg bg-white py-2 shadow-lg">
 					<div className="flex justify-around px-2">
 						<FacebookShareButton url={shareUrl} onClick={handleShare}>
 							<FacebookIcon size={40} round />
@@ -79,7 +79,7 @@ const SocialShare = ({ id, shares }: { id: String, shares: number }) => {
 					</div>
 				</div>
 			)}
-		</>
+		</div>
 	);
 };
 

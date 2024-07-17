@@ -5,9 +5,9 @@ import { headers } from "next/headers";
 import { Webhook } from "svix";
 import { WebhookEvent } from "@clerk/nextjs/server";
 
-import { createUser, deleteUser, updateUser } from "@/lib/actions/user.action";
-import { streamTokenProvider } from "@/lib/actions/stream.actions";
-import { identifyKnockUser } from "@/lib/actions/knock.action";
+import { deleteUser, updateUser } from "@/lib/actions/user.action";
+// import { streamTokenProvider } from "@/lib/actions/stream.actions";
+// import { identifyKnockUser } from "@/lib/actions/knock.action";
 
 export async function POST(req: Request) {
 	// You can find this in the Clerk Dashboard -> Webhooks -> choose the webhook
@@ -58,41 +58,39 @@ export async function POST(req: Request) {
 	// Get the ID and type
 	const eventType = evt.type;
 
-	if (eventType === "user.created") {
-		const {
-			id,
-			email_addresses,
-			image_url,
-			username,
-			first_name,
-			last_name,
-		} = evt.data;
+	// if (eventType === "user.created") {
+	// 	const {
+	// 		id,
+	// 		email_addresses,
+	// 		image_url,
+	// 		username,
+	// 		first_name,
+	// 		last_name,
+	// 	} = evt.data;
 
-		const parts = email_addresses[0].email_address.split("@");
-		const fullName = () => {
-			if (!first_name) {
-				return parts[0];
-			} else {
-				return `${first_name}${last_name ? ` ${last_name}` : ""}`;
-			}
-		};
-		// create a new user in database
-		const mongoUser = await createUser({
-			clerkId: id,
-			name: fullName(),
-			username: username || `${parts[0]}-${parts[1].split(".")[0]}`,
-			email: email_addresses[0].email_address,
-			picture: image_url,
-			skills: [],
-		});
+	// 	const parts = email_addresses[0].email_address.split("@");
+	// 	const fullName = () => {
+	// 		if (!first_name) {
+	// 			return parts[0];
+	// 		} else {
+	// 			return `${first_name}${last_name ? ` ${last_name}` : ""}`;
+	// 		}
+	// 	};
+	// 	// create a new user in database
+	// 	const mongoUser = await createUser({
+	// 		clerkId: id,
+	// 		name: fullName(),
+	// 		username: username || `${parts[0]}-${parts[1].split(".")[0]}`,
+	// 		email: email_addresses[0].email_address,
+	// 		picture: image_url,
+	// 		skills: [],
+	// 	});
 
-		await streamTokenProvider(id);
+	// 	await streamTokenProvider(id);
+	// 	await identifyKnockUser(id);
 
-    await streamTokenProvider(id);
-    await identifyKnockUser(id);
-
-		return NextResponse.json({ message: "User created", user: mongoUser });
-	}
+	// 	return NextResponse.json({ message: "User created", user: mongoUser });
+	// }
 
 	if (eventType === "user.updated") {
 		const {

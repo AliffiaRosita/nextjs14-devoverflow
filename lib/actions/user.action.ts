@@ -13,6 +13,7 @@ import { connectToDatabase } from "@/lib/mongoose";
 import { assignBadges } from "@/lib/utils";
 
 import type {
+	ClerkUser,
 	CreateUserParams,
 	DeleteUserParams,
 	GetAllUsersParams,
@@ -23,6 +24,8 @@ import type {
 	UpdateUserParams,
 } from "./shared.types";
 import type { BadgeCriteriaType } from "@/types";
+import { streamTokenProvider } from "./stream.actions";
+import { identifyKnockUser } from "./knock.action";
 
 export async function createUser(userData: CreateUserParams) {
 	try {
@@ -458,6 +461,42 @@ export async function getStreamUserData(params: { userId: string }) {
 		};
 
 		return streamUser;
+	} catch (error) {
+		console.log(error);
+		throw error;
+	}
+}
+
+export async function createUserFromClerk(params: ClerkUser) {
+	try {
+		const { id, emailAddresses, imageUrl, username, firstName, lastName } =
+			params;
+
+		const parts =
+			emailAddresses !== null
+				? emailAddresses[0].emailAddress.split("@")
+				: "";
+		const fullName = () => {
+			if (!firstName) {
+				return parts[0];
+			} else {
+				return `${firstName}${lastName ? ` ${lastName}` : ""}`;
+			}
+		};
+		// create a new user in database
+		await createUser({
+			clerkId: id || "",
+			name: fullName(),
+			username: username || `${parts[0]}-${parts[1].split(".")[0]}`,
+			email:
+				emailAddresses !== null ? emailAddresses[0].emailAddress : "",
+			picture: imageUrl,
+			skills: [],
+		});
+
+		await streamTokenProvider(id || "");
+		await identifyKnockUser(id || "");
+		return await getUserById({ userId: id || "" });
 	} catch (error) {
 		console.log(error);
 		throw error;

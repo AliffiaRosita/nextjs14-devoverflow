@@ -86,6 +86,18 @@ export interface UpdateUserParams extends ClerkId, Path {
 
 export interface DeleteUserParams extends ClerkId {}
 
+export interface EmailAddress {
+	emailAddress: string;
+}
+export interface ClerkUser {
+	id: string | null;
+	emailAddresses: EmailAddress[] | null;
+	imageUrl: string;
+	username: string | null;
+	firstName: string | null;
+	lastName: string | null;
+}
+
 export interface GetUserStatsParams
 	extends UserId,
 		OptionalPage,

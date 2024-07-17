@@ -1,17 +1,32 @@
-import { auth } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import Profile from "@/components/forms/Profile";
 
-import { getUserById } from "@/lib/actions/user.action";
+import { createUserFromClerk, getUserById } from "@/lib/actions/user.action";
 import { getSkillsForForm } from "@/lib/actions/skill.action";
 
 const Page = async () => {
-	const { userId } = auth();
-	if (!userId) return null;
+	const user = await currentUser();
+	const existingUser = await getUserById({ userId: user?.id || "" });
+	let mongoUser;
+	if (!existingUser) {
+		if (user) {
+			mongoUser = await createUserFromClerk({
+				id: user.id,
+				emailAddresses: user.emailAddresses,
+				imageUrl: user.imageUrl,
+				username: user.username,
+				firstName: user.firstName,
+				lastName: user.lastName,
+			});
+		}
+	} else {
+		mongoUser = existingUser;
+	}
+	// if (!user.id) return null;
 
 	const skills = await getSkillsForForm();
-	const mongoUser = await getUserById({ userId });
 	if (mongoUser?.onboarded) redirect("/home");
 
 	return (
@@ -24,7 +39,7 @@ const Page = async () => {
 
 				<div className="background-light850_dark100 mt-9 p-10">
 					<Profile
-						clerkId={userId}
+						clerkId={user?.id || ""}
 						user={JSON.stringify(mongoUser)}
 						skills={JSON.stringify(skills)}
 					/>

@@ -164,3 +164,8 @@ code {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
 }
+
+/* Hide active devices */
+.cl-profileSection__activeDevices, .cl-profileSection__danger {
+    display: none;
+}

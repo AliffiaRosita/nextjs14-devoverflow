@@ -79,7 +79,7 @@ const QuestionCard = ({
 			</div>
 
 			<div className=" mt-6 w-full flex-col flex-wrap ">
-				<div className="mt-3 flex justify-between gap-3 max-sm:flex-wrap max-sm:justify-start">
+				<div className="mt-3 flex justify-between gap-3 max-sm:flex-wrap">
 					<Metric
 						imgUrl={author.picture}
 						alt="user"
@@ -122,7 +122,7 @@ const QuestionCard = ({
 					)}
 				</div>
 
-				<div className="mt-3 flex items-center justify-between gap-6 max-sm:flex-wrap max-sm:justify-start">
+				<div className="mt-6 flex items-center justify-between gap-6 max-sm:flex-wrap max-sm:justify-start">
 					<div className=" flex gap-3">
 						<QuickVotes
 							questionId={_id}

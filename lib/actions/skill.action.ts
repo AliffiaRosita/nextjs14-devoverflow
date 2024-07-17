@@ -20,7 +20,7 @@ export async function getAllSkills(params: GetAllTagsParams) {
 	try {
 		connectToDatabase();
 
-		const { page = 1, pageSize = 10, filter, searchQuery } = params;
+		const { page = 1, pageSize = 12, filter, searchQuery } = params;
 
 		// Calculate the number of tags to skip based on the page number and page size
 		const skipAmount = (page - 1) * pageSize;

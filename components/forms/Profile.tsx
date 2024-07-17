@@ -295,6 +295,7 @@ const Profile = ({ clerkId, user, skills }: Props) => {
 									{...field}
 								/> */}
 								<PhoneInput
+									country="in"
 									inputClass=" !w-full no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700 min-h-[56px] border"
 									{...field}
 								/>

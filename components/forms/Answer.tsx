@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
@@ -8,6 +8,7 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Editor } from "@tinymce/tinymce-react";
+import { useChat } from "ai/react";
 
 import {
   Form,
@@ -40,12 +41,13 @@ const Answer = ({
   authorId,
   answerData,
 }: Props) => {
+  const { messages, error, setInput, reload, handleSubmit, isLoading } = useChat();
+
   const { mode } = useTheme();
   const editorRef = useRef(null);
   const pathname = usePathname();
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [isSubmittingAi, setIsSubmittingAi] = useState<boolean>(false);
 
   const parsedAnswerData = answerData && JSON.parse(answerData);
 
@@ -102,47 +104,56 @@ const Answer = ({
     }
   }
 
-  const generateAiAnswer = async () => {
-    if (!authorId) return;
+  const handleGenerateAIAnswer = (e) => {
+    e.preventDefault();
+    if (messages.length > 0) {
+      return reload();
+    }
+    return handleSubmit(e);
+  };
 
-    setIsSubmittingAi(true);
+  useEffect(() => {
+    if (question) {
+      setInput(question);
+    }
+  }, [question, setInput]);
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/openai`,
-        {
-          method: "POST",
-          body: JSON.stringify({ question }),
-        }
-      );
+  function findLastMatch(arr, conditionFn) {
+    const matches = arr.filter(conditionFn);
+    return matches.length ? matches[matches.length - 1] : null;
+  }
 
-      const aiAnswer = await response.json();
-
-      const formattedAiAnswer = aiAnswer.error
-        ? "Sorry, I could not provide an answer to your question, please try again."
-        : aiAnswer.reply.replace(/\n/g, "<br />");
-
-      if (editorRef.current) {
-        const editor = editorRef.current as any;
-        editor.setContent(formattedAiAnswer);
-      }
-    } catch (error: any) {
+  useEffect(() => {
+    let formattedAiAnswer = "";
+    if (error) {
       toast({
         title: "Error generating AI answer ⚠️",
         variant: "destructive",
       });
+      formattedAiAnswer =
+        "Sorry, I could not provide an answer to your question, please try again";
+    }
 
-      console.log(error);
-      throw error;
-    } finally {
-      setIsSubmittingAi(false);
+    if (messages.length > 0) {
+      const lastMatch = findLastMatch(
+        messages,
+        (obj) => obj.role === "assistant"
+      );
 
+      formattedAiAnswer = lastMatch?.content
+        ? lastMatch?.content.replace(/\n/g, "<br />")
+        : "No answer provided";
+    }
+
+    if (editorRef.current && !isLoading) {
+      const editor = editorRef.current as any;
+      editor.setContent(formattedAiAnswer);
       toast({
         title: "AI answer generated successfully 🎉",
         variant: "default",
       });
     }
-  };
+  }, [messages, error, isLoading]);
 
   return (
     <div>
@@ -153,19 +164,21 @@ const Answer = ({
           </h4>
         )}
 
-        <Button
-          className="btn light-border-2 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
-          onClick={generateAiAnswer}
-        >
-          <Image
-            src="/assets/icons/stars.svg"
-            alt="star"
-            width={12}
-            height={12}
-            className={`object-contain ${isSubmittingAi && "animate-pulse"}`}
-          />
-          {isSubmittingAi ? "Generating..." : "Generate AI Answer"}
-        </Button>
+        <form onSubmit={handleGenerateAIAnswer}>
+          <Button
+            type="submit"
+            className="btn light-border-2 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
+          >
+            <Image
+              src="/assets/icons/stars.svg"
+              alt="star"
+              width={12}
+              height={12}
+              className={`object-contain ${isLoading && "animate-pulse"}`}
+            />
+            {isLoading ? "Generating..." : "Generate AI Answer"}
+          </Button>
+        </form>
       </div>
 
       <Form {...form}>

@@ -272,8 +272,8 @@ const Profile = ({ clerkId, user, skills }: Props) => {
 								</>
 							</FormControl>
 							<FormDescription className="body-regular mt-2.5 text-light-500">
-								Add up to 3 skills to describe what your
-								interest is about
+								Add skills to describe what your interest is
+								about
 							</FormDescription>
 							<FormMessage className="text-red-500" />
 						</FormItem>

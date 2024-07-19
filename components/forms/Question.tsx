@@ -396,9 +396,8 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
 								</>
 							</FormControl>
 							<FormDescription className="body-regular mt-2.5 text-light-500">
-								Add up to 3 skills to describe what your
-								question is about. You need to press enter to
-								add a skill.
+								Add skills to describe what your question is
+								about. You need to press enter to add a skill.
 							</FormDescription>
 							<FormMessage className="text-red-500" />
 						</FormItem>

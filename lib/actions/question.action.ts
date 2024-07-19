@@ -183,7 +183,7 @@ export async function getQuestions(params: GetQuestionsParams) {
 			page = 1,
 			pageSize = 10,
 			filter,
-			searchQuery,
+			searchQuery = "",
 			clerkId,
 		} = params;
 
@@ -193,7 +193,6 @@ export async function getQuestions(params: GetQuestionsParams) {
 		const query: FilterQuery<typeof Question> = {};
 		let user;
 		let questions;
-
 		if (searchQuery) {
 			query.$or = [
 				{
@@ -264,6 +263,15 @@ export async function getQuestions(params: GetQuestionsParams) {
 				{
 					$unwind: {
 						path: "$author",
+					},
+				},
+				{
+					$match: {
+						$or: [
+							{
+								title: { $regex: new RegExp(searchQuery, "i") },
+							},
+						],
 					},
 				},
 			]);

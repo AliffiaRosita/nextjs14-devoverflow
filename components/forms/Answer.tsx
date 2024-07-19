@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
@@ -8,7 +8,8 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Editor } from "@tinymce/tinymce-react";
-import { useChat } from "ai/react";
+import { CreateMessage, useChat } from "ai/react";
+import { convert } from "html-to-text";
 
 import {
   Form,
@@ -41,8 +42,7 @@ const Answer = ({
   authorId,
   answerData,
 }: Props) => {
-  const { messages, error, setInput, reload, handleSubmit, isLoading } = useChat();
-
+  const { messages, error, setInput, append, reload, isLoading } = useChat();
   const { mode } = useTheme();
   const editorRef = useRef(null);
   const pathname = usePathname();
@@ -104,50 +104,59 @@ const Answer = ({
     }
   }
 
-  const handleGenerateAIAnswer = (e) => {
+  const convertHtmlToText = useCallback((html: string) => {
+    const options = { wordwrap: 130 };
+    return convert(html, options);
+  }, []);
+
+  const handleGenerateAIAnswer = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    let plainQuestion = convertHtmlToText(question);
+
     if (messages.length > 0) {
-      return reload();
+      plainQuestion += " generate another different answer";
     }
-    return handleSubmit(e);
+
+    const newMessage = {
+      role: "user",
+      content: plainQuestion,
+    };
+
+    append(newMessage as CreateMessage);
   };
 
   useEffect(() => {
     if (question) {
-      setInput(question);
-    }
-  }, [question, setInput]);
+      const plainQuestion = convertHtmlToText(question);
 
-  function findLastMatch(arr, conditionFn) {
-    const matches = arr.filter(conditionFn);
-    return matches.length ? matches[matches.length - 1] : null;
-  }
+      setInput(plainQuestion);
+    }
+  }, [question, setInput, convertHtmlToText]);
 
   useEffect(() => {
-    let formattedAiAnswer = "";
     if (error) {
       toast({
         title: "Error generating AI answer ⚠️",
         variant: "destructive",
       });
-      formattedAiAnswer =
-        "Sorry, I could not provide an answer to your question, please try again";
+
+      return;
     }
 
-    if (messages.length > 0) {
-      const lastMatch = findLastMatch(
-        messages,
-        (obj) => obj.role === "assistant"
-      );
+    if (!isLoading && editorRef.current) {
+      const lastAssistantMessage = messages
+        .slice()
+        .reverse()
+        .find((msg) => msg.role === "assistant");
 
-      formattedAiAnswer = lastMatch?.content
-        ? lastMatch?.content.replace(/\n/g, "<br />")
+      const formattedAiAnswer = lastAssistantMessage
+        ? lastAssistantMessage.content.replace(/\n/g, "<br />")
         : "No answer provided";
-    }
 
-    if (editorRef.current && !isLoading) {
       const editor = editorRef.current as any;
       editor.setContent(formattedAiAnswer);
+
       toast({
         title: "AI answer generated successfully 🎉",
         variant: "default",
@@ -160,25 +169,25 @@ const Answer = ({
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
         {type === "Create" && (
           <h4 className="paragraph-semibold text-dark400_light800">
-            Write you answer here
+            Write your answer here
           </h4>
         )}
 
-        <form onSubmit={handleGenerateAIAnswer}>
-          <Button
-            type="submit"
-            className="btn light-border-2 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
-          >
-            <Image
-              src="/assets/icons/stars.svg"
-              alt="star"
-              width={12}
-              height={12}
-              className={`object-contain ${isLoading && "animate-pulse"}`}
-            />
-            {isLoading ? "Generating..." : "Generate AI Answer"}
-          </Button>
-        </form>
+        <Button
+          type="submit"
+          className="btn light-border-2 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
+          disabled={isLoading}
+          onClick={handleGenerateAIAnswer}
+        >
+          <Image
+            src="/assets/icons/stars.svg"
+            alt="star"
+            width={12}
+            height={12}
+            className={`object-contain ${isLoading && "animate-pulse"}`}
+          />
+          {isLoading ? "Generating..." : "Generate AI Answer"}
+        </Button>
       </div>
 
       <Form {...form}>
@@ -223,9 +232,7 @@ const Answer = ({
                         "wordcount",
                       ],
                       toolbar:
-                        "undo redo | " +
-                        "codesample | bold italic forecolor | alignleft aligncenter |" +
-                        "alignright alignjustify | bullist numlist outdent indent",
+                        "undo redo | codesample | bold italic forecolor | alignleft aligncenter | alignright alignjustify | bullist numlist outdent indent",
                       content_style:
                         "body { font-family:Inter; font-size:16px }",
                       skin: mode === "dark" ? "oxide-dark" : "oxide",

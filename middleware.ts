@@ -21,6 +21,7 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
 const protectedRoutes = createRouteMatcher([
 	"/api/rapidapi",
+	"/api/chat",
 	"/question/:id",
 	"/skills(.*)",
 	"/profile(.*)",

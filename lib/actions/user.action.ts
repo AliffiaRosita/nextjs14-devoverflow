@@ -487,7 +487,7 @@ export async function createUserFromClerk(params: ClerkUser) {
 		await createUser({
 			clerkId: id || "",
 			name: fullName(),
-			username: username || `${parts[0]}-${parts[1].split(".")[0]}`,
+			username: username || parts[0],
 			email:
 				emailAddresses !== null ? emailAddresses[0].emailAddress : "",
 			picture: imageUrl,

@@ -158,24 +158,24 @@ export async function getTopInteractedSkill(
 	try {
 		connectToDatabase();
 
-		const { userId, limit = 3 } = params;
+		const { userId } = params;
 
 		const user = await User.findById(userId);
 
 		if (!user) throw new Error("User not found");
 
-		// find interactions for the user and groups by tags
-		const interactions = await Question.aggregate([
-			{ $match: { author: userId } },
-			{ $unwind: "$skills" },
-			{ $group: { _id: "$skills", count: { $sum: 1 } } },
-			{ $sort: { count: -1 } },
-			{ $limit: limit },
-		]);
+		// // find interactions for the user and groups by tags
+		// const interactions = await Question.aggregate([
+		// 	{ $match: { author: userId } },
+		// 	{ $unwind: "$skills" },
+		// 	{ $group: { _id: "$skills", count: { $sum: 1 } } },
+		// 	{ $sort: { count: -1 } },
+		// 	{ $limit: limit },
+		// ]);
 
 		// find the tags from the interactions
 		const skills = await Skill.find({
-			_id: { $in: interactions.map((i) => i._id) },
+			_id: { $in: user.skills },
 		});
 
 		return skills;

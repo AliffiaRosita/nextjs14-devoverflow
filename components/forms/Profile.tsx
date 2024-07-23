@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import React, { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 import {
     Form,
@@ -15,21 +15,21 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/components/ui/use-toast";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from '@/components/ui/use-toast';
 
-import { updateUser } from "@/lib/actions/user.action";
-import { ProfileValidation } from "@/lib/validations";
+import { updateUser } from '@/lib/actions/user.action';
+import { ProfileValidation } from '@/lib/validations';
 
-import type { ClerkId } from "@/lib/actions/shared.types";
+import type { ClerkId } from '@/lib/actions/shared.types';
 
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
-import { MultiValue } from "react-select";
-import CreatableSelect from "react-select/creatable";
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
+import { MultiValue } from 'react-select';
+import CreatableSelect from 'react-select/creatable';
 
 interface Props extends ClerkId {
     user: string;
@@ -56,7 +56,7 @@ const Profile = ({ clerkId, user, skills }: Props) => {
         MultiValue<Option>
     >(existingSkill || []);
 
-    const [skillValidation, setSkillValidation] = useState<string>("");
+    const [skillValidation, setSkillValidation] = useState<string>('');
 
     const skillOptions = parsedSkills.map((item: any) => {
         return {
@@ -67,17 +67,17 @@ const Profile = ({ clerkId, user, skills }: Props) => {
     const form = useForm<z.infer<typeof ProfileValidation>>({
         resolver: zodResolver(ProfileValidation),
         defaultValues: {
-            name: parsedUser?.name || "",
-            username: parsedUser?.username || "",
-            portfolioWebsite: parsedUser?.portfolioWebsite || "",
-            location: parsedUser?.location || "",
-            whatsapp: parsedUser?.whatsapp || "",
-            googleMeet: parsedUser?.googleMeet || "",
-            zoom: parsedUser?.zoom || "",
-            skype: parsedUser?.skype || "",
-            teams: parsedUser?.teams || "",
+            name: parsedUser?.name || '',
+            username: parsedUser?.username || '',
+            portfolioWebsite: parsedUser?.portfolioWebsite || '',
+            location: parsedUser?.location || '',
+            whatsapp: parsedUser?.whatsapp || '',
+            googleMeet: parsedUser?.googleMeet || '',
+            zoom: parsedUser?.zoom || '',
+            skype: parsedUser?.skype || '',
+            teams: parsedUser?.teams || '',
             // skills: groupedSkills || [],
-            bio: parsedUser?.bio || "",
+            bio: parsedUser?.bio || '',
         },
     });
 
@@ -86,7 +86,7 @@ const Profile = ({ clerkId, user, skills }: Props) => {
 
         try {
             if (selectedSkillOption.length === 0) {
-                setSkillValidation("Add at least 1 skill");
+                setSkillValidation('Add at least 1 skill');
                 setIsSubmitting(false);
             } else {
                 const skills = selectedSkillOption.map((item: Option) => {
@@ -113,16 +113,16 @@ const Profile = ({ clerkId, user, skills }: Props) => {
                 setIsSubmitting(false);
 
                 toast({
-                    title: "Profile updated successfully 🎉",
-                    variant: "default",
+                    title: 'Profile updated successfully 🎉',
+                    variant: 'default',
                 });
 
-                router.push("/home");
+                router.push('/home');
             }
         } catch (error) {
             toast({
-                title: "Error updating profile ⚠️",
-                variant: "destructive",
+                title: 'Error updating profile ⚠️',
+                variant: 'destructive',
             });
 
             console.log(error);
@@ -133,8 +133,7 @@ const Profile = ({ clerkId, user, skills }: Props) => {
         <Form {...form}>
             <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="mt-9 flex w-full flex-col gap-9"
-            >
+                className="mt-9 flex w-full flex-col gap-9">
                 <FormField
                     control={form.control}
                     name="name"
@@ -161,7 +160,7 @@ const Profile = ({ clerkId, user, skills }: Props) => {
                     render={({ field }) => (
                         <FormItem className="space-y-3.5">
                             <FormLabel className="paragraph-semibold text-dark400_light800">
-                                Username{" "}
+                                Username{' '}
                                 <span className="text-primary-500">*</span>
                             </FormLabel>
                             <FormControl>
@@ -186,7 +185,7 @@ const Profile = ({ clerkId, user, skills }: Props) => {
                             defaultValue={selectedSkillOption}
                             onChange={setSelectedSkillOption}
                             isMulti
-                            placeholder={"Select skill"}
+                            placeholder={'Select skill'}
                             options={skillOptions}
                         />
                     </FormControl>
@@ -214,6 +213,7 @@ const Profile = ({ clerkId, user, skills }: Props) => {
 								/> */}
                                 <PhoneInput
                                     country="in"
+                                    prefix="+ "
                                     inputClass=" !w-full no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700 min-h-[56px] border"
                                     {...field}
                                 />
@@ -372,9 +372,8 @@ const Profile = ({ clerkId, user, skills }: Props) => {
                     <Button
                         type="submit"
                         className="primary-gradient w-fit"
-                        disabled={isSubmitting}
-                    >
-                        {isSubmitting ? "Saving..." : "Save"}
+                        disabled={isSubmitting}>
+                        {isSubmitting ? 'Saving...' : 'Save'}
                     </Button>
                 </div>
             </form>

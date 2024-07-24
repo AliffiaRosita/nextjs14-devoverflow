@@ -127,6 +127,21 @@ export async function getUserById(params: { userId: string }) {
 	}
 }
 
+export async function getUserByUsername(username: string) {
+	try {
+		connectToDatabase();
+
+		const user = await User.findOne({
+			username,
+		});
+
+		return user;
+	} catch (error) {
+		console.log(error);
+		throw error;
+	}
+}
+
 export async function getUserInfo(params: GetUserByIdParams) {
 	try {
 		connectToDatabase();
@@ -469,8 +484,15 @@ export async function getStreamUserData(params: { userId: string }) {
 
 export async function createUserFromClerk(params: ClerkUser) {
 	try {
-		const { id, emailAddresses, imageUrl, username, firstName, lastName } =
-			params;
+		const {
+            id,
+            emailAddresses,
+            imageUrl,
+            username,
+            firstName,
+            lastName,
+            referredBy,
+        } = params;
 
 		const parts =
 			emailAddresses !== null
@@ -492,6 +514,7 @@ export async function createUserFromClerk(params: ClerkUser) {
 				emailAddresses !== null ? emailAddresses[0].emailAddress : "",
 			picture: imageUrl,
 			skills: [],
+            referredBy,
 		});
 
 		await streamTokenProvider(id || "");

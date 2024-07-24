@@ -11,9 +11,9 @@ export const ShowMore = ({ text, maxLength, link }: ShowMoreProps) => {
         : htmlContent;
 
     return (
-        <div className="text-justify">
+        <div className="text-justify text-dark100_light900">
             <p>
-                {beginHtmlContent}
+                {beginHtmlContent} 
                 {itCanOverflow && (
                     <>
                         <span>... </span>

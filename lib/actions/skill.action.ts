@@ -1,20 +1,20 @@
-"use server";
+'use server';
 
-import { FilterQuery } from "mongoose";
+import { FilterQuery } from 'mongoose';
 
-import Skill from "@/database/skill.model";
-import Question from "@/database/question.model";
-import User from "@/database/user.model";
+import Skill from '@/database/skill.model';
+import Question from '@/database/question.model';
+import User from '@/database/user.model';
 
-import { connectToDatabase } from "@/lib/mongoose";
+import { connectToDatabase } from '@/lib/mongoose';
 
 import type {
     GetAllTagsParams,
     GetQuestionByTagIdParams,
     GetTopInteractedTagsParams,
     GetTagByIdParams,
-} from "./shared.types";
-import { Tag } from "lucide-react";
+} from './shared.types';
+import { Tag } from 'lucide-react';
 
 export async function getAllSkills(params: GetAllTagsParams) {
     try {
@@ -28,22 +28,22 @@ export async function getAllSkills(params: GetAllTagsParams) {
         const query: FilterQuery<typeof Tag> = {};
 
         if (searchQuery) {
-            query.$or = [{ name: { $regex: new RegExp(searchQuery, "i") } }];
+            query.$or = [{ name: { $regex: new RegExp(searchQuery, 'i') } }];
         }
 
         let sortOptions = {};
 
         switch (filter) {
-            case "popular":
+            case 'popular':
                 sortOptions = { questions: -1 };
                 break;
-            case "recent":
+            case 'recent':
                 sortOptions = { createdAt: -1 };
                 break;
-            case "name":
+            case 'name':
                 sortOptions = { name: 1 };
                 break;
-            case "old":
+            case 'old':
                 sortOptions = { createdAt: 1 };
                 break;
             default:
@@ -95,10 +95,10 @@ export async function getQuestionsBySkillId(params: GetQuestionByTagIdParams) {
         const skillFilter: FilterQuery<typeof Tag> = { _id: skillId };
 
         const skill = await Skill.findOne(skillFilter).populate({
-            path: "questions",
+            path: 'questions',
             model: Question,
             match: searchQuery
-                ? { title: { $regex: searchQuery, $options: "i" } }
+                ? { title: { $regex: searchQuery, $options: 'i' } }
                 : {},
             options: {
                 sort: { createdAt: -1 },
@@ -106,17 +106,17 @@ export async function getQuestionsBySkillId(params: GetQuestionByTagIdParams) {
                 limit: pageSize + 1, // +1 to check if there is next page
             },
             populate: [
-                { path: "skills", model: Skill, select: "_id name" },
+                { path: 'skills', model: Skill, select: '_id name' },
                 {
-                    path: "author",
+                    path: 'author',
                     model: User,
-                    select: "_id clerkId name picture",
+                    select: '_id clerkId name picture',
                 },
             ],
         });
 
         if (!skill) {
-            throw new Error("skill not found");
+            throw new Error('skill not found');
         }
 
         const questions = skill.questions;
@@ -138,7 +138,7 @@ export async function getTopPopularSkill() {
             {
                 $project: {
                     name: 1,
-                    numberOfQuestions: { $size: "$questions" },
+                    numberOfQuestions: { $size: '$questions' },
                 },
             },
             { $sort: { numberOfQuestions: -1 } },
@@ -153,29 +153,29 @@ export async function getTopPopularSkill() {
 }
 
 export async function getTopInteractedSkill(
-    params: GetTopInteractedTagsParams
+    params: GetTopInteractedTagsParams,
 ) {
     try {
         connectToDatabase();
 
-        const { userId, limit = 3 } = params;
+        const { userId } = params;
 
         const user = await User.findById(userId);
 
-        if (!user) throw new Error("User not found");
+        if (!user) throw new Error('User not found');
 
-        // find interactions for the user and groups by tags
-        const interactions = await Question.aggregate([
-            { $match: { author: userId } },
-            { $unwind: "$skills" },
-            { $group: { _id: "$skills", count: { $sum: 1 } } },
-            { $sort: { count: -1 } },
-            { $limit: limit },
-        ]);
+        // // find interactions for the user and groups by tags
+        // const interactions = await Question.aggregate([
+        // 	{ $match: { author: userId } },
+        // 	{ $unwind: "$skills" },
+        // 	{ $group: { _id: "$skills", count: { $sum: 1 } } },
+        // 	{ $sort: { count: -1 } },
+        // 	{ $limit: limit },
+        // ]);
 
         // find the tags from the interactions
         const skills = await Skill.find({
-            _id: { $in: interactions.map((i) => i._id) },
+            _id: { $in: user.skills },
         });
 
         return skills;

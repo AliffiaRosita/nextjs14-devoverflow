@@ -58,6 +58,7 @@ const QuestionsContainer = ({
 							clerkId={clerkId}
 							mongoUserId={mongoUserId}
 							title={question.title}
+							content={question.content}
 							skills={question.skills}
 							author={question.author}
 							upvotes={question.upvotes}

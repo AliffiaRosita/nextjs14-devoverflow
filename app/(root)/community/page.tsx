@@ -21,6 +21,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
 		clerkId: "",
 		filter: searchParams.filter,
 		page: searchParams.page ? +searchParams.page : 1,
+		pageSize: 9
 	});
 
 	return (

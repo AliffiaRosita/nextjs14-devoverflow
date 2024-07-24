@@ -5,6 +5,7 @@ import { getTopInteractedSkill } from "@/lib/actions/skill.action";
 
 import { Badge } from "@/components/ui/badge";
 import RenderTag from "@/components/shared/RenderTag";
+import SkillBadge from "@/components/shared/SkillBadge";
 
 interface Props {
     user: {
@@ -43,20 +44,19 @@ const UserCard = async ({ user }: Props) => {
                     </p>
                 </div>
 
-                <div className="mt-5">
-                    {interactedTags.length > 0 ? (
-                        <div className="flex items-center gap-2">
-                            {interactedTags.map((tag: any) => (
-                                <RenderTag
-                                    key={tag._id}
-                                    _id={tag._id}
-                                    name={tag.name}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <Badge>No tags yet</Badge>
-                    )}
+                <div className="mt-5 min-h-[56px]">
+                  {interactedTags.length > 0 ? (
+                    <div className="flex flex-wrap items-center gap-2">
+                      {interactedTags.slice(0, 3).map((tag: any) => (
+                        <RenderTag key={tag._id} _id={tag._id} name={tag.name} size="small" />
+                      ))}
+                      {interactedTags.length > 3 && (
+                        <SkillBadge size='small' text={`+${interactedTags.length - 3} Skills`} />
+                      )}
+                    </div>
+                  ) : (
+                    <Badge className="text-dark500_light700">No Skills yet</Badge>
+                  )}
                 </div>
             </article>
         </Link>

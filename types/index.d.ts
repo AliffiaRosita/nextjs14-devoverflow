@@ -83,6 +83,11 @@ export interface ShowMoreProps {
     link: string;
 }
 
+export interface MaxTitleProps {
+    title: string;
+    maxLength: number;
+}
+
 export interface QuestionProps {
     _id: string;
     title: string;

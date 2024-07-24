@@ -21,7 +21,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { QuestionProps } from '@/types';
 import { useRouter } from 'next/navigation';
-import { ShowMore } from '../shared/ShowMore';
+import { MaxTitle, ShowMore } from '../shared/ShowMore';
 
 const QuestionCard = ({
     _id,
@@ -55,14 +55,12 @@ const QuestionCard = ({
             </SignedIn>
 
             <div className="mt-2 flex flex-col-reverse items-start justify-between sm:flex-row">
-                <div>
+                <div className='text-justify mb-3' style={{maxWidth: '50rem'}}>
                     <span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
                         {getTimestamp(createdAt)}
                     </span>
                     <Link prefetch={false} href={`/question/${_id}`}>
-                        <h3 className="sm:h3-semibold base-semibold line-clamp-2 flex-1 text-primary-500 hover:text-blue-500">
-                            {title}
-                        </h3>
+                        <MaxTitle title={title} maxLength={300}/>
                     </Link>
                 </div>
                 <div className="flex justify-end">
@@ -73,7 +71,7 @@ const QuestionCard = ({
             <div>
                 <ShowMore
                     text={content}
-                    maxLength={35}
+                    maxLength={50}
                     link={`/question/${_id}`}
                 />
             </div>

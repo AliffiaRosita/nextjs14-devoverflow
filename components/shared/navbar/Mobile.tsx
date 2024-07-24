@@ -3,6 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { SignedOut } from "@clerk/nextjs";
 
@@ -70,25 +72,28 @@ const Mobile = () => {
 			</SheetTrigger>
 			<SheetContent
 				side="left"
-				className="background-light900_dark200 border-none"
+				className="background-light900_dark200 flex flex-col justify-between border-none"
 			>
-				<Link href="/home" className="flex items-center gap-1">
-					<Image
-						src="/assets/images/site-logo.png"
-						width={23}
-						height={23}
-						alt="TheSkillGuru"
-					/>
+				<div className="flex flex-col">
+					<Link href="/home" className="flex items-center gap-1">
+						<Image
+							src="/assets/images/site-logo.png"
+							width={23}
+							height={23}
+							alt="TheSkillGuru"
+						/>
 
-					<p className="h2-bold text-dark100_light900 font-spaceGrotesk">
-						The <span className="text-primary-500">SkillGuru</span>
-					</p>
-				</Link>
-				<div>
-					<SheetClose asChild>
-						<NavContent />
-					</SheetClose>
-
+						<p className="h2-bold text-dark100_light900 font-spaceGrotesk">
+							The <span className="text-primary-500">SkillGuru</span>
+						</p>
+					</Link>
+					<div>
+						<SheetClose asChild>
+							<NavContent />
+						</SheetClose>
+					</div>
+				</div>
+				<div className="flex flex-col gap-6">
 					<SignedOut>
 						<div className="flex flex-col gap-3">
 							<SheetClose asChild>
@@ -110,6 +115,33 @@ const Mobile = () => {
 							</SheetClose>
 						</div>
 					</SignedOut>
+
+					<div className="flex-center flex flex-col gap-3">
+						<Link
+							href="https://wa.me/919560695530"
+							className="bottom-0 mt-auto"
+						>
+							<Button className="paragraph-medium min-h-[46px] min-w-[175px] bg-green-500 px-4 py-3 text-white">
+								<FontAwesomeIcon icon={faWhatsapp} className="mr-2" />{" "}
+								Help & Support
+							</Button>
+						</Link>
+						<div className="flex flex-row text-xs text-gray-600">
+								<Link
+									href="/privacy-policy"
+									className="bottom-0 mt-auto hover:text-primary-500"
+								>
+									Privacy Policy
+								</Link>
+								&nbsp;&&nbsp;
+								<Link
+									href="/terms-of-service"
+									className="bottom-0 mt-auto hover:text-primary-500"
+								>
+									Terms of Service
+								</Link>
+						</div>
+					</div>			
 				</div>
 			</SheetContent>
 		</Sheet>

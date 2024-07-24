@@ -298,7 +298,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                             defaultValue={selectedSkillOption}
                             onChange={setSelectedSkillOption}
                             isMulti
-                            isDisabled={type === 'Edit' ? true : false}
+                            isDisabled={type === 'Edit'}
                             placeholder={'Select skill'}
                             options={skillOptions}
                         />

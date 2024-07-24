@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { deleteCookies } from "@/lib/actions/cookies.action";
 
 interface ThemeContextType {
   mode: string;
@@ -27,6 +28,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => handleThemeChange(), [mode]);
+
+  useEffect(() => {
+      const referralSession = sessionStorage.getItem('referral');
+
+      if (!referralSession) {
+          const deleteReferral = async () => {
+              await deleteCookies('referral');
+          };
+
+          deleteReferral();
+      }
+  }, []);
 
   return (
     <ThemeContext.Provider value={{ mode, setMode }}>

@@ -12,6 +12,7 @@ const Page = async () => {
 	const user = await currentUser();
 	const existingUser = await getUserById({ userId: user?.id || "" });
     const cookieStore = cookies();
+
     const referral = cookieStore.get('referral');
     const referredUser = referral?.value ? await getUserByUsername(referral?.value) :  null;
 
@@ -69,6 +70,7 @@ const Page = async () => {
 						clerkId={user?.id || ""}
 						user={JSON.stringify(mongoUser)}
 						skills={JSON.stringify(skills)}
+						isOnboarding={true}
 					/>
 				</div>
 			</main>

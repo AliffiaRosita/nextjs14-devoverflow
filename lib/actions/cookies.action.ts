@@ -19,3 +19,13 @@ export async function setCookies(cookiesData) {
         throw error;
     }
 }
+
+export async function deleteCookies(name) {
+    try {
+        if (!name) throw new Error('Cookies name not provided');
+        cookies().delete(name);
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}

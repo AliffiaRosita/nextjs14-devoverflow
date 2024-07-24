@@ -3,7 +3,7 @@ import Link from 'next/link';
 import React from 'react';
 
 export const ShowMore = ({ text, maxLength, link }: ShowMoreProps) => {
-    const htmlContent = text.replace(/<[^>]+>/g, ' ');
+    const htmlContent = text.replace(/<[^>]+>|&[^;]+;/g, ' ');
     const splittedHtmlContent = htmlContent.split(' ');
     const itCanOverflow = splittedHtmlContent.length > maxLength;
     const beginHtmlContent = itCanOverflow

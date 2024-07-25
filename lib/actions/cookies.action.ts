@@ -1,31 +1,53 @@
 'use server';
 import { cookies } from 'next/headers';
 
-export async function setCookies(cookiesData) {
+type CookieOptions = {
+    path?: string;
+    domain?: string;
+    maxAge?: number;
+    expires?: Date;
+    httpOnly?: boolean;
+    secure?: boolean;
+    sameSite?: 'strict' | 'lax' | 'none';
+};
+
+type CookieData = {
+    name: string;
+    value: string;
+    options?: CookieOptions;
+};
+
+export async function setCookies(
+    cookieData: CookieData | CookieData[],
+): Promise<void> {
     try {
-        if (!cookiesData) throw new Error('cookies data is not exist');
+        if (!cookieData) throw new Error('Cookie data is not provided');
 
-        if (typeof cookiesData === 'object' && !Array.isArray(cookiesData)) {
-            cookies().set(cookiesData);
-        }
+        const cookiesHandler = cookies();
 
-        if (Array.isArray(cookiesData)) {
-            cookiesData.forEach(cookie => {
-                cookies().set(cookie);
-            });
+        const setCookie = (data: CookieData) => {
+            const { name, value, options } = data;
+            cookiesHandler.set(name, value, options);
+        };
+
+        if (Array.isArray(cookieData)) {
+            cookieData.forEach(setCookie);
+        } else {
+            setCookie(cookieData);
         }
     } catch (error) {
-        console.log(error);
+        console.error('Error setting cookies:', error);
         throw error;
     }
 }
 
-export async function deleteCookies(name) {
+export async function deleteCookie(cookieName: string): Promise<void> {
     try {
-        if (!name) throw new Error('Cookies name not provided');
-        cookies().delete(name);
+        if (!cookieName) throw new Error('Cookie name not provided');
+
+        cookies().delete(cookieName);
     } catch (error) {
-        console.log(error);
+        console.error('Error deleting cookie:', error);
         throw error;
     }
 }

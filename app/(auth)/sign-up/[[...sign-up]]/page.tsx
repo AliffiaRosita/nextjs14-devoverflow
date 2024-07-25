@@ -1,13 +1,13 @@
 import { SignUp } from '@clerk/nextjs';
-import Referral from './components/Referral';
 import { URLProps } from '@/types';
+import ReferralHandler from './components/ReferralHandler';
 
 export default function Page({ searchParams }: URLProps) {
     const { referral } = searchParams;
 
     return (
         <>
-            <Referral referral={referral} />
+            <ReferralHandler referral={referral} />
             <SignUp />
         </>
     );

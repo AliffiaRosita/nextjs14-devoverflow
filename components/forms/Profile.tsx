@@ -30,7 +30,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { MultiValue } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
-import { deleteCookies } from '@/lib/actions/cookies.action';
+import { deleteCookie } from '@/lib/actions/cookies.action';
 
 interface Props extends ClerkId {
     user: string;
@@ -116,7 +116,7 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
 
                 if (isOnboarding) {
                     sessionStorage.removeItem('referral');
-                    await deleteCookies('referral');
+                    await deleteCookie('referral');
                 }
 
                 toast({

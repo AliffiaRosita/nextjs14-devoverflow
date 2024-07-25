@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import Pagination from '@/components/shared/Pagination';
+// import Pagination from '@/components/shared/Pagination';
 
 import { getReferralUsers } from '@/lib/actions/user.action';
 
@@ -53,12 +53,12 @@ const ReferralUserTab = async ({ searchParams, userId, clerkId }: Props) => {
                 </div>
             )}
 
-            <div className="mt-10">
+            {/* <div className="mt-10">
                 <Pagination
                     pageNumber={searchParams?.page ? +searchParams.page : 1}
                     isNext={result.isNext}
                 />
-            </div>
+            </div> */}
         </>
     );
 };

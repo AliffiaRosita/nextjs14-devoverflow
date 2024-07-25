@@ -16,7 +16,7 @@ const Page = async () => {
     const referral = cookieStore.get('referral');
     const referredUser = referral?.value ? await getUserByUsername(referral?.value) :  null;
 
-    const saveReferredTo = async (id) => {
+    const saveReferredTo = async (id: string) => {
         if (!referredUser) return;
 
         const oldReferredTo = referredUser.referredTo;

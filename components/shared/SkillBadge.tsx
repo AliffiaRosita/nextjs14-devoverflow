@@ -8,7 +8,7 @@ const renderTagVariants = cva(
     variants: {
       size: {
         normal: "subtle-semibold px-4 py-2",
-        small: "max-w-[90px] px-2 py-1 text-[7pt]",
+        small: "max-w-[90px] px-3 py-1.5 text-[7pt]",
       },
     },
     defaultVariants: {

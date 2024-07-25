@@ -146,8 +146,6 @@ const Page = async ({ params, searchParams }: URLProps) => {
 						className="flex w-full flex-col gap-6"
 					>
 						<ReferralUserTab
-							searchParams={searchParams}
-							userId={userInfo.user._id}
 							clerkId={clerkId}
 						/>
 					</TabsContent>

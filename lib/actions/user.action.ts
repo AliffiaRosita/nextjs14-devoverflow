@@ -568,10 +568,13 @@ export async function getReferralUsers(params: GetAllUsersParams) {
             ];
         }
 
-        const users = await User.find(query)
+        const usersData = await User.find(query)
+			.populate({ path: "skills", model: Skill, select: "_id name" })
             .sort(sortOptions)
             .skip(skipAmount)
             .limit(pageSize);
+
+			const users = JSON.parse(JSON.stringify(usersData));
 
         const totalUsers = await User.countDocuments(query);
 

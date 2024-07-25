@@ -1,64 +1,82 @@
-import Link from 'next/link';
+'use client';
 
-// import Pagination from '@/components/shared/Pagination';
-
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { getReferralUsers } from '@/lib/actions/user.action';
-
-import type { UserId } from '@/lib/actions/shared.types';
-import type { SearchParamsProps } from '@/types';
-import UserCard from '@/components/cards/UserCard';
-import { Button } from '@/components/ui/button';
+import ReferralUserCard from './ReferralUserCard';
 import { NoResultText } from '@/components/shared/NoResult';
+import ClientPagination from '@/components/shared/ClientPagination';
+import Loader from '@/components/shared/Loader';
 
-interface Props extends SearchParamsProps, UserId {
+interface Props {
     clerkId?: string | null;
 }
 
-const ReferralUserTab = async ({ searchParams, userId, clerkId }: Props) => {
-    const result = await getReferralUsers({
-        searchQuery: searchParams.q,
-        filter: searchParams.filter,
-        page: searchParams.page ? +searchParams.page : 1,
-        clerkId: clerkId || '',
-    });
+const ReferralUserTab = ({ clerkId }: Props) => {
+    const [page, setPage] = useState(1);
+    const [referralData, setReferralData] = useState<{
+        users: any[];
+        isNext: boolean;
+    } | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const fetchReferralUsers = useCallback(async () => {
+        try {
+            setIsLoading(true);
+            const data = await getReferralUsers({
+                clerkId: clerkId || '',
+                pageSize: 8,
+                page,
+            });
+            setReferralData(data);
+        } catch (error) {
+            console.error('Error fetching referral users:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [clerkId, page]);
+
+    useEffect(() => {
+        fetchReferralUsers();
+    }, [fetchReferralUsers]);
+
+    const renderUserCards = useMemo(() => {
+        if (!referralData) return null;
+
+        if (referralData.users.length === 0) {
+            return (
+                <div className="mt-10 flex w-full flex-col items-center justify-center">
+                    <NoResultText
+                        title="No Referral Users Found"
+                        description="Your referral list is currently empty. 🚀 Invite others to join and impact more lives! Share your referral link and start inviting now! 💡"
+                    />
+                </div>
+            );
+        }
+
+        return referralData.users.map(user => (
+            <ReferralUserCard key={user._id} user={user} />
+        ));
+    }, [referralData]);
+
+    const handlePageChange = useCallback((nextPageNumber: number) => {
+        setPage(nextPageNumber);
+    }, []);
+
+    if (isLoading) {
+        return <Loader />;
+    }
 
     return (
         <>
-            <div className="mt-12 flex flex-wrap gap-4">
-                {result.users.length > 0 ? (
-                    result.users.map((user: any) => (
-                        <UserCard
-                            key={user._id}
-                            user={user}
-                            className="xs:w-[244px]"
-                        />
-                    ))
-                ) : (
-                    <div className="mt-10 flex w-full flex-col items-center justify-center">
-                        <NoResultText
-                            title="No Referral Users Found"
-                            description="Your referral list is currently empty. 🚀 Invite others to join and impact more lives! Share your referral link and start inviting now! 💡"
-                        />
-                    </div>
-                )}
-            </div>
+            <div className="mt-12 flex flex-wrap gap-4">{renderUserCards}</div>
 
-            {result.users.length > 12 && (
-                <div className="flex-center flex">
-                    <Link href={'/referral'}>
-                        <Button className="paragraph-medium mt-5 min-h-[46px] rounded-lg bg-primary-500 px-4 py-3 text-light-900 hover:bg-primary-500 dark:bg-primary-500 dark:text-light-900">
-                            See All Users
-                        </Button>
-                    </Link>
-                </div>
-            )}
-
-            {/* <div className="mt-10">
-                <Pagination
-                    pageNumber={searchParams?.page ? +searchParams.page : 1}
-                    isNext={result.isNext}
+            <div className="mt-10">
+                <ClientPagination
+                    pageNumber={page}
+                    isNext={referralData?.isNext ?? false}
+                    onChange={handlePageChange}
                 />
-            </div> */}
+            </div>
         </>
     );
 };

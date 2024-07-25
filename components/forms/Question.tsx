@@ -27,6 +27,7 @@ import { editQuestion, createQuestion } from '@/lib/actions/question.action';
 
 import CreatableSelect from 'react-select/creatable';
 import { MultiValue } from 'react-select';
+
 interface Props {
     type: string;
     mongoUserId: string;
@@ -298,7 +299,6 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                             defaultValue={selectedSkillOption}
                             onChange={setSelectedSkillOption}
                             isMulti
-                            isDisabled={type === 'Edit'}
                             placeholder={'Select skill'}
                             options={skillOptions}
                         />
@@ -319,11 +319,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                     {isSubmitting ? (
                         <>{type === 'Edit' ? 'Editing...' : 'Posting...'}</>
                     ) : (
-                        <>
-                            {type === 'Edit'
-                                ? 'Edit Question'
-                                : 'Post a Problem'}
-                        </>
+                        <>{type === 'Edit' ? 'Submit' : 'Post a Problem'}</>
                     )}
                 </Button>
             </form>

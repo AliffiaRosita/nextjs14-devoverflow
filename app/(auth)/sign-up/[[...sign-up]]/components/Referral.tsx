@@ -3,7 +3,10 @@
 import { setCookies } from '@/lib/actions/cookies.action';
 import { useEffect } from 'react';
 
-export default function Referral({ referral }) {
+interface ReferralProps {
+    referral: string | undefined;
+}
+export default function Referral({ referral }: ReferralProps) {
     useEffect(() => {
         if (referral) {
             const saveReferral = async () => {

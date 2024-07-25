@@ -9,10 +9,11 @@ interface ReferralLinkProps {
 
 const ReferralLink = ({ username }: ReferralLinkProps) => {
     const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL;
+    const signUpUrl = process.env.NEXT_PUBLIC_CLERK_SIGN_UP_URL;
 
     const referralLink = useMemo(
-        () => `${baseUrl}?referral=${username}`,
-        [username, baseUrl],
+        () => `${baseUrl}/${signUpUrl}?referral=${username}`,
+        [username, baseUrl, signUpUrl],
     );
 
     const handleCopyLink = useCallback(() => {

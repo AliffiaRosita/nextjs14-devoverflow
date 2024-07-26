@@ -19,7 +19,6 @@ import {
 } from '@/lib/actions/question.action';
 import { identifyKnockUser } from '@/lib/actions/knock.action';
 import { getUserById } from '@/lib/actions/user.action';
-import { ImageSwiper } from '@/components/shared/banner/banner';
 
 export const metadata: Metadata = {
     title: 'Home — TheSkillGuru',
@@ -63,10 +62,6 @@ export default async function Home({ searchParams }: SearchParamsProps) {
 
     return (
         <>
-            <div>
-                <ImageSwiper />
-            </div>
-
             <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
                 <h1 className="h1-bold text-dark100_light900">All Problems</h1>
 

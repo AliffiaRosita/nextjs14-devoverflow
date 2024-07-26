@@ -1,20 +1,19 @@
 import Link from "next/link";
 
-import { Badge } from "@/components/ui/badge";
+import SkillBadge from "./SkillBadge";
 
 interface Props {
     _id: string;
     name: string;
     totalQuestions?: number;
     showCount?: boolean;
+    size?: 'normal' | 'small' ;
 }
 
-const RenderTag = ({ _id, name, totalQuestions, showCount }: Props) => {
+const RenderTag = ({ _id, name, totalQuestions, showCount, size = "small" }: Props) => {
     return (
         <Link prefetch={false} href={`/skills/${_id}`} className="flex justify-between gap-2">
-            <Badge className="subtle-semibold light:border-none rounded-md bg-cyan-200 px-4 py-2 uppercase text-cyan-600 dark:border-cyan-600 dark:bg-dark-300">
-                {name}
-            </Badge>
+            <SkillBadge size={size} text={name} />
             {showCount && (
                 <p className="small-medium text-dark500_light700">
                     {totalQuestions}

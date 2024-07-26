@@ -42,13 +42,13 @@ const Stats = ({ totalQuestions, totalAnswers, badges, reputation }: Props) => {
             <p className="paragraph-semibold text-dark200_light900">
               {getFormattedNumber(totalQuestions)}
             </p>
-            <p className="body-medium text-dark400_light700">Questions</p>
+            <p className="body-medium text-dark400_light700">Problems</p>
           </div>
           <div>
             <p className="paragraph-semibold text-dark200_light900">
               {getFormattedNumber(totalAnswers)}
             </p>
-            <p className="body-medium text-dark400_light700">Answers</p>
+            <p className="body-medium text-dark400_light700">Solutions</p>
           </div>
         </div>
 

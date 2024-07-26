@@ -84,7 +84,7 @@ const Answer = ({
       }
     } catch (error) {
       toast({
-        title: `Error ${type === "Edit" ? "editing" : "submitting"} answer ⚠️`,
+        title: `Error ${type === "Edit" ? "editing" : "submitting"} solution ⚠️`,
         variant: "destructive",
       });
 
@@ -94,7 +94,7 @@ const Answer = ({
       setIsSubmitting(false);
 
       toast({
-        title: `Answer ${
+        title: `Solution ${
           type === "Edit" ? "edited" : "submitted"
         } successfully 🎉`,
         variant: "default",
@@ -119,7 +119,7 @@ const Answer = ({
       const aiAnswer = await response.json();
 
       const formattedAiAnswer = aiAnswer.error
-        ? "Sorry, I could not provide an answer to your question, please try again."
+        ? "Sorry, I could not provide a solution to your problem, please try again."
         : aiAnswer.reply.replace(/\n/g, "<br />");
 
       if (editorRef.current) {
@@ -128,7 +128,7 @@ const Answer = ({
       }
     } catch (error: any) {
       toast({
-        title: "Error generating AI answer ⚠️",
+        title: "Error generating AI solution ⚠️",
         variant: "destructive",
       });
 
@@ -138,7 +138,7 @@ const Answer = ({
       setIsSubmittingAi(false);
 
       toast({
-        title: "AI answer generated successfully 🎉",
+        title: "AI solution generated successfully 🎉",
         variant: "default",
       });
     }
@@ -149,7 +149,7 @@ const Answer = ({
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
         {type === "Create" && (
           <h4 className="paragraph-semibold text-dark400_light800">
-            Write you answer here
+            Write your solution here
           </h4>
         )}
 
@@ -164,7 +164,7 @@ const Answer = ({
             height={12}
             className={`object-contain ${isSubmittingAi && "animate-pulse"}`}
           />
-          {isSubmittingAi ? "Generating..." : "Generate AI Answer"}
+          {isSubmittingAi ? "Generating..." : "Generate AI Solution"}
         </Button>
       </div>
 

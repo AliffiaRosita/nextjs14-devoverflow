@@ -8,7 +8,7 @@ import Tag from "@/database/skill.model";
 import { connectToDatabase } from "../mongoose";
 import { SearchParams } from "./shared.types";
 
-const SearchableTypes = ["question", "user", "answer", "tag"];
+const SearchableTypes = ["problem", "user", "solution", "skill"];
 
 export async function globalSearch(params: SearchParams) {
     try {
@@ -20,10 +20,10 @@ export async function globalSearch(params: SearchParams) {
         let results = [];
 
         const modelsAndTypes = [
-            { model: Question, searchField: "title", type: "question" },
+            { model: Question, searchField: "title", type: "problem" },
             { model: User, searchField: "name", type: "user" },
-            { model: Answer, searchField: "content", type: "answer" },
-            { model: Tag, searchField: "name", type: "tag" },
+            { model: Answer, searchField: "content", type: "solution" },
+            { model: Tag, searchField: "name", type: "skill" },
         ];
 
         const typeLower = type?.toLowerCase();
@@ -39,14 +39,14 @@ export async function globalSearch(params: SearchParams) {
                 results.push(
                     ...queryResults.map((item) => ({
                         title:
-                            type === "answer"
-                                ? `Answer containing "${query}"`
+                            type === "solution"
+                                ? `Solution containing "${query}"`
                                 : item[searchField],
                         type,
                         id:
                             type === "user"
                                 ? item.clerkId
-                                : type === "answer"
+                                : type === "solution"
                                   ? [item.question, item._id]
                                   : item._id,
                     }))
@@ -69,14 +69,14 @@ export async function globalSearch(params: SearchParams) {
 
             results = queryResults.map((item) => ({
                 title:
-                    type === "answer"
-                        ? `Answers containing "${query}"`
+                    type === "solution"
+                        ? `Solution containing "${query}"`
                         : item[modelInfo.searchField],
                 type,
                 id:
                     type === "user"
                         ? item.clerkId
-                        : type === "answer"
+                        : type === "solution"
                           ? [item.question, item._id]
                           : item._id,
             }));

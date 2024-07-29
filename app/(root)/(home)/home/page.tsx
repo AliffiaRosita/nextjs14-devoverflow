@@ -63,7 +63,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
 
     return (
         <>
-            <div className="mb-10 w-full">
+            <div>
                 <ImageSwiper />
             </div>
 

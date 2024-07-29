@@ -19,7 +19,7 @@ const Page = async () => {
     const saveReferredTo = async (id: string) => {
         if (!referredUser) return;
 
-        const oldReferredTo = referredUser.referredTo;
+        const oldReferredTo = referredUser?.referredTo || [];
         const newReferredTo = pushUnique(oldReferredTo, id);
 
         await updateUser({

@@ -30,16 +30,18 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { MultiValue } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
+import { deleteCookie } from '@/lib/actions/cookies.action';
 
 interface Props extends ClerkId {
     user: string;
     skills: string;
+    isOnboarding? : boolean;
 }
 interface Option {
     value: string;
     label: string;
 }
-const Profile = ({ clerkId, user, skills }: Props) => {
+const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
     const router = useRouter();
     const pathname = usePathname();
     const parsedUser = JSON.parse(user);
@@ -132,6 +134,11 @@ const Profile = ({ clerkId, user, skills }: Props) => {
                     path: pathname,
                 });
                 setIsSubmitting(false);
+
+                if (isOnboarding) {
+                    sessionStorage.removeItem('referral');
+                    await deleteCookie('referral');
+                }
 
                 toast({
                     title: 'Profile updated successfully 🎉',

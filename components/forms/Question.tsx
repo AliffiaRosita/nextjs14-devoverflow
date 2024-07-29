@@ -27,6 +27,7 @@ import { editQuestion, createQuestion } from '@/lib/actions/question.action';
 
 import CreatableSelect from 'react-select/creatable';
 import { MultiValue } from 'react-select';
+
 interface Props {
     type: string;
     mongoUserId: string;
@@ -206,6 +207,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                             </FormLabel>
                             <FormControl className="mt-3.5">
                                 <Input
+                                    maxLength={600}
                                     className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
                                     {...field}
                                 />
@@ -293,14 +295,14 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                     <FormLabel className="paragraph-semibold text-dark400_light800 mb-2">
                         Skills <span className="text-primary-500">*</span>
                     </FormLabel>
-                    <FormControl className="mt-3.5">
+                    <FormControl className="mt-3">
                         <CreatableSelect<Option, true>
                             defaultValue={selectedSkillOption}
                             onChange={setSelectedSkillOption}
                             isMulti
-                            isDisabled={type === 'Edit'}
                             placeholder={'Select skill'}
                             options={skillOptions}
+                            menuPlacement='top'
                         />
                     </FormControl>
                     <FormDescription className="body-regular mt-2.5 text-light-500">
@@ -319,11 +321,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                     {isSubmitting ? (
                         <>{type === 'Edit' ? 'Editing...' : 'Posting...'}</>
                     ) : (
-                        <>
-                            {type === 'Edit'
-                                ? 'Edit Problem'
-                                : 'Post a Problem'}
-                        </>
+                        <>{type === 'Edit' ? 'Submit' : 'Post a Problem'}</>
                     )}
                 </Button>
             </form>

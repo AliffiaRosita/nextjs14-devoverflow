@@ -5,14 +5,15 @@ import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import slide from './banner.json';
 
-const slides = [slide.img1, slide.img2, slide.img3];
+const slides = [slide.img1, slide.img2, slide.img3, slide.img4, slide.img5];
 
 export const ImageSwiper = () => {
     return (
         <div className="h-56 sm:h-64 xl:h-80 2xl:h-96">
             <Carousel
-                autoPlay
-                infiniteLoop
+                axis='horizontal'
+                autoPlay={true}
+                infiniteLoop={true}
                 showThumbs={false}
                 showStatus={false}
                 interval={2000}

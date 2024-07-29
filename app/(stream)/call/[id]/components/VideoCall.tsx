@@ -8,6 +8,7 @@ import Loader from "@/components/shared/Loader";
 import VideoCallStarter from "./VideoCallStarter";
 import VideoCallList from "./VideoCallList";
 import { VideoCallProps } from "@/types";
+import { useSearchParams } from "next/navigation";
 
 const VideoCall = ({
   inviteId,
@@ -22,8 +23,11 @@ const VideoCall = ({
     questionId,
     isUserAuthor
   );
+  const searchParams = useSearchParams();
+  const instantCall = searchParams.get('instant');
+
   const [isShowCallRoom, setIsShowCallRoom] = useState<boolean>(
-    !isUserAuthor || !!inviteId
+    !isUserAuthor || !!inviteId || !!instantCall
   );
   const [callRoomId, setCallRoomId] = useState<string>(
     `${questionId}-${inviteId || (isUserAuthor ? userAuthorId : userId)}`

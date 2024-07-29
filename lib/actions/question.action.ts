@@ -27,7 +27,7 @@ import Question from "@/database/question.model";
 export async function createQuestion(params: CreateQuestionParams) {
     try {
         connectToDatabase();
-        let { title, content, skills, author, path } = params;
+        let { title, content, skills, author, path, isInstant = false } = params;
         if (!content) {
             content = " ";
         }
@@ -36,6 +36,7 @@ export async function createQuestion(params: CreateQuestionParams) {
             title,
             content,
             author,
+            isInstant
         });
 
         const skillDocuments = [];
@@ -84,6 +85,8 @@ export async function createQuestion(params: CreateQuestionParams) {
         }
 
         revalidatePath(path);
+
+        return JSON.parse(JSON.stringify(question));
     } catch (error) {
         console.log(error);
         throw error;

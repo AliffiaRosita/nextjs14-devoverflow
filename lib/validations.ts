@@ -24,3 +24,7 @@ export const ProfileValidation = z.object({
     teams: z.union([z.string().min(5).max(50), z.literal("")]),
     // skills: z.array(z.string().min(1)).min(1),
 });
+
+export const InstantQuestionValidation = z.object({
+    question: z.string().min(5).max(600),
+});

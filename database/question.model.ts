@@ -12,6 +12,7 @@ export interface IQuestion extends Document {
 	answers: Schema.Types.ObjectId[];
 	createdAt: Date;
 	mark: string;
+	isInstant: boolean,
 }
 
 const QuestionSchema = new Schema({
@@ -26,6 +27,7 @@ const QuestionSchema = new Schema({
 	answers: [{ type: Schema.Types.ObjectId, ref: "Answer" }],
 	createdAt: { type: Date, default: Date.now },
 	mark: { type: String, default: "unsolved" },
+	isInstant:  { type: Boolean, default: false },
 });
 
 const Question = models.Question || model("Question", QuestionSchema);

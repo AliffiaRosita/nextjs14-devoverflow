@@ -46,6 +46,10 @@ body {
         background: linear-gradient(129deg, #008dda 0%, #41c9e2 100%);
     }
 
+    .green-gradient {
+        background: linear-gradient(129deg, #4caf50 0%, #51dd90 100%);
+    }
+
     .dark-gradient {
         background: linear-gradient(
             232deg,

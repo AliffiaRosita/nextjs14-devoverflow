@@ -31,6 +31,7 @@ import 'react-phone-input-2/lib/style.css';
 import { MultiValue } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { deleteCookie } from '@/lib/actions/cookies.action';
+import Toggle from '../shared/Toggle';
 
 interface Props extends ClerkId {
     user: string;
@@ -57,6 +58,8 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
     const [selectedSkillOption, setSelectedSkillOption] = useState<
         MultiValue<Option>
     >(existingSkill || []);
+
+    const [isAcceptCalls, setIsAcceptCalls] = useState<boolean>(parsedUser?.isAcceptCalls);
 
     const [skillValidation, setSkillValidation] = useState<string>('');
 
@@ -108,6 +111,7 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
                         skype: values.skype,
                         teams: values.teams,
                         onboarded: true,
+                        isAcceptCalls
                     },
                     skills,
                     path: pathname,
@@ -374,6 +378,15 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
                         />
                     </>
                 )}
+
+                <FormItem className="flex w-full flex-col">
+                    <FormLabel className="paragraph-semibold text-dark400_light800">
+                        Accept Call
+                    </FormLabel>
+                    <FormControl className="mt-3.5">
+                        <Toggle id="accept_call" initialState={isAcceptCalls} onToggle={setIsAcceptCalls} />
+                    </FormControl>
+                </FormItem>
 
                 <div className="mt-7 flex justify-end">
                     <Button

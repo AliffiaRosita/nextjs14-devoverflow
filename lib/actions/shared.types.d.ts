@@ -124,6 +124,7 @@ export interface CreateQuestionParams extends Path, Content {
     title: string;
     skills: string[];
     author: Schema.Types.ObjectId | IUser;
+    isInstant?: boolean;
 }
 
 export interface GetQuestionByIdParams extends QuestionId {}

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
   DeviceSettings,
   VideoPreview,
@@ -22,8 +22,11 @@ const VideoCallSetup = ({
   const call = useCall();
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const { user } = useUser();
+
+  const instantCall = searchParams.get('instant')
 
   if (!call) {
     throw new Error(
@@ -50,6 +53,7 @@ const VideoCallSetup = ({
   );
 
   const handleJoin = useCallback(async () => {
+    //! Todo: instant call notification logic 
     await sendNotification({
       title: "New Video Call Invitation",
       type: "video_call",

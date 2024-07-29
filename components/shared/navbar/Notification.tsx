@@ -14,7 +14,6 @@ import Knock, { FeedItem, FeedStoreState } from '@knocklabs/client';
 import { Bell, BellRing, MessageSquarePlus, Video } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { IoNotificationsOffSharp } from 'react-icons/io5';
 
 const knockClient = new Knock(
     process.env.NEXT_PUBLIC_KNOCK_PUBLIC_API_KEY as string,
@@ -220,12 +219,10 @@ const AppNotification = ({ isUnreadExist = true }) => {
                             );
                         })
                     ) : (
-                        <div className="flex justify-center  items-center h-20">
-                            <IoNotificationsOffSharp />
+                        <div className="flex justify-center items-center h-20">
                             <p className="text-light400_light500">
-                                &nbsp; No new notifications &nbsp;
+                                No new notifications
                             </p>
-                            <IoNotificationsOffSharp />
                         </div>
                     )}
                 </MenubarContent>

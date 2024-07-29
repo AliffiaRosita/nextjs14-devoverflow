@@ -1,15 +1,38 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 import Profile from "@/components/forms/Profile";
 
-import { createUserFromClerk, getUserById } from "@/lib/actions/user.action";
+import { createUserFromClerk, getUserById, getUserByUsername, updateUser } from "@/lib/actions/user.action";
 import { getSkillsForForm } from "@/lib/actions/skill.action";
+import { pushUnique } from "@/lib/utils";
 
 const Page = async () => {
 	const user = await currentUser();
 	const existingUser = await getUserById({ userId: user?.id || "" });
-	let mongoUser;
+    const cookieStore = cookies();
+
+    const referral = cookieStore.get('referral');
+    const referredUser = referral?.value ? await getUserByUsername(referral?.value) :  null;
+
+    const saveReferredTo = async (id: string) => {
+        if (!referredUser) return;
+
+        const oldReferredTo = referredUser?.referredTo || [];
+        const newReferredTo = pushUnique(oldReferredTo, id);
+
+        await updateUser({
+			clerkId: referredUser.clerkId,
+			updateData: {
+				referredTo: newReferredTo,
+			},
+			path: "",
+		});
+    }
+
+    let mongoUser;
+
 	if (!existingUser) {
 		if (user) {
 			mongoUser = await createUserFromClerk({
@@ -19,7 +42,12 @@ const Page = async () => {
 				username: user.username,
 				firstName: user.firstName,
 				lastName: user.lastName,
+                referredBy: referredUser?._id,
 			});
+
+            if (mongoUser) {
+                await saveReferredTo(mongoUser._id);
+            }
 		}
 	} else {
 		mongoUser = existingUser;
@@ -42,6 +70,7 @@ const Page = async () => {
 						clerkId={user?.id || ""}
 						user={JSON.stringify(mongoUser)}
 						skills={JSON.stringify(skills)}
+						isOnboarding={true}
 					/>
 				</div>
 			</main>

@@ -181,3 +181,7 @@ export function isValidImage(url: string) {
 }
 
 export const isServer = () => typeof window === "undefined";
+
+export const pushUnique = (arr: any[], element: any) => {
+  return Array.from(new Set([...arr, element]));
+};

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-
+import type { URLProps } from "@/types";
+import type { Metadata } from "next";
+import { auth } from "@clerk/nextjs/server";
 import { SignedIn } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
@@ -13,9 +15,8 @@ import QuestionsTab from "@/components/shared/QuestionsTab";
 import { getUserInfo, getUserById } from "@/lib/actions/user.action";
 import { getFormattedJoinedDate } from "@/lib/utils";
 
-import type { URLProps } from "@/types";
-import type { Metadata } from "next";
-import { auth } from "@clerk/nextjs/server";
+import ReferralLink from "./components/ReferralLink";
+import ReferralUserTab from "./components/ReferralUserTab";
 
 export async function generateMetadata({
 	params,
@@ -86,11 +87,15 @@ const Page = async ({ params, searchParams }: URLProps) => {
 				<div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
 					<SignedIn>
 						{clerkId === userInfo.user.clerkId && (
-							<Link href="/profile/edit">
-								<Button className="primary-gradient paragraph-medium btn-secondary min-h-[46px] min-w-[175px] px-4 py-3 text-light-900">
-									Edit Profile
-								</Button>
-							</Link>
+							<div className="flex flex-col gap-2">
+								<Link href="/profile/edit">
+									<Button className="primary-gradient paragraph-medium btn-secondary min-h-[46px] min-w-[175px] px-4 py-3 text-light-900">
+										Edit Profile
+									</Button>
+								</Link>
+
+								<ReferralLink username={userInfo.user.username} />
+							</div>
 						)}
 					</SignedIn>
 				</div>
@@ -112,6 +117,9 @@ const Page = async ({ params, searchParams }: URLProps) => {
 						<TabsTrigger value="answers" className="tab">
 							Answers
 						</TabsTrigger>
+						<TabsTrigger value="referral-user" className="tab">
+							Referral User
+						</TabsTrigger>
 					</TabsList>
 					<TabsContent
 						value="top-posts"
@@ -130,6 +138,14 @@ const Page = async ({ params, searchParams }: URLProps) => {
 						<AnswersTab
 							searchParams={searchParams}
 							userId={userInfo.user._id}
+							clerkId={clerkId}
+						/>
+					</TabsContent>
+					<TabsContent
+						value="referral-user"
+						className="flex w-full flex-col gap-6"
+					>
+						<ReferralUserTab
 							clerkId={clerkId}
 						/>
 					</TabsContent>

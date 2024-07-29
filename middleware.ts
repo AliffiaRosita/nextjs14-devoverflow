@@ -25,6 +25,7 @@ const protectedRoutes = createRouteMatcher([
 	"/skills(.*)",
 	"/profile(.*)",
 	"/community",
+	"/referral",
 	"/jobs",
 	"/post-problem",
 	"/onboarding",

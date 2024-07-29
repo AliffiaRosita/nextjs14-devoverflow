@@ -14,10 +14,11 @@ interface Props {
         picture: string;
         name: string;
         username: string;
-    };
+    },
+    className?: string;
 }
 
-const UserCard = async ({ user }: Props) => {
+const UserCard = async ({ user, className = '' }: Props) => {
     const interactedTags = await getTopInteractedSkill({
         userId: user._id,
     });
@@ -25,7 +26,7 @@ const UserCard = async ({ user }: Props) => {
     return (
         <Link
             href={`/profile/${user.clerkId}`}
-            className="shadow-light100_darknone w-full max-xs:min-w-full xs:w-[260px]"
+            className={`shadow-light100_darknone w-full max-xs:min-w-full xs:w-[260px] ${className}`}
         >
             <article className="background-light900_dark200 light-border flex w-full flex-col items-center justify-center rounded-2xl border p-8">
                 <Image

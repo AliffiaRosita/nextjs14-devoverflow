@@ -66,6 +66,7 @@ export interface CreateUserParams extends ClerkId {
     email: string;
     picture: string;
     skills: string[];
+    referredBy?: string;
 }
 
 export interface GetUserByIdParams extends UserId {}
@@ -96,6 +97,7 @@ export interface ClerkUser {
     username: string | null;
     firstName: string | null;
     lastName: string | null;
+    referredBy?: string;
 }
 
 export interface GetUserStatsParams

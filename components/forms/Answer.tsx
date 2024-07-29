@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
@@ -8,6 +8,8 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Editor } from "@tinymce/tinymce-react";
+import { CreateMessage, useChat } from "ai/react";
+import { convert } from "html-to-text";
 
 import {
   Form,
@@ -40,12 +42,12 @@ const Answer = ({
   authorId,
   answerData,
 }: Props) => {
+  const { messages, error, setInput, append, isLoading } = useChat();
   const { mode } = useTheme();
   const editorRef = useRef(null);
   const pathname = usePathname();
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [isSubmittingAi, setIsSubmittingAi] = useState<boolean>(false);
 
   const parsedAnswerData = answerData && JSON.parse(answerData);
 
@@ -102,47 +104,65 @@ const Answer = ({
     }
   }
 
-  const generateAiAnswer = async () => {
-    if (!authorId) return;
+  const convertHtmlToText = useCallback((html: string) => {
+    const options = { wordwrap: 130 };
+    return convert(html, options);
+  }, []);
 
-    setIsSubmittingAi(true);
+  const handleGenerateAIAnswer = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/openai`,
-        {
-          method: "POST",
-          body: JSON.stringify({ question }),
-        }
-      );
+    let plainQuestion = convertHtmlToText(question);
 
-      const aiAnswer = await response.json();
+    if (messages.length > 0) {
+      plainQuestion += " generate another different solution";
+    }
 
-      const formattedAiAnswer = aiAnswer.error
-        ? "Sorry, I could not provide a solution to your problem, please try again."
-        : aiAnswer.reply.replace(/\n/g, "<br />");
+    const newMessage = {
+      role: "user",
+      content: plainQuestion,
+    };
 
-      if (editorRef.current) {
-        const editor = editorRef.current as any;
-        editor.setContent(formattedAiAnswer);
-      }
-    } catch (error: any) {
+    append(newMessage as CreateMessage);
+  };
+
+  useEffect(() => {
+    if (question) {
+      const plainQuestion = convertHtmlToText(question);
+
+      setInput(plainQuestion);
+    }
+  }, [question, setInput, convertHtmlToText]);
+
+  useEffect(() => {
+    if (error) {
       toast({
         title: "Error generating AI solution ⚠️",
         variant: "destructive",
       });
 
-      console.log(error);
-      throw error;
-    } finally {
-      setIsSubmittingAi(false);
+      return;
+    }
+
+    if (!isLoading && editorRef.current) {
+      const lastAssistantMessage = messages
+        .slice()
+        .reverse()
+        .find((msg) => msg.role === "assistant");
+
+      const formattedAiAnswer = lastAssistantMessage
+        ? lastAssistantMessage.content.replace(/\n/g, "<br />")
+        : "No solution provided";
+
+      const editor = editorRef.current as any;
+      editor.setContent(formattedAiAnswer);
 
       toast({
         title: "AI solution generated successfully 🎉",
         variant: "default",
       });
     }
-  };
+  }, [messages, error, isLoading]);
 
   return (
     <div>
@@ -154,17 +174,19 @@ const Answer = ({
         )}
 
         <Button
+          type="submit"
           className="btn light-border-2 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
-          onClick={generateAiAnswer}
+          disabled={isLoading}
+          onClick={handleGenerateAIAnswer}
         >
           <Image
             src="/assets/icons/stars.svg"
             alt="star"
             width={12}
             height={12}
-            className={`object-contain ${isSubmittingAi && "animate-pulse"}`}
+            className={`object-contain ${isLoading && "animate-pulse"}`}
           />
-          {isSubmittingAi ? "Generating..." : "Generate AI Solution"}
+          {isLoading ? "Generating..." : "Generate AI Solution"}
         </Button>
       </div>
 
@@ -210,9 +232,7 @@ const Answer = ({
                         "wordcount",
                       ],
                       toolbar:
-                        "undo redo | " +
-                        "codesample | bold italic forecolor | alignleft aligncenter |" +
-                        "alignright alignjustify | bullist numlist outdent indent",
+                        "undo redo | codesample | bold italic forecolor | alignleft aligncenter | alignright alignjustify | bullist numlist outdent indent",
                       content_style:
                         "body { font-family:Inter; font-size:16px }",
                       skin: mode === "dark" ? "oxide-dark" : "oxide",

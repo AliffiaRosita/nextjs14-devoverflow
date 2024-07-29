@@ -127,6 +127,21 @@ export async function getUserById(params: { userId: string }) {
 	}
 }
 
+export async function getUserByUsername(username: string) {
+	try {
+		connectToDatabase();
+
+		const user = await User.findOne({
+			username,
+		});
+
+		return user;
+	} catch (error) {
+		console.log(error);
+		throw error;
+	}
+}
+
 export async function getUserInfo(params: GetUserByIdParams) {
 	try {
 		connectToDatabase();
@@ -470,8 +485,15 @@ export async function getStreamUserData(params: { userId: string }) {
 
 export async function createUserFromClerk(params: ClerkUser) {
 	try {
-		const { id, emailAddresses, imageUrl, username, firstName, lastName } =
-			params;
+		const {
+            id,
+            emailAddresses,
+            imageUrl,
+            username,
+            firstName,
+            lastName,
+            referredBy,
+        } = params;
 
 		const parts =
 			emailAddresses !== null
@@ -493,6 +515,7 @@ export async function createUserFromClerk(params: ClerkUser) {
 				emailAddresses !== null ? emailAddresses[0].emailAddress : "",
 			picture: imageUrl,
 			skills: [],
+            referredBy,
 		});
 
 		await streamTokenProvider(id || "");
@@ -502,4 +525,65 @@ export async function createUserFromClerk(params: ClerkUser) {
 		console.log(error);
 		throw error;
 	}
+}
+
+export async function getReferralUsers(params: GetAllUsersParams) {
+    try {
+        connectToDatabase();
+
+        const { page = 1, pageSize = 12, filter, searchQuery, clerkId } = params;
+
+        const skipAmount = (page - 1) * pageSize;
+
+        const query: FilterQuery<typeof User> = {};
+
+        let sortOptions = {};
+
+		switch (filter) {
+			case "new_users":
+				sortOptions = { joinedAt: -1 };
+				break;
+			case "old_users":
+				sortOptions = { joinedAt: 1 };
+				break;
+			case "top_contributors":
+				sortOptions = { reputation: -1 };
+				break;
+			default:
+				break;
+		}
+
+		const user = await User.findOne({ clerkId });
+
+        query.$and = [{ _id: { $in: user.referredTo } }];
+
+        if (searchQuery) {
+            query.$and = [
+                ...query.$and,
+                {
+                    $or: [
+                        { name: { $regex: new RegExp(searchQuery, 'i') } },
+                        { username: { $regex: new RegExp(searchQuery, 'i') } },
+                    ],
+                },
+            ];
+        }
+
+        const usersData = await User.find(query)
+			.populate({ path: "skills", model: Skill, select: "_id name" })
+            .sort(sortOptions)
+            .skip(skipAmount)
+            .limit(pageSize);
+
+			const users = JSON.parse(JSON.stringify(usersData));
+
+        const totalUsers = await User.countDocuments(query);
+
+        const isNext = totalUsers > skipAmount + users.length;
+
+        return { users, isNext };
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
 }

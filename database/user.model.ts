@@ -20,6 +20,8 @@ export interface IUser extends Document {
 	onboarded: boolean;
 	streamToken?: string;
 	skills: Schema.Types.ObjectId[];
+    referredBy?: Schema.Types.ObjectId;
+    referredTo?: Schema.Types.ObjectId[];
 	joinedAt: Date;
 }
 
@@ -43,6 +45,8 @@ const UserSchema = new Schema({
 	onboarded: { type: Boolean, default: false },
 	streamToken: { type: String },
 	skills: [{ type: Schema.Types.ObjectId, ref: "Skill" }],
+    referredBy: { type: Schema.Types.ObjectId, ref: "User" },
+    referredTo: [{ type: Schema.Types.ObjectId, ref: "User" }],
 	joinedAt: { type: Date, default: Date.now },
 });
 

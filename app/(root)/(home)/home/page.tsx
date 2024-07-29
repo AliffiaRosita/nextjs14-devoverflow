@@ -63,7 +63,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
 
     return (
         <>
-            <div>
+            <div className='min-[320px]:mb-32 sm:mb-20 md:mb-20 lg:mb-20 xl:mb-10 2xl:mb-px'>
                 <ImageSwiper />
             </div>
 

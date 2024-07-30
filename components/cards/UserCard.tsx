@@ -6,6 +6,7 @@ import { getTopInteractedSkill } from '@/lib/actions/skill.action';
 import { Badge } from '@/components/ui/badge';
 import RenderTag from '@/components/shared/RenderTag';
 import SkillBadge from '@/components/shared/SkillBadge';
+import { MaxBio } from '../shared/ShowMore';
 
 interface Props {
     user: {
@@ -22,6 +23,10 @@ const UserCard = async ({ user }: Props) => {
     const interactedTags = await getTopInteractedSkill({
         userId: user._id,
     });
+
+    // const minLength = 25;
+    // const userBio = user.bio.length >= minLength ? user.bio : `${user.bio.slice(0, minLength)}...`;
+
 
     return (
         <Link
@@ -40,7 +45,7 @@ const UserCard = async ({ user }: Props) => {
                         {user.name}
                     </h3>
                     <p className="body-regular text-dark500_light500 mt-2">
-                        {user.bio ? user.bio : `@${user.username}`}
+                        {user.bio ? <MaxBio title={user.bio} maxLength={25}/> : `@${user.username}`}
                     </p>
                 </div>
 

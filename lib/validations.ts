@@ -1,7 +1,7 @@
 import * as z from 'zod';
 
 export const QuestionValidation = z.object({
-    title: z.string().min(5).max(600),
+    title: z.string().min(5),
     explanation: z.string().max(1500),
     // skills: z.array(z.string().min(1)).min(1),
     mark: z.string(),

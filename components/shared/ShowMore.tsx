@@ -45,3 +45,23 @@ export const MaxTitle = ({ title, maxLength }: MaxTitleProps) => {
     );
 };
 
+export const MaxBio = ({ title, maxLength }: MaxTitleProps) => {
+    const htmlContent = title.replace(/<[^>]+>/g, '');
+    const splittedHtmlContent = htmlContent.split('');
+    const itCanOverflow = splittedHtmlContent.length > maxLength;
+    const beginHtmlContent = itCanOverflow
+        ? splittedHtmlContent.slice(0, maxLength - 1).join('')
+        : htmlContent;
+
+    return (
+        <div>
+            <>
+                {beginHtmlContent}
+                {itCanOverflow && (
+                    <>...</>
+                )}
+            </>
+        </div>
+    );
+};
+

@@ -19,7 +19,7 @@ import {
 } from '@/lib/actions/question.action';
 import { identifyKnockUser } from '@/lib/actions/knock.action';
 import { getUserById } from '@/lib/actions/user.action';
-import { ImageSwiper } from '@/components/banner/banner';
+// import { ImageSwiper } from '@/components/banner/banner';
 
 export const metadata: Metadata = {
     title: 'Home — TheSkillGuru',

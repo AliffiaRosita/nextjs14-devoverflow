@@ -42,7 +42,7 @@ const Answer = ({
   authorId,
   answerData,
 }: Props) => {
-  const { messages, error, setInput, append, reload, isLoading } = useChat();
+  const { messages, error, setInput, append, isLoading } = useChat();
   const { mode } = useTheme();
   const editorRef = useRef(null);
   const pathname = usePathname();

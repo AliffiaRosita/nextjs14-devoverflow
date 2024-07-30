@@ -63,9 +63,9 @@ export default async function Home({ searchParams }: SearchParamsProps) {
 
     return (
         <>
-            <div className='min-[320px]:mb-32 sm:mb-20 md:mb-20 lg:mb-20 xl:mb-10 2xl:mb-px'>
+            {/* <div className='min-[320px]:mb-32 sm:mb-20 md:mb-20 lg:mb-20 xl:mb-10 2xl:mb-px'>
                 <ImageSwiper />
-            </div>
+            </div> */}
 
             <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
                 <h1 className="h1-bold text-dark100_light900">All Problems</h1>

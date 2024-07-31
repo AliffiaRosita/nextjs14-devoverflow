@@ -148,7 +148,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
 				page={searchParams?.page ? +searchParams.page : 1}
 			/>
 
-			{result.mark === "unsolved" && (
+			{result.mark === "unsolved" && authorClerkId && (
 				<Answer
 					type="Create"
 					question={result.content}

@@ -46,18 +46,21 @@ const AllAnswers = async ({
       </div>
       <div>
         {result.answers.map((answer: any) => {
+          const author = answer.author || {};
+          const authorName = author.name || "Deleted user";
+          const authorPicture = author.picture || 'https://res.cloudinary.com/dsbhnzicr/image/upload/v1722395958/skillguru/defaultpicture_vbnwwx.jpg';
           const showActionButtons =
-            JSON.stringify(userId) === JSON.stringify(answer.author._id);
+            JSON.stringify(userId) === JSON.stringify(answer.author?._id);
 
           return (
             <article key={answer._id} className="light-border border-b py-10">
               <div className="mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
                 <Link
-                  href={`/profile/${answer.author.clerkId}`}
+                  href={`/profile/${author._id || ''}`}
                   className="flex flex-1 items-start gap-1 sm:items-center"
                 >
                   <Image
-                    src={answer.author.picture}
+                    src={authorPicture}
                     width={18}
                     height={18}
                     alt="profile"
@@ -65,7 +68,7 @@ const AllAnswers = async ({
                   />
                   <div className="flex flex-col sm:flex-row sm:items-center">
                     <p className="body-semibold text-dark300_light700">
-                      {answer.author.name}
+                      {authorName}
                     </p>
                     <p className="small-regular text-light400_light500 ml-0.5 mt-0.5 line-clamp-1">
                       <span className="max-sm:hidden">• answered </span>

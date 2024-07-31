@@ -39,7 +39,11 @@ const QuestionCard = ({
     mongoUserId,
     mark,
 }: QuestionProps) => {
-    const isUserAuthor = clerkId && clerkId === author.clerkId;
+    const isUserAuthor =  author && clerkId && clerkId === author.clerkId;
+    const isAuthorName = author?.name ? author.name : 'Deleted user';
+    const isAuthorPicture =
+        author?.picture ||
+        'https://res.cloudinary.com/dsbhnzicr/image/upload/v1722395958/skillguru/defaultpicture_vbnwwx.jpg';
 
     const router = useRouter();
 
@@ -55,12 +59,14 @@ const QuestionCard = ({
             </SignedIn>
 
             <div className="mt-2 flex flex-col-reverse items-start justify-between sm:flex-row">
-                <div className='text-justify mb-3' style={{maxWidth: '50rem'}}>
+                <div
+                    className="text-justify mb-3"
+                    style={{ maxWidth: '50rem' }}>
                     <span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
                         {getTimestamp(createdAt)}
                     </span>
                     <Link prefetch={false} href={`/question/${_id}`}>
-                        <MaxTitle title={title} maxLength={300}/>
+                        <MaxTitle title={title} maxLength={300} />
                     </Link>
                 </div>
                 <div className="flex justify-end">
@@ -89,25 +95,29 @@ const QuestionCard = ({
             <div className=" mt-6 w-full flex-col flex-wrap ">
                 <div className="mt-3 flex justify-between gap-3 max-sm:flex-wrap">
                     <Metric
-                        imgUrl={author.picture}
+                        imgUrl={isAuthorPicture}
                         alt="user"
-                        value={author.name}
+                        value={isAuthorName}
                         title={` • asked ${getTimestamp(createdAt)}`}
-                        href={`/profile/${author.clerkId}`}
+                        href={
+                            author?.clerkId ? `/profile/${author.clerkId}` : '#'
+                        }
                         isAuthor
                         textStyles="body-medium text-dark400_light700"
                     />
                     {mark !== 'solved' && (
                         <div className="flex gap-3">
-                            <IconButton
-                                onClick={() => {
-                                    router.push(`/call/${_id}`);
-                                }}
-                                type="button"
-                                color={'blue'}
-                                icon={faVideoCamera}
-                                text={'Video Call'}
-                            />
+                            {author?.clerkId && (
+                                <IconButton
+                                    onClick={() => {
+                                        router.push(`/call/${_id}`);
+                                    }}
+                                    type="button"
+                                    color={'blue'}
+                                    icon={faVideoCamera}
+                                    text={'Video Call'}
+                                />
+                            )}
                             {/* <IconButton
                             onClick={() => {}}
                             type="button"
@@ -115,17 +125,19 @@ const QuestionCard = ({
                             icon={faPhoneAlt}
                             text={"Voice Call"}
                         /> */}
-                            <IconButton
-                                onClick={() => {
-                                    router.push(
-                                        `/message${!isUserAuthor ? `?userId=${author.clerkId}` : ''}`,
-                                    );
-                                }}
-                                type="button"
-                                color={'red'}
-                                icon={faMessage}
-                                text={'Message'}
-                            />
+                            {author?.clerkId && (
+                                <IconButton
+                                    onClick={() => {
+                                        router.push(
+                                            `/message${!isUserAuthor ? `?userId=${author.clerkId}` : ''}`,
+                                        );
+                                    }}
+                                    type="button"
+                                    color={'red'}
+                                    icon={faMessage}
+                                    text={'Message'}
+                                />
+                            )}
                         </div>
                     )}
                 </div>

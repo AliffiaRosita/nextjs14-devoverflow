@@ -54,14 +54,20 @@ const VideoCallSetup = ({
 
   const handleJoin = useCallback(async () => {
     //! Todo: instant call notification logic 
-    await sendNotification({
-      title: "New Video Call Invitation",
-      type: "video_call",
-      message: `You have a New Video Call Invitation from ${knockUser.name || "A User"}`,
-      sender: knockUser.name,
-      userId: userAuthorId,
-      path: `${pathname}?invite=${knockUser.id}`,
-    });
+    // if(userAuthorId === knockUser.id && instantCall) {
+
+    // }
+
+    if(userAuthorId !== knockUser.id) {
+      await sendNotification({
+        title: "New Video Call Invitation",
+        type: "video_call",
+        message: `You have a New Video Call Invitation from ${knockUser.name || "A User"}`,
+        sender: knockUser.name,
+        userId: userAuthorId,
+        path: `${pathname}?invite=${knockUser.id}`,
+      });
+    }
 
     call.join();
 

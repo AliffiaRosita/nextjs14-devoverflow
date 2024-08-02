@@ -16,6 +16,7 @@ const VideoCall = ({
   questionId,
   userId,
   knockUser,
+  relatedSkillUsers
 }: VideoCallProps) => {
   const isUserAuthor = userId === userAuthorId;
 

@@ -8,6 +8,7 @@ import { getQuestionById } from "@/lib/actions/question.action";
 
 import VideoCall from "./components/VideoCall";
 import { identifyKnockUser } from "@/lib/actions/knock.action";
+import { getRelatedSkillUsers } from "@/lib/actions/user.action";
 
 export const metadata: Metadata = {
 	title: "Video Call — TheSkillGuru",
@@ -28,7 +29,13 @@ const Page = async ({ params, searchParams }: URLProps) => {
 
 	if (!result) return null;
 
-	const inviteId = searchParams.invite;
+	const { invite: inviteId, instant: instantCall } = searchParams;
+
+	if(result?.author.clerkId === knockUser.id && instantCall) {
+		const relatedSkillUsers = await getRelatedSkillUsers({
+			skillIds: result.skills
+		});
+    }
 
 	return (
 		<VideoCall
@@ -37,6 +44,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
 			userAuthorId={result?.author.clerkId}
 			userId={clerkId}
 			knockUser={knockUser}
+			relatedSkillUsers={relatedSkillUsers}
 		/>
 	);
 };

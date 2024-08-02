@@ -1,0 +1,10 @@
+version: "3"
+services:
+ Be: #service for app image
+   image: image-upload/be:1
+   working_dir: /app
+   container_name: be
+   volumes:
+     - ./:/app
+   ports:
+     - 4040:4000

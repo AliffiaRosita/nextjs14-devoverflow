@@ -4,10 +4,13 @@ import { getFormattedNumber } from "@/lib/utils";
 
 import type { BadgeCounts } from "@/types";
 
+import Metric from "./Metric";
+
 interface Props {
   totalQuestions: number;
   totalAnswers: number;
   totalLiveImpacts: number;
+  totalRefLiveImpacts: number;
   badges: BadgeCounts;
   reputation: number;
 }
@@ -30,19 +33,30 @@ const StatsCard = ({ imgUrl, value, title }: StatsCardProps) => {
   );
 };
 
-const Stats = ({ totalQuestions, totalAnswers, totalLiveImpacts, badges, reputation }: Props) => {
+const Stats = ({ totalQuestions, totalAnswers, totalLiveImpacts, totalRefLiveImpacts, badges, reputation }: Props) => {
   return (
     <div className="mt-10">
-      <div className="flex-between mt-5">
+      <div className="mt-5 flex gap-10">
           <div className="flex">
             <h4 className="h3-semibold text-dark200_light900">
               Stats - {reputation}
             </h4>
           </div>
-          <div className="flex">
-            <h4 className="h3-semibold text-dark200_light900">
-              Live Impacts - {totalLiveImpacts}
-            </h4>
+          <div className="flex gap-3">
+            <Metric
+              imgUrl="/assets/icons/user-round-plus.svg"
+              alt="Live Impacts"
+              value={getFormattedNumber(totalLiveImpacts)}
+              title=" Live Impacts"
+              textStyles="small-medium text-dark400_light800"
+            />
+            <Metric
+              imgUrl="/assets/icons/users-round.svg"
+              alt="Referral Live Impacts"
+              value={getFormattedNumber(totalRefLiveImpacts)}
+              title=" Referral Live Impacts"
+              textStyles="small-medium text-dark400_light800"
+            />
           </div>
       </div>
 

@@ -212,7 +212,7 @@ export async function getUserInfo(params: GetUserByIdParams) {
             {
                 $project: {
                     _id: 0,
-                    count: {
+                    totalCount: {
 						$cond: {
 							if: { $lt: ["$totalAnswers", 3] },
 							then: 0,
@@ -221,6 +221,40 @@ export async function getUserInfo(params: GetUserByIdParams) {
 					}
                 }
             }
+		]);
+
+		const [refLiveImpacts] = await Answer.aggregate([
+			{ $match: { author: { $in: user.referredTo } } },
+			{
+				$group: {
+					_id: "$author",
+					totalAnswers: { $sum: 1 }
+				},
+			},
+			{
+				$project: {
+					_id: 1,
+					count: {
+						$cond: {
+							if: { $lt: ["$totalAnswers", 3] },
+							then: 0,
+							else: { $floor: { $divide: ["$totalAnswers", 3] } }
+						}
+					}
+				}
+			},
+			{
+				$group: {
+					_id: null,
+					totalCount: { $sum: "$count" }
+				}
+			},
+			{
+				$project: {
+					_id: 0,
+					totalCount: 1
+				}
+			}
 		]);
 
 		const criteria = [
@@ -249,7 +283,8 @@ export async function getUserInfo(params: GetUserByIdParams) {
 			user,
 			totalQuestions,
 			totalAnswers,
-			totalLiveImpacts: liveImpacts?.count || 0,
+			totalLiveImpacts: liveImpacts?.totalCount || 0,
+			totalRefLiveImpacts: refLiveImpacts?.totalCount || 0,
 			badgeCounts,
 			reputation: user.reputation,
 		};

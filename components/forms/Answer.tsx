@@ -44,7 +44,7 @@ const Answer = ({
   authorId,
   answerData,
 }: Props) => {
-  const { messages, error, setInput, append, isLoading } = useChat();
+  const { messages, error, append, isLoading } = useChat();
   const { mode } = useTheme();
   const editorRef = useRef(null);
   const pathname = usePathname();
@@ -127,14 +127,6 @@ const Answer = ({
 
     append(newMessage as CreateMessage);
   };
-
-  useEffect(() => {
-    if (question) {
-      const plainQuestion = convertHtmlToText(question);
-
-      setInput(plainQuestion);
-    }
-  }, [question, setInput, convertHtmlToText]);
 
   useEffect(() => {
     if (error) {

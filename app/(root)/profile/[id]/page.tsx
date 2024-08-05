@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { URLProps } from "@/types";
-import type { Metadata } from "next";
+// import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { SignedIn } from "@clerk/nextjs";
 
@@ -17,19 +17,25 @@ import { getFormattedJoinedDate } from "@/lib/utils";
 
 import ReferralLink from "./components/ReferralLink";
 import ReferralUserTab from "./components/ReferralUserTab";
+import { redirect } from "next/navigation";
 
-export async function generateMetadata({
-	params,
-}: Omit<URLProps, "searchParams">): Promise<Metadata> {
-	const user = await getUserById({ userId: params.id });
+// export async function generateMetadata({
+// 	params,
+// }: Omit<URLProps, "searchParams">): Promise<Metadata> {
+// 	const user = await getUserById({ userId: params.id });
 
-	return {
-		title: `${user.username}'s Profile — TheSkillGuru`,
-	};
-}
+	// return {
+	// 	title: `${user.username}'s Profile — TheSkillGuru`,
+	// };
+// }
 
 const Page = async ({ params, searchParams }: URLProps) => {
 	const { userId: clerkId } = auth();
+	if (!clerkId) return null;
+	
+	const mongoUser = await getUserById({ userId: clerkId });
+	if (!mongoUser?.onboarded) redirect("/onboarding");
+
 	const userInfo = await getUserInfo({ userId: params.id });
 
 	return (

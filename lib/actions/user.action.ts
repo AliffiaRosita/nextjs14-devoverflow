@@ -201,6 +201,28 @@ export async function getUserInfo(params: GetUserByIdParams) {
 			},
 		]);
 
+		const [liveImpacts] = await Answer.aggregate([
+			{ $match: { author: user._id } },
+			{
+				$group: {
+					_id: null,
+                    totalAnswers: { $sum: 1 }				
+                },
+			},
+            {
+                $project: {
+                    _id: 0,
+                    count: {
+						$cond: {
+							if: { $lt: ["$totalAnswers", 3] },
+							then: 0,
+							else: { $floor: { $divide: ["$totalAnswers", 3] } }
+						}
+					}
+                }
+            }
+		]);
+
 		const criteria = [
 			{
 				type: "QUESTION_COUNT" as BadgeCriteriaType,
@@ -227,6 +249,7 @@ export async function getUserInfo(params: GetUserByIdParams) {
 			user,
 			totalQuestions,
 			totalAnswers,
+			totalLiveImpacts: liveImpacts?.count || 0,
 			badgeCounts,
 			reputation: user.reputation,
 		};

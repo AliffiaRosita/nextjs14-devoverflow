@@ -183,7 +183,6 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
                             <FormMessage className="text-red-500" />
                         </FormItem>
                     )}
-                    rules={{ required: `Name can't be empty` }}
                 />
 
                 <FormField
@@ -202,7 +201,7 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
                                     {...field}
                                 />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-red-500"/>
                         </FormItem>
                     )}
                 />

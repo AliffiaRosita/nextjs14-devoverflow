@@ -12,11 +12,11 @@ export const AnswerValidation = z.object({
 });
 
 export const ProfileValidation = z.object({
-    name: z.string().max(50).nonempty({ message: `Name can't be empty` }),
+    name: z.string().max(50).min(1, { message: `Name can't be empty` }),
     username: z
         .string()
         .max(50)
-        .nonempty({ message: `Username can't be empty` }),
+        .min(1, { message: `Username can't be empty` }),
     bio: z.union([z.string(), z.literal('')]),
     portfolioWebsite: z.union([z.string().url(), z.literal('')]),
     whatsapp: z

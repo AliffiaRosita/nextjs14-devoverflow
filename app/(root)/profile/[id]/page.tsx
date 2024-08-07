@@ -42,8 +42,6 @@ const Page = async ({ params, searchParams }: URLProps) => {
     const mongoUser = await getUserById({ userId: clerkId });
     if (!mongoUser?.onboarded) redirect('/onboarding');
 
-    // const userInfo = await getUserInfo({ userId: params.id });
-    // const { userId: clerkId } = auth();
     const userInfo = await getUserInfo({ userId: params.id });
 
     const userFromClerk = await clerkClient.users.getUser(params.id);

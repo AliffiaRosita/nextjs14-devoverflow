@@ -55,11 +55,11 @@ const QuestionCard = ({
             </SignedIn>
 
             <div className="mt-2 flex flex-col-reverse items-start justify-between sm:flex-row">
-                <div className='text-justify mb-3' style={{maxWidth: '50rem'}}>
+                <div className='mb-3 text-justify' style={{maxWidth: '50rem'}}>
                     <span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
                         {getTimestamp(createdAt)}
                     </span>
-                    <Link prefetch={false} href={`/question/${_id}`}>
+                    <Link prefetch={true} href={`/question/${_id}`}>
                         <MaxTitle title={title} maxLength={300}/>
                     </Link>
                 </div>
@@ -144,7 +144,7 @@ const QuestionCard = ({
                             imgUrl="/assets/icons/message.svg"
                             alt="Message"
                             value={getFormattedNumber(answers.length)}
-                            title=" Answers"
+                            title=" Solutions"
                             textStyles="small-medium text-dark400_light800"
                         />
                         <Metric

@@ -31,6 +31,7 @@ import type { QuestionId } from "@/lib/actions/shared.types";
 interface Props extends QuestionId {
   type?: string;
   question: string;
+  questionTitle?: string;
   authorId: string;
   answerData?: string;
 }
@@ -38,11 +39,12 @@ interface Props extends QuestionId {
 const Answer = ({
   type,
   question,
+  questionTitle,
   questionId,
   authorId,
   answerData,
 }: Props) => {
-  const { messages, error, setInput, append, isLoading } = useChat();
+  const { messages, error, append, isLoading } = useChat();
   const { mode } = useTheme();
   const editorRef = useRef(null);
   const pathname = usePathname();
@@ -86,7 +88,7 @@ const Answer = ({
       }
     } catch (error) {
       toast({
-        title: `Error ${type === "Edit" ? "editing" : "submitting"} answer ⚠️`,
+        title: `Error ${type === "Edit" ? "editing" : "submitting"} solution ⚠️`,
         variant: "destructive",
       });
 
@@ -96,7 +98,7 @@ const Answer = ({
       setIsSubmitting(false);
 
       toast({
-        title: `Answer ${
+        title: `Solution ${
           type === "Edit" ? "edited" : "submitted"
         } successfully 🎉`,
         variant: "default",
@@ -115,29 +117,21 @@ const Answer = ({
     let plainQuestion = convertHtmlToText(question);
 
     if (messages.length > 0) {
-      plainQuestion += " generate another different answer";
+      plainQuestion += " generate another different solution";
     }
 
     const newMessage = {
       role: "user",
-      content: plainQuestion,
+      content: `${questionTitle} ${plainQuestion}`,
     };
 
     append(newMessage as CreateMessage);
   };
 
   useEffect(() => {
-    if (question) {
-      const plainQuestion = convertHtmlToText(question);
-
-      setInput(plainQuestion);
-    }
-  }, [question, setInput, convertHtmlToText]);
-
-  useEffect(() => {
     if (error) {
       toast({
-        title: "Error generating AI answer ⚠️",
+        title: "Error generating AI solution ⚠️",
         variant: "destructive",
       });
 
@@ -152,13 +146,13 @@ const Answer = ({
 
       const formattedAiAnswer = lastAssistantMessage
         ? lastAssistantMessage.content.replace(/\n/g, "<br />")
-        : "No answer provided";
+        : "No solution provided";
 
       const editor = editorRef.current as any;
       editor.setContent(formattedAiAnswer);
 
       toast({
-        title: "AI answer generated successfully 🎉",
+        title: "AI solution generated successfully 🎉",
         variant: "default",
       });
     }
@@ -169,7 +163,7 @@ const Answer = ({
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
         {type === "Create" && (
           <h4 className="paragraph-semibold text-dark400_light800">
-            Write your answer here
+            Write your solution here
           </h4>
         )}
 
@@ -186,7 +180,7 @@ const Answer = ({
             height={12}
             className={`object-contain ${isLoading && "animate-pulse"}`}
           />
-          {isLoading ? "Generating..." : "Generate AI Answer"}
+          {isLoading ? "Generating..." : "Generate AI Solution"}
         </Button>
       </div>
 

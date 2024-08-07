@@ -11,7 +11,7 @@ import type { Metadata } from 'next';
 import { getSkillsForForm } from '@/lib/actions/skill.action';
 
 export const metadata: Metadata = {
-    title: 'Edit Question — TheSkillGuru',
+	title: "Edit Problem — TheSkillGuru",
 };
 
 const Page = async ({ params }: ParamsProps) => {
@@ -26,7 +26,7 @@ const Page = async ({ params }: ParamsProps) => {
 
     return (
         <>
-            <h1 className="h1-bold text-dark100_light900">Edit Question</h1>
+            <h1 className="h1-bold text-dark100_light900">Edit Problem</h1>
             <div className="mt-9">
                 <Question
                     type="Edit"

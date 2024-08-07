@@ -53,7 +53,7 @@ const Votes = ({
     });
 
     toast({
-      title: `Question ${
+      title: `Problem ${
         !hasSaved ? "saved" : "removed from your collection"
       } 🎉`,
       variant: !hasSaved ? "default" : "destructive",

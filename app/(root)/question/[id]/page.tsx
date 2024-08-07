@@ -96,15 +96,15 @@ const Page = async ({ params, searchParams }: URLProps) => {
 				<Metric
 					imgUrl="/assets/icons/clock.svg"
 					alt="clock icon"
-					value={` asked ${getTimestamp(result.createdAt)}`}
-					title=" Asked"
+					value={`Posted ${getTimestamp(result.createdAt)}`}
+					title=""
 					textStyles="small-medium text-dark400_light800"
 				/>
 				<Metric
 					imgUrl="/assets/icons/message.svg"
 					alt="Message"
 					value={getFormattedNumber(result.answers.length)}
-					title=" Answers"
+					title=" Solutions"
 					textStyles="small-medium text-dark400_light800"
 				/>
 				<Metric
@@ -151,6 +151,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
 				<Answer
 					type="Create"
 					question={result.content}
+					questionTitle={result.title}
 					questionId={JSON.stringify(result._id)}
 					authorId={JSON.stringify(mongoUser._id)}
 				/>

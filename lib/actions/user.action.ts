@@ -267,6 +267,7 @@ export async function getAllUsers(params: GetAllUsersParams) {
 				sortOptions = { reputation: -1 };
 				break;
 			default:
+				sortOptions = { joinedAt: -1 };
 				break;
 		}
 

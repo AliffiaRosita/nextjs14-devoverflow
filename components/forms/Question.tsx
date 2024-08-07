@@ -113,7 +113,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                 setIsSubmitting(false);
 
                 toast({
-                    title: `Question ${
+                    title: `Problem ${
                         type === 'Edit' ? 'edited' : 'posted'
                     } successfully 🎉`,
                     variant: 'default',
@@ -138,7 +138,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                     setIsSubmitting(false);
 
                     toast({
-                        title: `Question ${
+                        title: `Problem ${
                             type === 'Edit' ? 'edited' : 'posted'
                         } successfully 🎉`,
                         variant: 'default',
@@ -147,7 +147,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
             }
         } catch (error) {
             toast({
-                title: `Error ${type === 'Edit' ? 'editing' : 'posting'} question ⚠️`,
+                title: `Error ${type === 'Edit' ? 'editing' : 'posting'} problem ⚠️`,
                 variant: 'destructive',
             });
 
@@ -306,7 +306,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                         />
                     </FormControl>
                     <FormDescription className="body-regular mt-2.5 text-light-500">
-                        Add skills to describe what your question is about. You
+                        Add skills to describe what your problem is about. You
                         need to press enter to add a skill.
                     </FormDescription>
                     <FormMessage className="text-red-500">

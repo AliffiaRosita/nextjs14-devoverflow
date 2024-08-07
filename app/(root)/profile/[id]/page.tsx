@@ -115,7 +115,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
 							Top Posts
 						</TabsTrigger>
 						<TabsTrigger value="answers" className="tab">
-							Answers
+							Solutions
 						</TabsTrigger>
 						<TabsTrigger value="referral-user" className="tab">
 							Referral User

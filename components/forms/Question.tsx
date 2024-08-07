@@ -163,7 +163,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
     const handleImageUpload = (
         blobInfo: any,
         progress: (percent: number) => void,
-        failure: (message: string) => void,
+        // failure: (message: string) => void,
     ): Promise<string> => {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
@@ -206,9 +206,9 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
 
             xhr.onerror = () => {
                 reject(new Error('Image upload failed'));
-                if (failure && typeof failure === 'function') {
-                    failure('Image upload failed');
-                }
+                // if (failure && typeof failure === 'function') {
+                //     failure('Image upload failed');
+                // }
             };
 
             xhr.send(formData);

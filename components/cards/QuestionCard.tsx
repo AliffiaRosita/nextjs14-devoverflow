@@ -59,7 +59,7 @@ const QuestionCard = ({
                     <span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
                         {getTimestamp(createdAt)}
                     </span>
-                    <Link prefetch={false} href={`/question/${_id}`}>
+                    <Link prefetch={true} href={`/question/${_id}`}>
                         <MaxTitle title={title} maxLength={300}/>
                     </Link>
                 </div>

@@ -31,6 +31,7 @@ import type { QuestionId } from "@/lib/actions/shared.types";
 interface Props extends QuestionId {
   type?: string;
   question: string;
+  questionTitle?: string;
   authorId: string;
   answerData?: string;
 }
@@ -38,11 +39,12 @@ interface Props extends QuestionId {
 const Answer = ({
   type,
   question,
+  questionTitle,
   questionId,
   authorId,
   answerData,
 }: Props) => {
-  const { messages, error, setInput, append, isLoading } = useChat();
+  const { messages, error, append, isLoading } = useChat();
   const { mode } = useTheme();
   const editorRef = useRef(null);
   const pathname = usePathname();
@@ -120,19 +122,11 @@ const Answer = ({
 
     const newMessage = {
       role: "user",
-      content: plainQuestion,
+      content: `${questionTitle} ${plainQuestion}`,
     };
 
     append(newMessage as CreateMessage);
   };
-
-  useEffect(() => {
-    if (question) {
-      const plainQuestion = convertHtmlToText(question);
-
-      setInput(plainQuestion);
-    }
-  }, [question, setInput, convertHtmlToText]);
 
   useEffect(() => {
     if (error) {

@@ -110,7 +110,7 @@ export async function deleteUser(params: DeleteUserParams) {
 	}
 }
 
-export async function getUserById(params: { userId: string }) {
+export async function getUserById(params: { userId: string | null}) {
 	try {
 		connectToDatabase();
 
@@ -201,6 +201,62 @@ export async function getUserInfo(params: GetUserByIdParams) {
 			},
 		]);
 
+		const [liveImpacts] = await Answer.aggregate([
+			{ $match: { author: user._id } },
+			{
+				$group: {
+					_id: null,
+                    totalAnswers: { $sum: 1 }				
+                },
+			},
+            {
+                $project: {
+                    _id: 0,
+                    totalCount: {
+						$cond: {
+							if: { $lt: ["$totalAnswers", 3] },
+							then: 0,
+							else: { $floor: { $divide: ["$totalAnswers", 3] } }
+						}
+					}
+                }
+            }
+		]);
+
+		const [refLiveImpacts] = await Answer.aggregate([
+			{ $match: { author: { $in: user.referredTo } } },
+			{
+				$group: {
+					_id: "$author",
+					totalAnswers: { $sum: 1 }
+				},
+			},
+			{
+				$project: {
+					_id: 1,
+					count: {
+						$cond: {
+							if: { $lt: ["$totalAnswers", 3] },
+							then: 0,
+							else: { $floor: { $divide: ["$totalAnswers", 3] } }
+						}
+					}
+				}
+			},
+			{
+				$group: {
+					_id: null,
+					totalCount: { $sum: "$count" }
+				}
+			},
+			{
+				$project: {
+					_id: 0,
+					totalCount: 1
+				}
+			}
+		]);
+
 		const criteria = [
 			{
 				type: "QUESTION_COUNT" as BadgeCriteriaType,
@@ -227,6 +283,8 @@ export async function getUserInfo(params: GetUserByIdParams) {
 			user,
 			totalQuestions,
 			totalAnswers,
+			totalLiveImpacts: liveImpacts?.totalCount || 0,
+			totalRefLiveImpacts: refLiveImpacts?.totalCount || 0,
 			badgeCounts,
 			reputation: user.reputation,
 		};

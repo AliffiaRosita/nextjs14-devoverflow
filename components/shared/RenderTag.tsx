@@ -12,7 +12,7 @@ interface Props {
 
 const RenderTag = ({ _id, name, totalQuestions, showCount, size = "small" }: Props) => {
     return (
-        <Link prefetch={false} href={`/skills/${_id}`} className="flex justify-between gap-2">
+        <Link prefetch={true} href={`/skills/${_id}`} className="flex justify-between gap-2">
             <SkillBadge size={size} text={name} />
             {showCount && (
                 <p className="small-medium text-dark500_light700">

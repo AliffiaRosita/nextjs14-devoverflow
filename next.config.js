@@ -25,6 +25,21 @@ const nextConfig = {
             },
         ],
     },
+    // headers: async () => {
+    //     return [
+    //         {
+    //             source: '/(.*)',
+    //             headers: [
+    //                 {
+    //                     key: 'Cache-Control',
+    //                     value: 'public, max-age=31536000, immutable',
+    //                 },
+    //             ],
+    //         },
+    //     ];
+    // },
+    // compress: true, // Enables gzip compression for responses
+    // productionBrowserSourceMaps: false
 };
 
 module.exports = nextConfig;

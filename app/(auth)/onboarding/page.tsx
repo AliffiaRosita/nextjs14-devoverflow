@@ -35,7 +35,6 @@ const Page = async () => {
 
 	if (!existingUser) {
 		if (user) {
-			console.log(user);
 			mongoUser = await createUserFromClerk({
 				id: user.id,
 				emailAddresses: user.emailAddresses,

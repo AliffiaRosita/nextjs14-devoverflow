@@ -43,6 +43,8 @@ const Page = async ({ params, searchParams }: URLProps) => {
 		return redirect("/sign-in");
 	}
 
+	if (!mongoUser?.onboarded) redirect("/onboarding");
+
 	const result = await getQuestionById({ questionId: params.id });
 	if (!result) return null;
 

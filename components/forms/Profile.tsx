@@ -133,7 +133,6 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
                     skills,
                     path: pathname,
                 });
-                setIsSubmitting(false);
 
                 if (isOnboarding) {
                     sessionStorage.removeItem('referral');
@@ -146,6 +145,8 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
                 });
 
                 router.push('/home');
+
+                // setIsSubmitting(false);
             }
         } catch (error) {
             toast({

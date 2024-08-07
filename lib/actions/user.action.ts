@@ -110,7 +110,7 @@ export async function deleteUser(params: DeleteUserParams) {
 	}
 }
 
-export async function getUserById(params: { userId: string }) {
+export async function getUserById(params: { userId: string | null}) {
 	try {
 		connectToDatabase();
 

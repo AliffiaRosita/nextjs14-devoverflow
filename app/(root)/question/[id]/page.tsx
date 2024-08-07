@@ -48,25 +48,28 @@ const Page = async ({ params, searchParams }: URLProps) => {
 	const result = await getQuestionById({ questionId: params.id });
 	if (!result) return null;
 
-	const showActionButtons = clerkId && clerkId === result?.author.clerkId;
+	const authorClerkId = result.author ? result.author.clerkId : null
+	const showActionButtons = clerkId && authorClerkId && clerkId === result?.author.clerkId;
+	const isAuthorName = result.author?.name ? result.author.name : 'Deleted user';
+	const isAuthorPicture = result.author?.picture ? result.author.picture : 'https://res.cloudinary.com/dsbhnzicr/image/upload/v1722395958/skillguru/defaultpicture_vbnwwx.jpg';
 
 	return (
 		<>
 			<div className="flex-start w-full flex-col">
 				<div className="flex w-full flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
 					<Link
-						href={`/profile/${result.author.clerkId}`}
+						href={`/profile/${authorClerkId || ''}`}
 						className="flex items-center justify-start gap-1"
 					>
 						<Image
-							src={result.author.picture}
+							src={isAuthorPicture}
 							alt="profile"
 							className="rounded-full"
 							width={22}
 							height={22}
 						/>
 						<p className="paragraph-semibold text-dark300_light700">
-							{result.author.name}
+							{isAuthorName}
 						</p>
 					</Link>
 					<div className="flex justify-end">
@@ -147,7 +150,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
 				page={searchParams?.page ? +searchParams.page : 1}
 			/>
 
-			{result.mark === "unsolved" && (
+			{result.mark === "unsolved" && authorClerkId && (
 				<Answer
 					type="Create"
 					question={result.content}

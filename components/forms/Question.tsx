@@ -160,6 +160,61 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
         form.setValue('mark', event.target.value);
     };
 
+    const handleImageUpload = (
+        blobInfo: any,
+        progress: (percent: number) => void,
+        failure: (message: string) => void,
+    ): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open(
+                'POST',
+                'https://file-upload-tau-three.vercel.app/api/upload',
+                true,
+            );
+
+            const formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+            xhr.upload.onprogress = e => {
+                if (progress && typeof progress === 'function') {
+                    const percent = (e.loaded / e.total) * 100;
+                    progress(percent);
+                }
+            };
+
+            xhr.onload = () => {
+                if (xhr.status === 403) {
+                    reject(new Error('HTTP Error: ' + xhr.status));
+                    return;
+                }
+
+                if (xhr.status < 200 || xhr.status >= 300) {
+                    reject(new Error('HTTP Error: ' + xhr.status));
+                    return;
+                }
+
+                const json = JSON.parse(xhr.responseText);
+
+                if (!json || typeof json.data !== 'string') {
+                    reject(new Error('Invalid JSON: ' + xhr.responseText));
+                    return;
+                }
+
+                resolve(json.data);
+            };
+
+            xhr.onerror = () => {
+                reject(new Error('Image upload failed'));
+                if (failure && typeof failure === 'function') {
+                    failure('Image upload failed');
+                }
+            };
+
+            xhr.send(formData);
+        });
+    };
+
     return (
         <Form {...form}>
             <form
@@ -279,6 +334,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                                                 : 'oxide',
                                         content_css:
                                             mode === 'dark' ? 'dark' : 'light',
+                                        images_upload_handler: handleImageUpload
                                     }}
                                 />
                             </FormControl>
@@ -302,7 +358,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                             isMulti
                             placeholder={'Select skill'}
                             options={skillOptions}
-                            menuPlacement='top'
+                            menuPlacement="top"
                         />
                     </FormControl>
                     <FormDescription className="body-regular mt-2.5 text-light-500">

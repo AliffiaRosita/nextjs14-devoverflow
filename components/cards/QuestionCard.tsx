@@ -156,7 +156,7 @@ const QuestionCard = ({
                             imgUrl="/assets/icons/message.svg"
                             alt="Message"
                             value={getFormattedNumber(answers.length)}
-                            title=" Answers"
+                            title=" Solutions"
                             textStyles="small-medium text-dark400_light800"
                         />
                         <Metric

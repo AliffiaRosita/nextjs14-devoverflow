@@ -68,7 +68,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
 									<span className="body-semibold primary-text-gradient mr-2.5">
 										{tag.questions.length}+
 									</span>{" "}
-									Questions
+									Problems
 								</p>
 							</article>
 						</Link>

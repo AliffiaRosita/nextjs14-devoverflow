@@ -30,13 +30,13 @@ const SocialShare = ({ id, shares }: { id: String, shares: number }) => {
 			setShareCount(shareCount);
 	
 			toast({
-			  title: `Question shared successfully 🎉`,
+			  title: `Problem shared successfully 🎉`,
 			});
 
 		  } catch (error) {
 			toast({
 			  title: "Error",
-			  description: `Failed to share the question. Please try again later.`,
+			  description: `Failed to share the problem. Please try again later.`,
 			  variant: "destructive",
 			});
 		  }

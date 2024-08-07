@@ -113,7 +113,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                 setIsSubmitting(false);
 
                 toast({
-                    title: `Question ${
+                    title: `Problem ${
                         type === 'Edit' ? 'edited' : 'posted'
                     } successfully 🎉`,
                     variant: 'default',
@@ -138,7 +138,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                     setIsSubmitting(false);
 
                     toast({
-                        title: `Question ${
+                        title: `Problem ${
                             type === 'Edit' ? 'edited' : 'posted'
                         } successfully 🎉`,
                         variant: 'default',
@@ -147,7 +147,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
             }
         } catch (error) {
             toast({
-                title: `Error ${type === 'Edit' ? 'editing' : 'posting'} question ⚠️`,
+                title: `Error ${type === 'Edit' ? 'editing' : 'posting'} problem ⚠️`,
                 variant: 'destructive',
             });
 
@@ -158,6 +158,61 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
     const handleMarkChange = (event: any) => {
         setOptionValue(event.target.value);
         form.setValue('mark', event.target.value);
+    };
+
+    const handleImageUpload = (
+        blobInfo: any,
+        progress: (percent: number) => void,
+        // failure: (message: string) => void,
+    ): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open(
+                'POST',
+                'https://file-upload-tau-three.vercel.app/api/upload',
+                true,
+            );
+
+            const formData = new FormData();
+            formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+            xhr.upload.onprogress = e => {
+                if (progress && typeof progress === 'function') {
+                    const percent = (e.loaded / e.total) * 100;
+                    progress(percent);
+                }
+            };
+
+            xhr.onload = () => {
+                if (xhr.status === 403) {
+                    reject(new Error('HTTP Error: ' + xhr.status));
+                    return;
+                }
+
+                if (xhr.status < 200 || xhr.status >= 300) {
+                    reject(new Error('HTTP Error: ' + xhr.status));
+                    return;
+                }
+
+                const json = JSON.parse(xhr.responseText);
+
+                if (!json || typeof json.data !== 'string') {
+                    reject(new Error('Invalid JSON: ' + xhr.responseText));
+                    return;
+                }
+
+                resolve(json.data);
+            };
+
+            xhr.onerror = () => {
+                reject(new Error('Image upload failed'));
+                // if (failure && typeof failure === 'function') {
+                //     failure('Image upload failed');
+                // }
+            };
+
+            xhr.send(formData);
+        });
     };
 
     return (
@@ -279,6 +334,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                                                 : 'oxide',
                                         content_css:
                                             mode === 'dark' ? 'dark' : 'light',
+                                        images_upload_handler: handleImageUpload
                                     }}
                                 />
                             </FormControl>
@@ -302,11 +358,11 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                             isMulti
                             placeholder={'Select skill'}
                             options={skillOptions}
-                            menuPlacement='top'
+                            menuPlacement="top"
                         />
                     </FormControl>
                     <FormDescription className="body-regular mt-2.5 text-light-500">
-                        Add skills to describe what your question is about. You
+                        Add skills to describe what your problem is about. You
                         need to press enter to add a skill.
                     </FormDescription>
                     <FormMessage className="text-red-500">

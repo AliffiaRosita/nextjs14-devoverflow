@@ -20,10 +20,10 @@ const QuestionsContainer = ({
 		if (type === "collection") {
 			return (
 				<NoResult
-					title="No Saved Questions Found"
-					description="It appears that there are no saved questions in your collection at the moment 😔. Start exploring and saving questions that pique your interest 🌟"
+					title="No Saved Problems Found"
+					description="It appears that there are no saved problems in your collection at the moment 😔. Start exploring and saving problems that pique your interest 🌟"
 					link="/home"
-					linkTitle="Explore Questions"
+					linkTitle="Explore Problems"
 				/>
 			);
 		}
@@ -31,17 +31,17 @@ const QuestionsContainer = ({
 		if (type === "skill") {
 			return (
 				<NoResult
-					title="No Tag Questions Found"
-					description="It appears that there are no saved questions in your collection at the moment 😔.Start exploring and saving questions that pique your interest 🌟"
+					title="No Problems Found"
+					description="It appears that there are no problems related to this skill at the moment 😔. Post a Problem and kickstart the discussion. Your query could be the next big thing others learn from. Get involved! 💡"
 					link="/home"
-					linkTitle="Explore Questions"
+					linkTitle="Explore Problems"
 				/>
 			);
 		}
 
 		return (
 			<NoResult
-				title="No Questions Found"
+				title="No Problems Found"
 				description="Be the first to break the silence! 🚀 Post a Problem and kickstart the discussion. Your query could be the next big thing others learn from. Get involved! 💡"
 				link="/post-problem"
 				linkTitle="Post a Problem"

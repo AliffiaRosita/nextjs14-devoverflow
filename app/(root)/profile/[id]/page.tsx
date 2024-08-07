@@ -17,11 +17,18 @@ import { getFormattedJoinedDate } from '@/lib/utils';
 
 import ReferralLink from './components/ReferralLink';
 import ReferralUserTab from './components/ReferralUserTab';
+import { redirect } from 'next/navigation';
 
 export async function generateMetadata({
     params,
 }: Omit<URLProps, 'searchParams'>): Promise<Metadata> {
     const user = await getUserById({ userId: params.id });
+
+    if (!user) {
+        return {
+            title: 'User Not Found — TheSkillGuru',
+        };
+    }
 
     return {
         title: `${user.username}'s Profile — TheSkillGuru`,
@@ -30,6 +37,13 @@ export async function generateMetadata({
 
 const Page = async ({ params, searchParams }: URLProps) => {
     const { userId: clerkId } = auth();
+    if (!clerkId) return null;
+
+    const mongoUser = await getUserById({ userId: clerkId });
+    if (!mongoUser?.onboarded) redirect('/onboarding');
+
+    // const userInfo = await getUserInfo({ userId: params.id });
+    // const { userId: clerkId } = auth();
     const userInfo = await getUserInfo({ userId: params.id });
 
     const userFromClerk = await clerkClient.users.getUser(params.id);
@@ -111,6 +125,8 @@ const Page = async ({ params, searchParams }: URLProps) => {
             <Stats
                 totalQuestions={userInfo.totalQuestions}
                 totalAnswers={userInfo.totalAnswers}
+                totalLiveImpacts={userInfo.totalLiveImpacts}
+                totalRefLiveImpacts={userInfo.totalRefLiveImpacts}
                 badges={userInfo.badgeCounts}
                 reputation={userInfo.reputation}
             />

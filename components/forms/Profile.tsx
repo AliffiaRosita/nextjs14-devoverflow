@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import * as z from 'zod';
@@ -47,6 +47,7 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
     const parsedUser = JSON.parse(user);
     const parsedSkills = skills && JSON.parse(skills);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [whatsappError, setWhatsappError] = useState<string>('');
 
     const existingSkill = parsedUser?.skills.map((item: any) => {
         return {
@@ -83,6 +84,23 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
         },
     });
 
+    const isPhoneNumberValid = (number: string) => {
+        const trimmedNumber = number.replace(/\D/g, '');
+        return trimmedNumber.length > 4;
+    };
+
+    const validatePhoneNumber = (number: string) => {
+        if (!number || !isPhoneNumberValid(number)) {
+            setWhatsappError('Whatsapp number is required');
+        } else {
+            setWhatsappError('');
+        }
+    };
+
+    useEffect(() => {
+        validatePhoneNumber(form.getValues('whatsapp'));
+    }, [form.watch('whatsapp')]);
+
     async function onSubmit(values: z.infer<typeof ProfileValidation>) {
         setIsSubmitting(true);
 
@@ -90,6 +108,9 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
             if (selectedSkillOption.length === 0) {
                 setSkillValidation('Add at least 1 skill');
                 setIsSubmitting(false);
+            } else if (!isPhoneNumberValid(values.whatsapp)) {
+                setWhatsappError('Whatsapp number is required')
+                setIsSubmitting(false)
             } else {
                 const skills = selectedSkillOption.map((item: Option) => {
                     return item.value;
@@ -112,7 +133,6 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
                     skills,
                     path: pathname,
                 });
-                setIsSubmitting(false);
 
                 if (isOnboarding) {
                     sessionStorage.removeItem('referral');
@@ -125,6 +145,8 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
                 });
 
                 router.push('/home');
+
+                // setIsSubmitting(false);
             }
         } catch (error) {
             toast({
@@ -156,7 +178,10 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
                                     {...field}
                                 />
                             </FormControl>
-                            <FormMessage />
+                            {/* {form.formState.errors.name && (
+                                <span className="text-red-500">{form.formState.errors.name.message}</span>
+                            )} */}
+                            <FormMessage className="text-red-500" />
                         </FormItem>
                     )}
                 />
@@ -177,7 +202,7 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
                                     {...field}
                                 />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-red-500"/>
                         </FormItem>
                     )}
                 />
@@ -211,6 +236,7 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
                         <FormItem className="space-y-3.5">
                             <FormLabel className="paragraph-semibold text-dark400_light800">
                                 Whatsapp
+                                <span className="text-primary-500">*</span>
                             </FormLabel>
                             <FormControl>
                                 {/* <Input
@@ -222,6 +248,31 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
                                     country="in"
                                     prefix="+ "
                                     inputClass=" !w-full no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700 min-h-[56px] border"
+                                    {...field}
+                                />
+                            </FormControl>
+                            {whatsappError && (
+                                <FormMessage className="text-red-500">
+                                    {whatsappError}
+                                </FormMessage>
+                            )}
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="bio"
+                    render={({ field }) => (
+                        <FormItem className="space-y-3.5">
+                            <FormLabel className="paragraph-semibold text-dark400_light800">
+                                Bio
+                            </FormLabel>
+                            <FormControl>
+                                <Textarea
+                                    maxLength={100}
+                                    placeholder="Tell us about yourself"
+                                    className="no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700 min-h-[56px] border"
                                     {...field}
                                 />
                             </FormControl>
@@ -264,26 +315,6 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
                                     <FormControl>
                                         <Input
                                             placeholder="Your location"
-                                            className="no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700 min-h-[56px] border"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="bio"
-                            render={({ field }) => (
-                                <FormItem className="space-y-3.5">
-                                    <FormLabel className="paragraph-semibold text-dark400_light800">
-                                        Bio
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Textarea
-                                            placeholder="Tell us about yourself"
                                             className="no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700 min-h-[56px] border"
                                             {...field}
                                         />

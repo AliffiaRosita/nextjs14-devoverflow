@@ -19,6 +19,7 @@ import {
 } from '@/lib/actions/question.action';
 import { identifyKnockUser } from '@/lib/actions/knock.action';
 import { getUserById } from '@/lib/actions/user.action';
+// import { redirect } from 'next/navigation';
 // import { ImageSwiper } from '@/components/banner/banner';
 
 export const metadata: Metadata = {
@@ -29,11 +30,14 @@ export default async function Home({ searchParams }: SearchParamsProps) {
     const { userId: clerkId } = auth();
     let mongoUserId;
 
+    const mongoUser = await getUserById({ userId: clerkId });
+
     if (clerkId) {
         await identifyKnockUser(clerkId);
-        const mongoUser = await getUserById({ userId: clerkId });
         mongoUserId = mongoUser ? mongoUser._id : null;
     }
+
+    // if (!mongoUser?.onboarded) redirect("/onboarding");
 
     let result;
 

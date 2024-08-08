@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import type { URLProps } from '@/types';
 import type { Metadata } from 'next';
-import { auth, clerkClient } from '@clerk/nextjs/server';
+import { auth } from '@clerk/nextjs/server';
 import { SignedIn } from '@clerk/nextjs';
 
 import { Button } from '@/components/ui/button';
@@ -44,8 +44,8 @@ const Page = async ({ params, searchParams }: URLProps) => {
 
     const userInfo = await getUserInfo({ userId: params.id });
 
-    const userFromClerk = await clerkClient.users.getUser(params.id);
-    const profileImageUrl = userFromClerk.imageUrl || userInfo?.user.picture;
+    // const userFromClerk = await clerkClient.users.getUser(params.id);
+    const profileImageUrl = userInfo?.user.picture;
 
     return (
         <>

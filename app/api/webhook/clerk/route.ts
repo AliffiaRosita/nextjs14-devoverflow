@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 import { Webhook } from "svix";
 import { WebhookEvent } from "@clerk/nextjs/server";
 
-import { deleteUser, updateUser } from "@/lib/actions/user.action";
+import { deleteUser, getUserById, updateUser } from "@/lib/actions/user.action";
 // import { streamTokenProvider } from "@/lib/actions/stream.actions";
 // import { identifyKnockUser } from "@/lib/actions/knock.action";
 
@@ -102,15 +102,20 @@ export async function POST(req: Request) {
 			last_name,
 		} = evt.data;
 
+		const existingUser = await getUserById({userId: id});
+		const updatedUsername = username || existingUser.username;
+		console.log(existingUser);
+
 		// create a new user in database
 		const mongoUser = await updateUser({
 			clerkId: id,
 			updateData: {
 				name: `${first_name}${last_name ? ` ${last_name}` : ""}`,
-				username: username!,
+				username: updatedUsername,
 				email: email_addresses[0].email_address,
 				picture: image_url,
 			},
+			skills: existingUser.skills,
 			path: `/profile/${id}`,
 		});
 

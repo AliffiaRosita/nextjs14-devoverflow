@@ -40,6 +40,7 @@ interface Option {
 }
 
 const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
+    const gcpUrl = process.env.NODE_ENV
     const { mode } = useTheme();
     const editorRef = useRef(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -169,7 +170,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
             const xhr = new XMLHttpRequest();
             xhr.open(
                 'POST',
-                'https://file-upload-tau-three.vercel.app/api/upload',
+                gcpUrl,
                 true,
             );
 

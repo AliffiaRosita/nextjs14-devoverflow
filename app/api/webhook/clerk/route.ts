@@ -103,19 +103,27 @@ export async function POST(req: Request) {
 		} = evt.data;
 
 		const existingUser = await getUserById({userId: id});
-		const updatedUsername = username || existingUser.username;
-		console.log(existingUser);
+		const updatedName = existingUser.name ? existingUser.name : `${first_name}${last_name ? ` ${last_name}` : ""}`
+		const updatedUsername = existingUser.username ? existingUser.username : username;
+
+		interface Skill {
+			_id: string;
+			name: string;
+		  }
+		const skillNames = existingUser.skills.map((skill: Skill) => skill.name);
+		console.log(skillNames);
 
 		// create a new user in database
 		const mongoUser = await updateUser({
 			clerkId: id,
 			updateData: {
-				name: `${first_name}${last_name ? ` ${last_name}` : ""}`,
+				name: updatedName,
 				username: updatedUsername,
 				email: email_addresses[0].email_address,
 				picture: image_url,
 			},
-			skills: existingUser.skills,
+			// skills: existingUser.skills,
+			skills: skillNames,
 			path: `/profile/${id}`,
 		});
 

@@ -1,158 +1,174 @@
-import Link from "next/link";
-import Image from "next/image";
-import type { URLProps } from "@/types";
-import type { Metadata } from "next";
-import { auth } from "@clerk/nextjs/server";
-import { SignedIn } from "@clerk/nextjs";
+import Link from 'next/link';
+import Image from 'next/image';
+import type { URLProps } from '@/types';
+import type { Metadata } from 'next';
+import { auth } from '@clerk/nextjs/server';
+import { SignedIn } from '@clerk/nextjs';
 
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ProfileLink from "@/components/shared/ProfileLink";
-import Stats from "@/components/shared/Stats";
-import AnswersTab from "@/components/shared/AnswersTab";
-import QuestionsTab from "@/components/shared/QuestionsTab";
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ProfileLink from '@/components/shared/ProfileLink';
+import Stats from '@/components/shared/Stats';
+import AnswersTab from '@/components/shared/AnswersTab';
+import QuestionsTab from '@/components/shared/QuestionsTab';
 
-import { getUserInfo, getUserById } from "@/lib/actions/user.action";
-import { getFormattedJoinedDate } from "@/lib/utils";
+import { getUserInfo, getUserById } from '@/lib/actions/user.action';
+import { getFormattedJoinedDate } from '@/lib/utils';
 
-import ReferralLink from "./components/ReferralLink";
-import ReferralUserTab from "./components/ReferralUserTab";
+import ReferralLink from './components/ReferralLink';
+import ReferralUserTab from './components/ReferralUserTab';
+import { redirect } from 'next/navigation';
 
 export async function generateMetadata({
-	params,
-}: Omit<URLProps, "searchParams">): Promise<Metadata> {
-	const user = await getUserById({ userId: params.id });
+    params,
+}: Omit<URLProps, 'searchParams'>): Promise<Metadata> {
+    const user = await getUserById({ userId: params.id });
 
-	return {
-		title: `${user.username}'s Profile — TheSkillGuru`,
-	};
+    if (!user) {
+        return {
+            title: 'User Not Found — TheSkillGuru',
+        };
+    }
+
+    return {
+        title: `${user.username}'s Profile — TheSkillGuru`,
+    };
 }
 
 const Page = async ({ params, searchParams }: URLProps) => {
-	const { userId: clerkId } = auth();
-	const userInfo = await getUserInfo({ userId: params.id });
+    const { userId: clerkId } = auth();
+    if (!clerkId) return null;
 
-	return (
-		<>
-			<div className="flex flex-col-reverse items-start justify-between sm:flex-row">
-				<div className="flex flex-col items-start gap-4 lg:flex-row">
-					<Image
-						src={userInfo?.user.picture}
-						alt="profile picture"
-						width={140}
-						height={140}
-						className="rounded-full object-cover"
-					/>
+    const mongoUser = await getUserById({ userId: clerkId });
+    if (!mongoUser?.onboarded) redirect('/onboarding');
 
-					<div className="mt-3">
-						<h2 className="h2-bold text-dark100_light900">
-							{userInfo.user.name}
-						</h2>
-						<p className="paragraph-regular text-dark200_light800">
-							@{userInfo.user.username}
-						</p>
+    const userInfo = await getUserInfo({ userId: params.id });
 
-						<div className="mt-5 flex flex-wrap items-center justify-start gap-5">
-							{userInfo.user.portfolioWebsite && (
-								<ProfileLink
-									imgUrl="/assets/icons/link.svg"
-									href={userInfo.user.portfolioWebsite}
-									title="Portfolio"
-								/>
-							)}
+    // const userFromClerk = await clerkClient.users.getUser(params.id);
+    const profileImageUrl = userInfo?.user.picture;
 
-							{userInfo.user.location && (
-								<ProfileLink
-									imgUrl="/assets/icons/location.svg"
-									title={userInfo.user.location}
-								/>
-							)}
+    return (
+        <>
+            <div className="flex flex-col-reverse items-start justify-between sm:flex-row">
+                <div className="flex flex-col items-start gap-4 lg:flex-row">
+                    <div className="rounded-full size-[140px] overflow-hidden">
+                        <Image
+                            src={profileImageUrl}
+                            alt="profile picture"
+                            width={140}
+                            height={140}
+                            className="rounded-full"
+                        />
+                    </div>
 
-							<ProfileLink
-								imgUrl="/assets/icons/calendar.svg"
-								title={getFormattedJoinedDate(
-									userInfo.user.joinedAt
-								)}
-							/>
-						</div>
+                    <div className="mt-3">
+                        <h2 className="h2-bold text-dark100_light900">
+                            {userInfo.user.name}
+                        </h2>
+                        <p className="paragraph-regular text-dark200_light800">
+                            @{userInfo.user.username}
+                        </p>
 
-						{userInfo.user.bio && (
-							<p className="paragraph-regular text-dark400_light800 mt-8">
-								{userInfo.user.bio}
-							</p>
-						)}
-					</div>
-				</div>
+                        <div className="mt-5 flex flex-wrap items-center justify-start gap-5">
+                            {userInfo.user.portfolioWebsite && (
+                                <ProfileLink
+                                    imgUrl="/assets/icons/link.svg"
+                                    href={userInfo.user.portfolioWebsite}
+                                    title="Portfolio"
+                                />
+                            )}
 
-				<div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
-					<SignedIn>
-						{clerkId === userInfo.user.clerkId && (
-							<div className="flex flex-col gap-2">
-								<Link href="/profile/edit">
-									<Button className="primary-gradient paragraph-medium btn-secondary min-h-[46px] min-w-[175px] px-4 py-3 text-light-900">
-										Edit Profile
-									</Button>
-								</Link>
+                            {userInfo.user.location && (
+                                <ProfileLink
+                                    imgUrl="/assets/icons/location.svg"
+                                    title={userInfo.user.location}
+                                />
+                            )}
 
-								<ReferralLink username={userInfo.user.username} />
-							</div>
-						)}
-					</SignedIn>
-				</div>
-			</div>
+                            <ProfileLink
+                                imgUrl="/assets/icons/calendar.svg"
+                                title={getFormattedJoinedDate(
+                                    userInfo.user.joinedAt,
+                                )}
+                            />
+                        </div>
 
-			<Stats
-				totalQuestions={userInfo.totalQuestions}
-				totalAnswers={userInfo.totalAnswers}
-				badges={userInfo.badgeCounts}
-				reputation={userInfo.reputation}
-			/>
+                        {userInfo.user.bio && (
+                            <p className="paragraph-regular text-dark400_light800 mt-8">
+                                {userInfo.user.bio}
+                            </p>
+                        )}
+                    </div>
+                </div>
 
-			<div className="mt-10 flex gap-10">
-				<Tabs defaultValue="top-posts" className="flex-1">
-					<TabsList className="background-light800_dark400 min-h-[42px] p-1">
-						<TabsTrigger value="top-posts" className="tab">
-							Top Posts
-						</TabsTrigger>
-						<TabsTrigger value="answers" className="tab">
-							Answers
-						</TabsTrigger>
-						<TabsTrigger value="referral-user" className="tab">
-							Referral User
-						</TabsTrigger>
-					</TabsList>
-					<TabsContent
-						value="top-posts"
-						className="mt-5 flex w-full flex-col gap-6"
-					>
-						<QuestionsTab
-							searchParams={searchParams}
-							userId={userInfo.user._id}
-							clerkId={clerkId}
-						/>
-					</TabsContent>
-					<TabsContent
-						value="answers"
-						className="flex w-full flex-col gap-6"
-					>
-						<AnswersTab
-							searchParams={searchParams}
-							userId={userInfo.user._id}
-							clerkId={clerkId}
-						/>
-					</TabsContent>
-					<TabsContent
-						value="referral-user"
-						className="flex w-full flex-col gap-6"
-					>
-						<ReferralUserTab
-							clerkId={clerkId}
-						/>
-					</TabsContent>
-				</Tabs>
-			</div>
-		</>
-	);
+                <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
+                    <SignedIn>
+                        {clerkId === userInfo.user.clerkId && (
+                            <div className="flex flex-col gap-2">
+                                <Link href="/profile/edit">
+                                    <Button className="primary-gradient paragraph-medium btn-secondary min-h-[46px] min-w-[175px] px-4 py-3 text-light-900">
+                                        Edit Profile
+                                    </Button>
+                                </Link>
+
+                                <ReferralLink
+                                    username={userInfo.user.username}
+                                />
+                            </div>
+                        )}
+                    </SignedIn>
+                </div>
+            </div>
+
+            <Stats
+                totalQuestions={userInfo.totalQuestions}
+                totalAnswers={userInfo.totalAnswers}
+                totalLiveImpacts={userInfo.totalLiveImpacts}
+                totalRefLiveImpacts={userInfo.totalRefLiveImpacts}
+                badges={userInfo.badgeCounts}
+                reputation={userInfo.reputation}
+            />
+
+            <div className="mt-10 flex gap-10">
+                <Tabs defaultValue="top-posts" className="flex-1">
+                    <TabsList className="background-light800_dark400 min-h-[42px] p-1">
+                        <TabsTrigger value="top-posts" className="tab">
+                            Top Posts
+                        </TabsTrigger>
+                        <TabsTrigger value="answers" className="tab">
+                            Answers
+                        </TabsTrigger>
+                        <TabsTrigger value="referral-user" className="tab">
+                            Referral User
+                        </TabsTrigger>
+                    </TabsList>
+                    <TabsContent
+                        value="top-posts"
+                        className="mt-5 flex w-full flex-col gap-6">
+                        <QuestionsTab
+                            searchParams={searchParams}
+                            userId={userInfo.user._id}
+                            clerkId={clerkId}
+                        />
+                    </TabsContent>
+                    <TabsContent
+                        value="answers"
+                        className="flex w-full flex-col gap-6">
+                        <AnswersTab
+                            searchParams={searchParams}
+                            userId={userInfo.user._id}
+                            clerkId={clerkId}
+                        />
+                    </TabsContent>
+                    <TabsContent
+                        value="referral-user"
+                        className="flex w-full flex-col gap-6">
+                        <ReferralUserTab clerkId={clerkId} />
+                    </TabsContent>
+                </Tabs>
+            </div>
+        </>
+    );
 };
 
 export default Page;

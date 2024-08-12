@@ -19,7 +19,8 @@ import {
 } from '@/lib/actions/question.action';
 import { identifyKnockUser } from '@/lib/actions/knock.action';
 import { getUserById } from '@/lib/actions/user.action';
-import { ImageSwiper } from '@/components/banner/banner';
+// import { redirect } from 'next/navigation';
+// import { ImageSwiper } from '@/components/banner/banner';
 
 export const metadata: Metadata = {
     title: 'Home — TheSkillGuru',
@@ -29,11 +30,14 @@ export default async function Home({ searchParams }: SearchParamsProps) {
     const { userId: clerkId } = auth();
     let mongoUserId;
 
+    const mongoUser = await getUserById({ userId: clerkId });
+
     if (clerkId) {
         await identifyKnockUser(clerkId);
-        const mongoUser = await getUserById({ userId: clerkId });
         mongoUserId = mongoUser ? mongoUser._id : null;
     }
+
+    // if (!mongoUser?.onboarded) redirect("/onboarding");
 
     let result;
 
@@ -71,7 +75,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
                 <h1 className="h1-bold text-dark100_light900">All Problems</h1>
 
                 <Link
-                    prefetch={false}
+                    prefetch={true}
                     href="/post-problem"
                     className="flex justify-end max-sm:w-full">
                     <Button className="primary-gradient min-h-[46px] px-4 py-3 !text-light-900">

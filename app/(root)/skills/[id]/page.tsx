@@ -20,7 +20,7 @@ export async function generateMetadata({
 
 	return {
 		title: `Posts by skill '${tag.name}' — TheSkillGuru`,
-		description: tag.description || `Questions tagged with ${tag.name}`,
+		description: tag.description || `Problems related with ${tag.name}`,
 	};
 }
 
@@ -51,7 +51,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
 					route={`/skills/${params.id}`}
 					iconPosition="left"
 					imgSrc="/assets/icons/search.svg"
-					placeholder="Search tag questions"
+					placeholder="Search for related problems"
 					otherClasses="flex-1"
 				/>
 			</div>

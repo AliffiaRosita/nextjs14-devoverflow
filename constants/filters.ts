@@ -43,8 +43,8 @@ export const JobPageFilters: FilterProps[] = [
 ];
 
 export const GlobalSearchFilters: FilterProps[] = [
-    { name: "Question", value: "question" },
-    { name: "Answer", value: "answer" },
+    { name: "Problem", value: "problem" },
+    { name: "Solution", value: "solution" },
     { name: "User", value: "user" },
-    { name: "Tag", value: "tag" },
+    { name: "Skill", value: "skill" },
 ];

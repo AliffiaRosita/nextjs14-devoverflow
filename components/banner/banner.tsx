@@ -5,7 +5,7 @@ import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import slide from './banner.json';
 
-const slides = [slide.img1, slide.img2];
+const slides = [slide.img1];
 
 export const ImageSwiper = () => {
     const [isBannerVisible, setIsBannerVisible] = useState(true);
@@ -20,7 +20,7 @@ export const ImageSwiper = () => {
                     <div className="h-10 sm:h-16 xl:h-32 2xl:h-40">
                         <button
                             onClick={handleBannerClose}
-                            className="absolute top-0 right-0 mt-2 mr-2 z-40 rounded-sm shadow-md shadow-gray-700 bg-white text-black px-1 hover:bg-black hover:text-white">
+                            className="absolute top-0 -right-5 mt-0 mr- z-40 rounded-full shadow-md shadow-gray-700 bg-white text-black px-1 hover:bg-black hover:text-white">
                             {`x`}
                         </button>
 

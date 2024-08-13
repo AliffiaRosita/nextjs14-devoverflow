@@ -1,5 +1,5 @@
-import Link from "next/link";
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
 
 interface MetricProps {
     imgUrl: string;
@@ -22,21 +22,22 @@ const Metric = ({
 }: MetricProps) => {
     const metricContent = (
         <>
-            <Image
-                src={imgUrl}
-                alt={alt}
-                width={16}
-                height={16}
-                className={`object-contain ${href && "rounded-full"}`}
-            />
+            <div className="rounded-full size-[16px] overflow-hidden">
+                <Image
+                    src={imgUrl}
+                    alt={alt}
+                    width={16}
+                    height={16}
+                    className={`object-contain ${href && 'rounded-full'}`}
+                />
+            </div>
             <p className={`${textStyles} flex items-center gap-1 text-center`}>
                 {value}
                 {title && (
                     <span
                         className={`small-regular line-clamp-1 max-[405px]:hidden ${
-                            isAuthor && "max-sm:hidden"
-                        }`}
-                    >
+                            isAuthor && 'max-sm:hidden'
+                        }`}>
                         {title}
                     </span>
                 )}
@@ -46,7 +47,10 @@ const Metric = ({
 
     if (href) {
         return (
-            <Link prefetch={true} href={href} className="flex-center flex-wrap gap-1">
+            <Link
+                prefetch={true}
+                href={href}
+                className="flex-center flex-wrap gap-1">
                 {metricContent}
             </Link>
         );

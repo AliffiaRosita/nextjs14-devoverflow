@@ -33,7 +33,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
     const mongoUser = await getUserById({ userId: clerkId });
 
     if (clerkId) {
-        // await identifyKnockUser(clerkId);
+        await identifyKnockUser(clerkId);
         mongoUserId = mongoUser ? mongoUser._id : null;
     }
 

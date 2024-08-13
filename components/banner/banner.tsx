@@ -5,7 +5,7 @@ import { Carousel } from 'react-responsive-carousel';
 import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import slide from './banner.json';
 
-const slides = [slide.img1, slide.img2, slide.img3, slide.img4, slide.img5];
+const slides = [slide.img1, slide.img2];
 
 export const ImageSwiper = () => {
     const [isBannerVisible, setIsBannerVisible] = useState(true);
@@ -20,8 +20,8 @@ export const ImageSwiper = () => {
                     <div className="h-10 sm:h-16 xl:h-32 2xl:h-40">
                         <button
                             onClick={handleBannerClose}
-                            className="absolute top-0 right-0 mt-2 mr-2 z-40 text-cyan-500 px-3 py-1 hover:text-red-700">
-                            {`Close [x]`}
+                            className="absolute top-0 right-0 mt-2 mr-2 z-40 rounded-sm shadow-md shadow-gray-700 bg-white text-black px-1 hover:bg-black hover:text-white">
+                            {`x`}
                         </button>
 
                         <Carousel
@@ -30,7 +30,7 @@ export const ImageSwiper = () => {
                             infiniteLoop={true}
                             showThumbs={false}
                             showStatus={false}
-                            interval={2000}
+                            interval={6000}
                             className="h-28 w-full">
                             {slides.map((item, index) => (
                                 <div key={index} className="h-28 w-full">

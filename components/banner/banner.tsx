@@ -17,13 +17,13 @@ export const ImageSwiper = () => {
                 showThumbs={false}
                 showStatus={false}
                 interval={2000}
-                className="w-full h-80">
+                className="w-full h-28">
                 {slides.map((item, index) => (
-                    <div key={index} className="w-full h-80">
+                    <div key={index} className="w-full h-28">
                         <img
                             src={item}
                             alt={`Image ${index + 1}`}
-                            className="object-fit w-full h-80"
+                            className="object-fit w-full h-28"
                         />
                     </div>
                 ))}

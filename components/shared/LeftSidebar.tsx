@@ -34,7 +34,7 @@ const LeftSidebar = () => {
 
                     return (
                         <Link
-                            prefetch={false}
+                            prefetch={true}
                             key={link.route}
                             href={link.route}
                             className={`${

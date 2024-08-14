@@ -1,15 +1,15 @@
-"use server";
+'use server';
 
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
-import { FilterQuery } from "mongoose";
+import { FilterQuery } from 'mongoose';
 
-import User from "@/database/user.model";
-import Answer from "@/database/answer.model";
-import Interaction from "@/database/interaction.model";
+import User from '@/database/user.model';
+import Answer from '@/database/answer.model';
+import Interaction from '@/database/interaction.model';
 
-import { connectToDatabase } from "@/lib/mongoose";
+import { connectToDatabase } from '@/lib/mongoose';
 
 import type {
     CreateQuestionParams,
@@ -20,16 +20,16 @@ import type {
     QuestionVoteParams,
     RecommendedParams,
     SortOptions,
-} from "./shared.types";
-import Skill from "@/database/skill.model";
-import Question from "@/database/question.model";
+} from './shared.types';
+import Skill from '@/database/skill.model';
+import Question from '@/database/question.model';
 
 export async function createQuestion(params: CreateQuestionParams) {
     try {
         connectToDatabase();
         let { title, content, skills, author, path, isInstant = false } = params;
         if (!content) {
-            content = " ";
+            content = ' ';
         }
         // create new question
         const question = await Question.create({
@@ -45,18 +45,18 @@ export async function createQuestion(params: CreateQuestionParams) {
         // create the skills or get them if they already exist
         for (const skill of skills) {
             const isSkillAlreadyExist = await Skill.exists({
-                name: { $regex: new RegExp(`^${skill}$`, "i") },
+                name: { $regex: new RegExp(`^${skill}$`, 'i') },
             });
 
             if (!isSkillAlreadyExist) newSkillCounter++;
 
             const existingSkill = await Skill.findOneAndUpdate(
-                { name: { $regex: new RegExp(`^${skill}$`, "i") } },
+                { name: { $regex: new RegExp(`^${skill}$`, 'i') } },
                 {
                     $setOnInsert: { name: skill },
                     $push: { questions: question._id },
                 },
-                { upsert: true, new: true }
+                { upsert: true, new: true },
             );
 
             skillDocuments.push(existingSkill._id);
@@ -69,7 +69,7 @@ export async function createQuestion(params: CreateQuestionParams) {
         // create an interaction record for the user's ask_question action
         await Interaction.create({
             user: author,
-            action: "ask_question",
+            action: 'ask_question',
             question: question._id,
             skills: skillDocuments,
         });
@@ -107,11 +107,11 @@ export async function editQuestion(params: EditQuestionParams) {
                     content,
                     mark,
                 },
-            }
-        ).populate("skills");
+            },
+        ).populate('skills');
 
         if (!question) {
-            throw new Error("Question not found");
+            throw new Error('Question not found');
         }
 
         revalidatePath(path);
@@ -130,7 +130,7 @@ export async function deleteQuestion(params: DeleteQuestionParams) {
         const question = await Question.findById({ _id: questionId });
 
         if (!question) {
-            throw new Error("Question not found");
+            throw new Error('Question not found');
         }
 
         await Question.deleteOne({ _id: questionId });
@@ -141,7 +141,7 @@ export async function deleteQuestion(params: DeleteQuestionParams) {
 
         await Skill.updateMany(
             { questions: questionId },
-            { $pull: { questions: questionId } }
+            { $pull: { questions: questionId } },
         );
 
         await User.findByIdAndUpdate(question.author, {
@@ -149,7 +149,7 @@ export async function deleteQuestion(params: DeleteQuestionParams) {
         });
 
         if (isQuestionPath) {
-            redirect("/home");
+            redirect('/home');
         } else {
             revalidatePath(path);
         }
@@ -166,11 +166,11 @@ export async function getQuestionById(params: GetQuestionByIdParams) {
         const { questionId } = params;
 
         const question = await Question.findById(questionId)
-            .populate({ path: "skills", model: Skill, select: "_id name" })
+            .populate({ path: 'skills', model: Skill, select: '_id name' })
             .populate({
-                path: "author",
+                path: 'author',
                 model: User,
-                select: "_id clerkId name picture",
+                select: '_id clerkId name picture',
             });
         return question;
     } catch (error) {
@@ -195,8 +195,6 @@ export async function getQuestions(params: GetQuestionsParams) {
         const skipAmount = (page - 1) * pageSize;
 
         let query: FilterQuery<typeof Question> = {};
-        let user;
-        let questions;
         if (searchQuery) {
             query = {
                 title: { $regex: new RegExp(searchQuery, "i") },
@@ -216,10 +214,12 @@ export async function getQuestions(params: GetQuestionsParams) {
             default:
                 break;
         }
+
+        let user;
         if (clerkId !== "") {
             user = await User.findOne({ clerkId });
 
-            questions = await Question.aggregate([
+            const questions = await Question.aggregate([
                 {
                     $addFields: {
                         hasUserSkill: {
@@ -264,37 +264,35 @@ export async function getQuestions(params: GetQuestionsParams) {
                 {
                     $unwind: {
                         path: "$author",
-                    },
-                },
-                {
-                    $match: {
-                        $or: [
-                            {
-                                title: { $regex: new RegExp(searchQuery, "i") },
-                            },
-                        ],
+                        preserveNullAndEmptyArrays: true,
                     },
                 },
             ]);
+
+            const totalQuestions = await Question.countDocuments(query);
+            const isNext = totalQuestions > skipAmount + questions.length;
+
+            return { questions, isNext };
         } else {
-            questions = await Question.find(query)
+            const questions = await Question.find(query)
                 .populate({ path: "skills", model: Skill })
                 .populate({ path: "author", model: User })
                 .sort(sortOptions)
                 .skip(skipAmount)
                 .limit(pageSize);
+
+            const totalQuestions = await Question.countDocuments(query);
+            const isNext = totalQuestions > skipAmount + questions.length;
+
+            return { questions, isNext };
         }
-
-        const totalQuestions = await Question.countDocuments(query);
-
-        const isNext = totalQuestions > skipAmount + questions.length;
-
-        return { questions, isNext };
     } catch (error) {
         console.log(error);
         throw error;
     }
 }
+
+
 
 export async function upvoteQuestion(params: QuestionVoteParams) {
     try {
@@ -322,11 +320,11 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
             updateQuery,
             {
                 new: true,
-            }
+            },
         );
 
         if (!question) {
-            throw new Error("Question not found");
+            throw new Error('Question not found');
         }
 
         if (userId !== question.author.toString()) {
@@ -381,11 +379,11 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
             updateQuery,
             {
                 new: true,
-            }
+            },
         );
 
         if (!question) {
-            throw new Error("Question not found");
+            throw new Error('Question not found');
         }
 
         if (userId !== question.author.toString()) {
@@ -442,14 +440,14 @@ export async function getRecommendedQuestions(params: RecommendedParams) {
         const user = await User.findOne({ clerkId: userId });
 
         if (!user) {
-            throw new Error("user not found");
+            throw new Error('user not found');
         }
 
         const skipAmount = (page - 1) * pageSize;
 
         // Find the user's interactions
         const userInteractions = await Interaction.find({ user: user._id })
-            .populate("skills")
+            .populate('skills')
             .exec();
 
         // Extract tags from user's interactions
@@ -475,8 +473,8 @@ export async function getRecommendedQuestions(params: RecommendedParams) {
 
         if (searchQuery) {
             query.$or = [
-                { title: { $regex: searchQuery, $options: "i" } },
-                { content: { $regex: searchQuery, $options: "i" } },
+                { title: { $regex: searchQuery, $options: 'i' } },
+                { content: { $regex: searchQuery, $options: 'i' } },
             ];
         }
 
@@ -484,11 +482,11 @@ export async function getRecommendedQuestions(params: RecommendedParams) {
 
         const recommendedQuestions = await Question.find(query)
             .populate({
-                path: "skills",
+                path: 'skills',
                 model: Skill,
             })
             .populate({
-                path: "author",
+                path: 'author',
                 model: User,
             })
             .skip(skipAmount)
@@ -499,7 +497,7 @@ export async function getRecommendedQuestions(params: RecommendedParams) {
 
         return { questions: recommendedQuestions, isNext };
     } catch (error) {
-        console.error("Error getting recommended questions:", error);
+        console.error('Error getting recommended questions:', error);
         throw error;
     }
 }

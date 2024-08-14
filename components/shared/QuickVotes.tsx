@@ -70,7 +70,7 @@ const QuickVotes = ({
       } catch (error) {
         toast({
           title: "Error",
-          description: `Failed to ${action} the question. Please try again later.`,
+          description: `Failed to ${action} the problem. Please try again later.`,
           variant: "destructive",
         });
       }

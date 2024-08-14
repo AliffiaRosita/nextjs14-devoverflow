@@ -122,7 +122,7 @@ const InstantCallForm: React.FC<InstantCallFormProps> = ({
         const skills = selectedSkillOption.map((item: Option) => item.value);
 
         return await createQuestion({
-            title: values.question || 'An Instant Problem',
+            title: values.question || 'Can you help me with this problem?',
             content,
             skills,
             author: JSON.parse(mongoUserId),

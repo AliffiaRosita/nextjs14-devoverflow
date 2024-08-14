@@ -32,5 +32,5 @@ export const ProfileValidation = z.object({
 });
 
 export const InstantQuestionValidation = z.object({
-    question: z.string().min(5).max(600),
+    question: z.string().optional(),
 });

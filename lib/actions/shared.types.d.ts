@@ -1,6 +1,7 @@
 import { Schema } from "mongoose";
 
 import { IUser } from "@/database/user.model";
+import { ISkill } from "@/database/skill.model";
 
 /**
  * Common interfaces used in actions
@@ -99,6 +100,8 @@ export interface ClerkUser {
     lastName: string | null;
     referredBy?: string;
 }
+export interface MongoUser extends Partial<IUser> {}
+export interface Skill extends Partial<ISkill> {}
 
 export interface GetUserStatsParams
     extends UserId,

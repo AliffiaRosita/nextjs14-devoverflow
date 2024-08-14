@@ -1,7 +1,11 @@
 import React, { useCallback, useState, DragEvent, ChangeEvent } from 'react';
 import Image from 'next/image';
 
-const ImageUpload: React.FC = () => {
+interface ImageUploadProps {
+    onChange: (file: File | null) => void;
+}
+
+const ImageUpload: React.FC<ImageUploadProps> = ({ onChange }) => {
     const [image, setImage] = useState<string | null>(null);
     const [error, setError] = useState<string>('');
     const [isDragActive, setIsDragActive] = useState<boolean>(false);
@@ -25,32 +29,36 @@ const ImageUpload: React.FC = () => {
         handleFiles(event.dataTransfer.files);
     };
 
-    const handleFiles = useCallback((files: FileList) => {
-        try {
-            setError('');
-            const file = files[0];
-            if (!file) return;
+    const handleFiles = useCallback(
+        (files: FileList) => {
+            try {
+                setError('');
+                const file = files[0];
+                if (!file) return;
 
-            if (!['image/jpeg', 'image/png'].includes(file.type)) {
-                setError('Invalid file type.');
-                return;
+                if (!['image/jpeg', 'image/png'].includes(file.type)) {
+                    setError('Invalid file type.');
+                    return;
+                }
+
+                if (file.size > 1048576) {
+                    // 1MB
+                    setError('File is too large.');
+                    return;
+                }
+
+                onChange(file);
+                const reader = new FileReader();
+                reader.onload = () => {
+                    setImage(reader.result as string);
+                };
+                reader.readAsDataURL(file);
+            } catch (err) {
+                setError('An error occurred while uploading the image.');
             }
-
-            if (file.size > 1048576) {
-                // 1MB
-                setError('File is too large.');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = () => {
-                setImage(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        } catch (err) {
-            setError('An error occurred while uploading the image.');
-        }
-    }, []);
+        },
+        [onChange],
+    );
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         handleFiles(event.target.files!);
@@ -79,13 +87,13 @@ const ImageUpload: React.FC = () => {
             )}
             {error && <p className="text-red-500">{error}</p>}
             {image && (
-                <div className="mt-2 w-full">
+                <div className="flex-center mt-2 flex w-full">
                     <Image
                         src={image}
                         alt="Uploaded"
-                        layout="responsive"
-                        width={500}
-                        height={500}
+                        width={0}
+                        height={0}
+                        style={{ width: 'auto', maxHeight: '245px' }}
                     />
                 </div>
             )}

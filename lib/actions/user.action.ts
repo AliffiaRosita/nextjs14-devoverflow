@@ -120,7 +120,7 @@ export async function getUserById(params: { userId: string | null}) {
 			clerkId: userId,
 		}).populate({ path: "skills", model: Skill, select: "_id name" });
 
-		return user;
+		return JSON.parse(JSON.stringify(user));
 	} catch (error) {
 		console.log(error);
 		throw error;

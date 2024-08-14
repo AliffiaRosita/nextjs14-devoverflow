@@ -1,4 +1,13 @@
 'use client';
+
+import React, { useState } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { MultiValue } from 'react-select';
+import CreatableSelect from 'react-select/creatable';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 import ImageUpload from '@/components/shared/ImageUpload';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,32 +21,31 @@ import {
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/components/ui/use-toast';
+import { uploadImage } from '@/lib/actions/file.action';
 import { createQuestion } from '@/lib/actions/question.action';
-import {
-    InstantQuestionValidation,
-    ProfileValidation,
-} from '@/lib/validations';
+import { InstantQuestionValidation } from '@/lib/validations';
+import { Skill } from '@/lib/actions/shared.types';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter, usePathname } from 'next/navigation';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { MultiValue } from 'react-select';
-import CreatableSelect from 'react-select/creatable';
-import { z } from 'zod';
 interface Option {
     value: string;
     label: string;
 }
 
-const InstantCallForm = ({ skills, mongoUserId }) => {
+interface InstantCallFormProps {
+    skills: Skill[];
+    mongoUserId: string;
+}
+
+const InstantCallForm: React.FC<InstantCallFormProps> = ({
+    skills,
+    mongoUserId,
+}) => {
     const router = useRouter();
     const pathname = usePathname();
     const form = useForm<z.infer<typeof InstantQuestionValidation>>({
         resolver: zodResolver(InstantQuestionValidation),
         defaultValues: {
             question: '',
-            // skill: [],
         },
     });
 
@@ -45,57 +53,104 @@ const InstantCallForm = ({ skills, mongoUserId }) => {
         MultiValue<Option>
     >([]);
     const [skillValidation, setSkillValidation] = useState<string>('');
+    const [image, setImage] = useState<File | null>(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-    async function onSubmit(values: z.infer<typeof InstantQuestionValidation>) {
+    async function handleSubmit(
+        values: z.infer<typeof InstantQuestionValidation>,
+    ) {
+        if (!validateSubmission(values)) return;
+
         setIsSubmitting(true);
+
         try {
-            if (selectedSkillOption.length === 0) {
-                setSkillValidation('Add at least 1 skill');
-                setIsSubmitting(false);
-            } else {
-                const skills = selectedSkillOption.map((item: Option) => {
-                    return item.value;
-                });
-                const question = await createQuestion({
-                    title: values.question,
-                    content: values.question,
-                    skills,
-                    author: JSON.parse(mongoUserId),
-                    path: pathname,
-                    isInstant: true,
-                });
+            const questionContent = await buildQuestionContent(values);
+            const question = await submitQuestion(values, questionContent);
 
-                setIsSubmitting(false);
+            setIsSubmitting(false);
 
-                toast({
-                    title: `Question posted successfully 🎉`,
-                    variant: 'default',
-                });
-
-                router.push(`/call/${question._id}?instant=true`);
-            }
+            notifyUser('Question posted successfully 🎉', 'default');
+            navigateToQuestion(question._id);
         } catch (error) {
-            toast({
-                title: `Error creating a question ⚠️`,
-                variant: 'destructive',
-            });
-
+            notifyUser('Error creating a problem ⚠️', 'destructive');
             console.error(error);
+            setIsSubmitting(false);
         }
     }
 
-    const skillOptions = skills?.map((item: any) => {
-        return {
-            value: item.name,
-            label: item.name,
-        };
-    });
+    function validateSubmission(
+        values: z.infer<typeof InstantQuestionValidation>,
+    ) {
+        if (!image && !values.question) {
+            notifyUser(
+                'Please add an image or type the problem! ⚠️',
+                'destructive',
+            );
+            return false;
+        }
+
+        if (selectedSkillOption.length === 0) {
+            setSkillValidation('Add at least 1 skill');
+            return false;
+        }
+
+        return true;
+    }
+
+    async function buildQuestionContent(
+        values: z.infer<typeof InstantQuestionValidation>,
+    ) {
+        if (!image) {
+            return values.question || '';
+        }
+
+        const formData = new FormData();
+        formData.append('file', image);
+
+        const uploadedImage = await uploadImage(formData);
+        const imageTag = uploadedImage?.data
+            ? `<img src="${uploadedImage.data}" alt="problem image">`
+            : '';
+
+        return `<p>${values.question || ''}</p><p>${imageTag}</p>`;
+    }
+
+    async function submitQuestion(
+        values: z.infer<typeof InstantQuestionValidation>,
+        content: string,
+    ) {
+        const skills = selectedSkillOption.map((item: Option) => item.value);
+
+        return await createQuestion({
+            title: values.question || 'An Instant Problem',
+            content,
+            skills,
+            author: JSON.parse(mongoUserId),
+            path: pathname,
+            isInstant: true,
+        });
+    }
+
+    function notifyUser(message: string, variant: 'default' | 'destructive') {
+        toast({
+            title: message,
+            variant,
+        });
+    }
+
+    function navigateToQuestion(questionId: string) {
+        router.push(`/call/${questionId}?instant=true`);
+    }
+
+    const skillOptions = skills?.map(item => ({
+        value: item.name,
+        label: item.name,
+    })) as Option[];
 
     return (
         <Form {...form}>
             <form
-                onSubmit={form.handleSubmit(onSubmit)}
+                onSubmit={form.handleSubmit(handleSubmit)}
                 className="flex w-full flex-col gap-9">
                 <FormField
                     control={form.control}
@@ -121,15 +176,12 @@ const InstantCallForm = ({ skills, mongoUserId }) => {
                         Image
                     </FormLabel>
                     <FormControl className="mt-3.5">
-                        <ImageUpload />
+                        <ImageUpload onChange={setImage} />
                     </FormControl>
                     <FormDescription className="body-regular mt-2.5 text-light-500">
                         Describe what your problem is or upload Images related
-                        to your problem.{' '}
+                        to your problem.
                     </FormDescription>
-                    <FormMessage className="text-red-500">
-                        {skillValidation}
-                    </FormMessage>
                 </FormItem>
 
                 <FormItem className="flex w-full flex-col">
@@ -148,7 +200,7 @@ const InstantCallForm = ({ skills, mongoUserId }) => {
                     </FormControl>
                     <FormDescription className="body-regular mt-2.5 text-light-500">
                         Add skills to describe what your problem is about. You
-                        need to press enter to add a skill.{' '}
+                        need to press enter to add a skill.
                     </FormDescription>
                     <FormMessage className="text-red-500">
                         {skillValidation}

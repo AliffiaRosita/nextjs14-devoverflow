@@ -1,12 +1,12 @@
+/* eslint-disable prefer-promise-reject-errors */
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Editor } from '@tinymce/tinymce-react';
-
+// import { Editor } from '@tinymce/tinymce-react';
 import {
     Form,
     FormControl,
@@ -16,17 +16,25 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
+import dynamic from 'next/dynamic';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 
-import { useTheme } from '@/context/ThemeProvider';
+// import { useTheme } from '@/context/ThemeProvider';
+import { useTheme } from 'next-themes';
 
 import { QuestionValidation } from '@/lib/validations';
 import { editQuestion, createQuestion } from '@/lib/actions/question.action';
 
 import CreatableSelect from 'react-select/creatable';
 import { MultiValue } from 'react-select';
+import 'react-quill/dist/quill.snow.css';
+import ImageUploader from 'quill-image-uploader';
+import { Quill } from 'react-quill';
+
+const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+Quill.register('modules/imageUploader', ImageUploader);
 
 interface Props {
     type: string;
@@ -40,9 +48,10 @@ interface Option {
 }
 
 const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
-    const gcpUrl = process.env.NODE_ENV
-    const { mode } = useTheme();
-    const editorRef = useRef(null);
+    // const gcpUrl = process.env.NEXT_GCP_UPLOAD_URL;
+    const { theme } = useTheme();
+    const [editorTheme, setEditorTheme] = useState('');
+    // const editorRef = useRef(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const router = useRouter();
     const pathname = usePathname();
@@ -161,60 +170,78 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
         form.setValue('mark', event.target.value);
     };
 
-    const handleImageUpload = (
-        blobInfo: any,
-        progress: (percent: number) => void,
-        // failure: (message: string) => void,
-    ): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.open(
-                'POST',
-                gcpUrl,
-                true,
-            );
-
-            const formData = new FormData();
-            formData.append('file', blobInfo.blob(), blobInfo.filename());
-
-            xhr.upload.onprogress = e => {
-                if (progress && typeof progress === 'function') {
-                    const percent = (e.loaded / e.total) * 100;
-                    progress(percent);
-                }
-            };
-
-            xhr.onload = () => {
-                if (xhr.status === 403) {
-                    reject(new Error('HTTP Error: ' + xhr.status));
-                    return;
-                }
-
-                if (xhr.status < 200 || xhr.status >= 300) {
-                    reject(new Error('HTTP Error: ' + xhr.status));
-                    return;
-                }
-
-                const json = JSON.parse(xhr.responseText);
-
-                if (!json || typeof json.data !== 'string') {
-                    reject(new Error('Invalid JSON: ' + xhr.responseText));
-                    return;
-                }
-
-                resolve(json.data);
-            };
-
-            xhr.onerror = () => {
-                reject(new Error('Image upload failed'));
-                // if (failure && typeof failure === 'function') {
-                //     failure('Image upload failed');
-                // }
-            };
-
-            xhr.send(formData);
-        });
+    const quillModules = {
+        toolbar: [
+            [{ header: '1' }, { header: '2' }],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            ['bold', 'italic', 'underline'],
+            ['link', 'image', 'video', 'code-block'],
+        ],
     };
+
+    // Update the editor theme based on the current page theme
+    useEffect(() => {
+        if (theme === 'dark') {
+            setEditorTheme('dark');
+        } else {
+            setEditorTheme('light');
+        }
+    }, [theme]);
+
+    // const handleImageUpload = (
+    //     blobInfo: any,
+    //     progress: (percent: number) => void,
+    //     // failure: (message: string) => void,
+    // ): Promise<string> => {
+    //     return new Promise((resolve, reject) => {
+    //         const xhr = new XMLHttpRequest();
+    //         xhr.open(
+    //             'POST',
+    //             gcpUrl,
+    //             true,
+    //         );
+
+    //         const formData = new FormData();
+    //         formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+    //         xhr.upload.onprogress = e => {
+    //             if (progress && typeof progress === 'function') {
+    //                 const percent = (e.loaded / e.total) * 100;
+    //                 progress(percent);
+    //             }
+    //         };
+
+    //         xhr.onload = () => {
+    //             if (xhr.status === 403) {
+    //                 reject(new Error('HTTP Error: ' + xhr.status));
+    //                 return;
+    //             }
+
+    //             if (xhr.status < 200 || xhr.status >= 300) {
+    //                 reject(new Error('HTTP Error: ' + xhr.status));
+    //                 return;
+    //             }
+
+    //             const json = JSON.parse(xhr.responseText);
+
+    //             if (!json || typeof json.data !== 'string') {
+    //                 reject(new Error('Invalid JSON: ' + xhr.responseText));
+    //                 return;
+    //             }
+
+    //             resolve(json.data);
+    //         };
+
+    //         xhr.onerror = () => {
+    //             reject(new Error('Image upload failed'));
+    //             // if (failure && typeof failure === 'function') {
+    //             //     failure('Image upload failed');
+    //             // }
+    //         };
+
+    //         xhr.send(formData);
+    //     });
+    // };
 
     return (
         <Form {...form}>
@@ -287,7 +314,20 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                                 characters)
                             </FormLabel>
                             <FormControl className="mt-3.5">
-                                <Editor
+                                <div
+                                    className={
+                                        editorTheme === 'dark' ? 'dark' : ''
+                                    }>
+                                    <ReactQuill
+                                        className={`min-h-[100px] border-0 rounded-lg dark:bg-gray-800 dark:text-white bg-white text-black`}
+                                        value={field.value}
+                                        theme="snow"
+                                        onChange={field.onChange}
+                                        modules={quillModules}
+                                    />
+                                </div>
+
+                                {/* <Editor
                                     apiKey={
                                         process.env.NEXT_PUBLIC_TINY_MCE_API_KEY
                                     }
@@ -337,7 +377,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                                             mode === 'dark' ? 'dark' : 'light',
                                         images_upload_handler: handleImageUpload
                                     }}
-                                />
+                                /> */}
                             </FormControl>
                             <FormDescription className="body-regular mt-2.5 text-light-500">
                                 Introduces the problem and expand on what you

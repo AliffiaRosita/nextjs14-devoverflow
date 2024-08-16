@@ -2,6 +2,10 @@ import { Schema, models, model, Document } from "mongoose";
 
 export interface IUser extends Document {
 	clerkId: string;
+	firebaseId: string;
+	googleId: string;
+	emailOTP: number;
+	isEmailVerified: boolean;
 	name: string;
 	username: string;
 	email: string;
@@ -26,13 +30,17 @@ export interface IUser extends Document {
 }
 
 const UserSchema = new Schema({
-	clerkId: { type: String, required: true },
+	clerkId: { type: String },
+	firebaseId: { type: String },
+	googleId: { type: String },
+	OTPCode: { type: Number },
+	isEmailVerified: { type: Boolean, default: false },
 	name: { type: String, required: true },
 	username: { type: String, required: true, unique: true },
 	email: { type: String, required: true, unique: true },
 	password: { type: String },
 	bio: { type: String },
-	picture: { type: String, required: true },
+	picture: { type: String },
 	location: { type: String },
 	whatsapp: { type: String },
 	googleMeet: { type: String },

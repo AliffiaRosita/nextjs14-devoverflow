@@ -9,6 +9,14 @@ interface ClerkId {
     clerkId: string;
 }
 
+interface FirebaseId {
+    firebaseId: string;
+}
+
+interface GoogleId {
+    googleId: string
+}
+
 interface UserId {
     userId: string;
 }
@@ -60,7 +68,28 @@ interface Searchable
 /**
  * Interfaces for user actions
  */
+
 export interface CreateUserParams extends ClerkId {
+    clerkId: string;
+    name: string;
+    username: string;
+    email: string;
+    picture: string;
+    skills: string[];
+    referredBy?: string;
+}
+
+export interface NewCreateUserParams extends FirebaseId {
+    name: string;
+    username: string;
+    password: string;
+    email: string;
+    picture: string;
+    skills: string[];
+    referredBy?: string;
+}
+
+export interface NewGoogleCreateUserParams extends GoogleId {
     name: string;
     username: string;
     email: string;

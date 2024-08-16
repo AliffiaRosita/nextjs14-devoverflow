@@ -17,7 +17,7 @@ import {
     getQuestions,
     getRecommendedQuestions,
 } from '@/lib/actions/question.action';
-import { identifyKnockUser } from '@/lib/actions/knock.action';
+// import { identifyKnockUser } from '@/lib/actions/knock.action';
 import { getUserById } from '@/lib/actions/user.action';
 // import { redirect } from 'next/navigation';
 // import { ImageSwiper } from '@/components/banner/banner';
@@ -33,7 +33,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
     const mongoUser = await getUserById({ userId: clerkId });
 
     if (clerkId) {
-        await identifyKnockUser(clerkId);
+        // await identifyKnockUser(clerkId);
         mongoUserId = mongoUser ? mongoUser._id : null;
     }
 

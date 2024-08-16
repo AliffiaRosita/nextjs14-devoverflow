@@ -2,13 +2,13 @@
 const nextConfig = {
     experimental: {
         mdxRs: true,
-        serverComponentsExternalPackages: ["mongoose"],
+        serverComponentsExternalPackages: ['mongoose'],
     },
     async redirects() {
         return [
             {
-                source: "/",
-                destination: "/home",
+                source: '/',
+                destination: '/home',
                 permanent: true,
             },
         ];
@@ -16,14 +16,24 @@ const nextConfig = {
     images: {
         remotePatterns: [
             {
-                protocol: "https",
-                hostname: "*",
+                protocol: 'https',
+                hostname: '*',
             },
             {
-                protocol: "http",
-                hostname: "*",
+                protocol: 'http',
+                hostname: '*',
             },
         ],
+    },
+
+    webpack: (config, { isServer }) => {
+        if (!isServer) {
+            config.watchOptions = {
+                poll: 1000,
+                aggregateTimeout: 300,
+            };
+        }
+        return config;
     },
     // headers: async () => {
     //     return [

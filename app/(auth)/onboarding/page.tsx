@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 
 import Profile from "@/components/forms/Profile";
 
-import { createUserFromClerk, getUserById, getUserByUsername, updateUser } from "@/lib/actions/user.action";
+import { createUserFromClerk, getUserById, getUserByUsername, updateUserById } from "@/lib/actions/user.action";
 import { getSkillsForForm } from "@/lib/actions/skill.action";
 import { pushUnique } from "@/lib/utils";
 
@@ -22,7 +22,7 @@ const Page = async () => {
         const oldReferredTo = referredUser?.referredTo || [];
         const newReferredTo = pushUnique(oldReferredTo, id);
 
-        await updateUser({
+        await updateUserById({
 			clerkId: referredUser.clerkId,
 			updateData: {
 				referredTo: newReferredTo,

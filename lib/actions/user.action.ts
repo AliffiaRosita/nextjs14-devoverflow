@@ -17,6 +17,7 @@ import type {
 	CreateUserParams,
 	DeleteUserParams,
 	GetAllUsersParams,
+	GetRelatedSkillUsersParams,
 	GetSavedQuestionParams,
 	GetUserByIdParams,
 	GetUserStatsParams,
@@ -63,6 +64,32 @@ export async function updateUser(params: UpdateUserParams) {
 			{ clerkId },
 			{
 				$set: { ...updateData, skills: skillDocuments },
+			},
+			{
+				new: true,
+			}
+		);
+
+		if (path) {
+			revalidatePath(path);
+		}
+	} catch (error) {
+		console.log(error);
+		throw error;
+	}
+}
+
+export async function updateUserById(params: UpdateUserParams) {
+	try {
+		connectToDatabase();
+
+		const { clerkId, updateData, path } = params;
+
+
+		await User.findOneAndUpdate(
+			{ clerkId },
+			{
+				$set: { ...updateData },
 			},
 			{
 				new: true,
@@ -646,61 +673,25 @@ export async function getReferralUsers(params: GetAllUsersParams) {
     }
 }
 
-export async function getRelatedSkillUsers(params: GetAllUsersParams) {
+export async function getRelatedSkillUsers(params: GetRelatedSkillUsersParams) {
     try {
-        connectToDatabase();
+        await connectToDatabase();
 
-        const { page = 1, pageSize = 12, filter, searchQuery, clerkId } = params;
+        const { skills = [], limit = 3 } = params;
 
-        const skipAmount = (page - 1) * pageSize;
+        const matchQuery: FilterQuery<typeof User> = {
+            $and: [{ skills: { $in: skills }, isAcceptCalls: true }],
+        };
 
-        const query: FilterQuery<typeof User> = {};
+        const usersData = await User.aggregate([
+            { $match: matchQuery },
+            { $sample: { size: limit } },
+            { $project: { _id: 1, clerkId: 1, name: 1 } },
+        ]);
 
-        let sortOptions = {};
+        const users = JSON.parse(JSON.stringify(usersData));
 
-		switch (filter) {
-			case "new_users":
-				sortOptions = { joinedAt: -1 };
-				break;
-			case "old_users":
-				sortOptions = { joinedAt: 1 };
-				break;
-			case "top_contributors":
-				sortOptions = { reputation: -1 };
-				break;
-			default:
-				break;
-		}
-
-		const user = await User.findOne({ clerkId });
-
-        query.$and = [{ _id: { $in: user.referredTo } }];
-
-        if (searchQuery) {
-            query.$and = [
-                ...query.$and,
-                {
-                    $or: [
-                        { name: { $regex: new RegExp(searchQuery, 'i') } },
-                        { username: { $regex: new RegExp(searchQuery, 'i') } },
-                    ],
-                },
-            ];
-        }
-
-        const usersData = await User.find(query)
-			.populate({ path: "skills", model: Skill, select: "_id name" })
-            .sort(sortOptions)
-            .skip(skipAmount)
-            .limit(pageSize);
-
-			const users = JSON.parse(JSON.stringify(usersData));
-
-        const totalUsers = await User.countDocuments(query);
-
-        const isNext = totalUsers > skipAmount + users.length;
-
-        return { users, isNext };
+        return users;
     } catch (error) {
         console.log(error);
         throw error;

@@ -1,4 +1,5 @@
 import { BADGE_CRITERIA } from '@/constants';
+import { MongoUser } from '@/lib/actions/shared.types';
 import type { Channel as StreamChannel } from 'stream-chat';
 
 export interface FilterProps {
@@ -123,18 +124,23 @@ interface KnockUser {
     name: string;
 }
 
+export interface InvitedMentors {
+    _id: string;
+    name: string;
+}
+
 export interface VideoCallProps {
     inviteId?: string;
     userAuthorId: string;
-    questionId: string | null;
+    questionId: string;
     userId: string;
     knockUser: KnockUser;
+    invitedMentors: InvitedMentors[],
+    mongoUser: MongoUser
 }
 
 export interface VideoCallSetupProps {
-    userAuthorId: string;
     setIsSetupComplete: (value: boolean) => void;
-    knockUser: KnockUser;
 }
 
 export interface VideoCallRoomProps {
@@ -159,4 +165,20 @@ export interface ChatChannelProps {
 export interface ChannelInnerProps {
     hideChannelOnThread: boolean;
     knockUser: KnockUser;
+}
+export interface StreamUserProps {
+    id: string,
+    role: string,
+    custom: {
+        email: string,
+        username: string,
+    },
+    name: string,
+    image: string,
+}
+
+export interface RelatedSkillUsers {
+    _id: string,
+    clerkId: string,
+    name: string,
 }

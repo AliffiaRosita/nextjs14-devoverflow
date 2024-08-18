@@ -1,14 +1,10 @@
 "use client";
 
-import React, { useState, useMemo, useCallback } from "react";
+import { useShallow } from 'zustand/react/shallow'
 
-import { useGetLiveCalls } from "@/hooks/useGetLiveCalls";
-
-import Loader from "@/components/shared/Loader";
 import VideoCallStarter from "./VideoCallStarter";
-import VideoCallList from "./VideoCallList";
 import { VideoCallProps } from "@/types";
-import { useSearchParams } from "next/navigation";
+import { useBoundStore } from "@/store/useBoundStore";
 
 const VideoCall = ({
   inviteId,
@@ -16,59 +12,39 @@ const VideoCall = ({
   questionId,
   userId,
   knockUser,
-  relatedSkillUsers
+  mongoUser,
+  invitedMentors
 }: VideoCallProps) => {
+  const [
+    setInvitedMentors,
+    setKnockUser,
+    setUserAuthorId,
+    setCallRoomId,
+    setQuestionId,
+    setMongoUser,
+  ] = useBoundStore(
+    useShallow((state) => [
+      state.setInvitedMentors, 
+      state.setKnockUser,
+      state.setUserAuthorId, 
+      state.setCallRoomId, 
+      state.setQuestionId,
+      state.setMongoUser
+    ]),
+  );
+
   const isUserAuthor = userId === userAuthorId;
 
-  const { liveCalls, isLoading: isLiveLoading } = useGetLiveCalls(
-    questionId,
-    isUserAuthor
-  );
-  const searchParams = useSearchParams();
-  const instantCall = searchParams.get('instant');
+  const callRoomId = `${questionId}-${inviteId || (isUserAuthor ? userAuthorId : userId)}`;
 
-  const [isShowCallRoom, setIsShowCallRoom] = useState<boolean>(
-    !isUserAuthor || !!inviteId || !!instantCall
-  );
-  const [callRoomId, setCallRoomId] = useState<string>(
-    `${questionId}-${inviteId || (isUserAuthor ? userAuthorId : userId)}`
-  );
+  setInvitedMentors(invitedMentors)
+  setKnockUser(knockUser)
+  setUserAuthorId(userAuthorId)
+  setCallRoomId(callRoomId)
+  setQuestionId(questionId)
+  setMongoUser(mongoUser)
 
-  const handleShowCallRoom = useCallback(() => setIsShowCallRoom(true), []);
-  const handleSetCallRoomId = useCallback(
-    (roomId: string) => setCallRoomId(roomId),
-    []
-  );
-
-  const videoCallContent = useMemo(() => {
-    return isShowCallRoom ? (
-      <VideoCallStarter
-        questionId={questionId}
-        roomId={callRoomId}
-        userAuthorId={userAuthorId}
-        knockUser={knockUser}
-      />
-    ) : (
-      <VideoCallList
-        liveCalls={liveCalls}
-        setIsShowCallRoom={handleShowCallRoom}
-        setCallRoomId={handleSetCallRoomId}
-      />
-    );
-  }, [
-    isShowCallRoom,
-    questionId,
-    callRoomId,
-    liveCalls,
-    userAuthorId,
-    knockUser,
-    handleShowCallRoom,
-    handleSetCallRoomId,
-  ]);
-
-  if (isLiveLoading) return <Loader />;
-
-  return videoCallContent;
+  return <VideoCallStarter />;
 };
 
 export default VideoCall;

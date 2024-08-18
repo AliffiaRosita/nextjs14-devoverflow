@@ -2,6 +2,7 @@ import { Schema } from "mongoose";
 
 import { IUser } from "@/database/user.model";
 import { ISkill } from "@/database/skill.model";
+import { IVideoCall } from "@/database/videoCall.model";
 
 /**
  * Common interfaces used in actions
@@ -73,6 +74,11 @@ export interface CreateUserParams extends ClerkId {
 export interface GetUserByIdParams extends UserId {}
 
 export interface GetAllUsersParams extends Searchable {}
+
+export interface GetRelatedSkillUsersParams {
+    limit?: number;
+    skills: string[];
+}
 
 export interface GetJobsParams extends Searchable {
     location?: string;
@@ -230,4 +236,11 @@ export interface SendNotificationParams {
     sender?: string;
     type?: string;
     path: string;
+}
+
+export interface CreateVideoCallParams{}
+
+export interface UpdateVideoCallParams {
+    updateData: Partial<IVideoCall>;
+    callRoomId: string;
 }

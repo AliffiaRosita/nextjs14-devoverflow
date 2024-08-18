@@ -14,16 +14,28 @@ import VideoCallRoom from "./VideoCallRoom";
 import VideoCallSetup from "./VideoCallSetup";
 
 import "@/styles/stream-video.css";
-import { VideoCallRoomProps } from "@/types";
+import { useShallow } from "zustand/react/shallow";
+import { useBoundStore } from "@/store/useBoundStore";
+import { createVideoCall, getVideoCallByRoomId, updateVideoCall } from "@/lib/actions/videoCall.action";
 
-const VideoCallStarter = ({
-  questionId,
-  roomId,
-  userAuthorId,
-  knockUser,
-}: VideoCallRoomProps) => {
-  const { call, isCallLoading } = useGetCallById(roomId!);
+const VideoCallStarter = () => {
+  const [
+    callRoomId,
+    questionId,
+    invitedMentors,
+    mongoUser
+  ] = useBoundStore(
+    useShallow((state) => [
+      state.callRoomId, 
+      state.questionId,
+      state.invitedMentors,
+      state.mongoUser
+    ]),
+  );
+
+  const { call, isCallLoading } = useGetCallById(callRoomId!);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
+  const [isAllowed, setIsAllowed] = useState(false);
 
   const client = useStreamVideoClient();
 
@@ -43,22 +55,60 @@ const VideoCallStarter = ({
   }, [call, isCallLoading]);
 
   useEffect(() => {
-    const startRoom = async () => {
-      if (!client || !roomId) return;
+      const startRoom = async () => {
+          if (!client || !callRoomId || !mongoUser?._id) return;
 
-      const newCall = client.call("default", roomId);
+          const newCall = client.call('default', callRoomId);
 
-      await newCall.getOrCreate({
-        data: {
-          starts_at: new Date().toISOString(),
-          custom: {
-            questionId,
-          },
-        },
-      });
-    };
-    startRoom();
-  }, [client, roomId, questionId]);
+          const call = await newCall.getOrCreate({
+              data: {
+                  starts_at: new Date().toISOString(),
+                  custom: {
+                      questionId,
+                  },
+              },
+          });
+
+          if (call) {
+              //! Todo: register new call to db
+              const videoCall = await getVideoCallByRoomId({ callRoomId });
+              if (!videoCall) {
+                  const invitedIds = invitedMentors.map(member => member._id);
+                  await createVideoCall({
+                      callRoomId,
+                      invitedIds,
+                      memberIds: [],
+                      createdBy: mongoUser._id,
+                      questionId,
+                      type: 'author',
+                  });
+              } else {
+                  if (
+                      videoCall.invitedIds.includes(mongoUser._id) &&
+                      !videoCall.memberIds.length
+                  ) {
+                      await updateVideoCall({
+                          callRoomId,
+                          updateData: {
+                              memberIds: [mongoUser._id],
+                          },
+                      });
+                      setIsAllowed(true);
+                  } else if (
+                      videoCall.invitedIds.includes(mongoUser._id) &&
+                      videoCall.memberIds.includes(mongoUser._id)
+                  ) {
+                      setIsAllowed(true);
+                  } else if (videoCall.createdBy === mongoUser._id) {
+                      setIsAllowed(true);
+                  } else {
+                      setIsAllowed(false);
+                  }
+              }
+          }
+      };
+      startRoom();
+  }, [client, callRoomId, questionId]);
 
   const handleSetupComplete = useCallback(() => {
     setIsSetupComplete(true);
@@ -68,11 +118,9 @@ const VideoCallStarter = ({
     return (
       <VideoCallSetup
         setIsSetupComplete={handleSetupComplete}
-        userAuthorId={userAuthorId}
-        knockUser={knockUser}
       />
     );
-  }, [handleSetupComplete, userAuthorId, knockUser]);
+  }, [handleSetupComplete]);
 
   const roomComponent = useMemo(() => {
     return <VideoCallRoom />;

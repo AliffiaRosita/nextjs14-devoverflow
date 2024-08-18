@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   DeviceSettings,
   VideoPreview,
@@ -13,20 +13,27 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { sendNotification } from "@/lib/actions/knock.action";
 import { VideoCallSetupProps } from "@/types";
+import { useBoundStore } from "@/store/useBoundStore";
+import { useShallow } from "zustand/react/shallow";
 
 const VideoCallSetup = ({
   setIsSetupComplete,
-  userAuthorId,
-  knockUser,
 }: VideoCallSetupProps) => {
+  const [
+    knockUser,
+    userAuthorId,
+  ] = useBoundStore(
+    useShallow((state) => [
+      state.knockUser,
+      state.userAuthorId, 
+    ]),
+  );
+
   const call = useCall();
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   const { user } = useUser();
-
-  const instantCall = searchParams.get('instant')
 
   if (!call) {
     throw new Error(
@@ -58,7 +65,7 @@ const VideoCallSetup = ({
 
     // }
 
-    if(userAuthorId !== knockUser.id) {
+    if(knockUser && userAuthorId && userAuthorId !== knockUser.id) {
       await sendNotification({
         title: "New Video Call Invitation",
         type: "video_call",

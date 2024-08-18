@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '@clerk/nextjs';
 
-import { getUserById, updateUser } from '@/lib/actions/user.action';
+import { getUserById, updateUserById } from '@/lib/actions/user.action';
 import { MongoUser } from '@/lib/actions/shared.types';
 import Toggle from '../Toggle';
 
@@ -35,7 +35,7 @@ const AcceptCallToggle = () => {
                     // Delay to ensure this doesn't happen during render
                     await new Promise(resolve => setTimeout(resolve, 0));
 
-                    await updateUser({
+                    await updateUserById({
                         clerkId: userId,
                         updateData: {
                             isAcceptCalls,

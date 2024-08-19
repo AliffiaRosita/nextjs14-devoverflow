@@ -24,63 +24,117 @@ import type {
 import Skill from '@/database/skill.model';
 import Question from '@/database/question.model';
 
+// export async function createQuestion(params: CreateQuestionParams) {
+//     try {
+//         connectToDatabase();
+//         let { title, content, skills, author, path } = params;
+//         if (!content) {
+//             content = ' ';
+//         }
+//         // create new question
+//         const question = await Question.create({
+//             title,
+//             content,
+//             author,
+//         });
+
+//         const skillDocuments = [];
+//         let newSkillCounter = 0;
+
+//         // create the skills or get them if they already exist
+//         for (const skill of skills) {
+//             const isSkillAlreadyExist = await Skill.exists({
+//                 name: { $regex: new RegExp(`^${skill}$`, 'i') },
+//             });
+
+//             if (!isSkillAlreadyExist) newSkillCounter++;
+
+//             const existingSkill = await Skill.findOneAndUpdate(
+//                 { name: { $regex: new RegExp(`^${skill}$`, 'i') } },
+//                 {
+//                     $setOnInsert: { name: skill },
+//                     $push: { questions: question._id },
+//                 },
+//                 { upsert: true, new: true },
+//             );
+
+//             skillDocuments.push(existingSkill._id);
+//         }
+
+//         await Question.findByIdAndUpdate(question._id, {
+//             $push: { skills: { $each: skillDocuments } },
+//         });
+
+//         // create an interaction record for the user's ask_question action
+//         await Interaction.create({
+//             user: author,
+//             action: 'ask_question',
+//             question: question._id,
+//             skills: skillDocuments,
+//         });
+
+//         // increment author's reputation by +S for creating a question
+//         await User.findByIdAndUpdate(author, { $inc: { reputation: 5 } });
+
+//         // increment user's reputation by +S for creating a new tag (S = 3)
+//         if (newSkillCounter > 0) {
+//             await User.findByIdAndUpdate(author, {
+//                 $inc: { reputation: newSkillCounter * 3 },
+//             });
+//         }
+
+//         revalidatePath(path);
+//     } catch (error) {
+//         console.log(error);
+//         throw error;
+//     }
+// }
+
 export async function createQuestion(params: CreateQuestionParams) {
     try {
         connectToDatabase();
-        let { title, content, skills, author, path, isInstant = false } = params;
+        let { title, content = ' ', skills, author, path, isInstant = false } = params;
         if (!content) {
             content = ' ';
         }
-        // create new question
-        const question = await Question.create({
-            title,
-            content,
-            author,
-            isInstant
-        });
+        // Create question
+        const question = await Question.create({ title, content, author, isInstant });
 
-        const skillDocuments = [];
-        let newSkillCounter = 0;
-
-        // create the skills or get them if they already exist
-        for (const skill of skills) {
-            const isSkillAlreadyExist = await Skill.exists({
-                name: { $regex: new RegExp(`^${skill}$`, 'i') },
-            });
-
-            if (!isSkillAlreadyExist) newSkillCounter++;
-
-            const existingSkill = await Skill.findOneAndUpdate(
+        // Batch create or update skills
+        const skillPromises = skills.map(skill =>
+            Skill.findOneAndUpdate(
                 { name: { $regex: new RegExp(`^${skill}$`, 'i') } },
                 {
                     $setOnInsert: { name: skill },
                     $push: { questions: question._id },
                 },
                 { upsert: true, new: true },
-            );
+            ),
+        );
 
-            skillDocuments.push(existingSkill._id);
-        }
+        const skillDocuments = await Promise.all(skillPromises);
+        const skillIds = skillDocuments.map(doc => doc._id);
 
+        // Update question with skills
         await Question.findByIdAndUpdate(question._id, {
-            $push: { skills: { $each: skillDocuments } },
+            $push: { skills: { $each: skillIds } },
         });
 
-        // create an interaction record for the user's ask_question action
-        await Interaction.create({
-            user: author,
-            action: 'ask_question',
-            question: question._id,
-            skills: skillDocuments,
-        });
+        // Create interaction and update user reputation
+        await Promise.all([
+            Interaction.create({
+                user: author,
+                action: 'ask_question',
+                question: question._id,
+                skills: skillIds,
+            }),
+            User.findByIdAndUpdate(author, { $inc: { reputation: 5 } }),
+        ]);
 
-        // increment author's reputation by +S for creating a question
-        await User.findByIdAndUpdate(author, { $inc: { reputation: 5 } });
-
-        // increment user's reputation by +S for creating a new tag (S = 3)
-        if (newSkillCounter > 0) {
+        // Optionally, update user's reputation for new skills
+        if (skillDocuments.length > 0) {
             await User.findByIdAndUpdate(author, {
-                $inc: { reputation: newSkillCounter * 3 },
+                $inc: { reputation: skillDocuments.length * 3 },
             });
         }
 
@@ -187,7 +241,7 @@ export async function getQuestions(params: GetQuestionsParams) {
             page = 1,
             pageSize = 10,
             filter,
-            searchQuery = "",
+            searchQuery = '',
             clerkId,
         } = params;
 
@@ -197,18 +251,18 @@ export async function getQuestions(params: GetQuestionsParams) {
         let query: FilterQuery<typeof Question> = {};
         if (searchQuery) {
             query = {
-                title: { $regex: new RegExp(searchQuery, "i") },
+                title: { $regex: new RegExp(searchQuery, 'i') },
             };
         }
         let sortOptions: SortOptions = { createdAt: -1 };
         switch (filter) {
-            case "newest":
+            case 'newest':
                 sortOptions = { createdAt: -1 };
                 break;
-            case "frequent":
+            case 'frequent':
                 sortOptions = { views: -1 };
                 break;
-            case "unanswered":
+            case 'unanswered':
                 query.answers = { $size: 0 };
                 break;
             default:
@@ -216,7 +270,7 @@ export async function getQuestions(params: GetQuestionsParams) {
         }
 
         let user;
-        if (clerkId !== "") {
+        if (clerkId !== '') {
             user = await User.findOne({ clerkId });
 
             const questions = await Question.aggregate([
@@ -225,9 +279,9 @@ export async function getQuestions(params: GetQuestionsParams) {
                         hasUserSkill: {
                             $anyElementTrue: {
                                 $map: {
-                                    input: "$skills",
-                                    as: "skill",
-                                    in: { $in: ["$$skill", user.skills] },
+                                    input: '$skills',
+                                    as: 'skill',
+                                    in: { $in: ['$$skill', user.skills] },
                                 },
                             },
                         },
@@ -247,23 +301,23 @@ export async function getQuestions(params: GetQuestionsParams) {
                 },
                 {
                     $lookup: {
-                        from: "skills",
-                        localField: "skills",
-                        foreignField: "_id",
-                        as: "skills",
+                        from: 'skills',
+                        localField: 'skills',
+                        foreignField: '_id',
+                        as: 'skills',
                     },
                 },
                 {
                     $lookup: {
-                        from: "users",
-                        localField: "author",
-                        foreignField: "_id",
-                        as: "author",
+                        from: 'users',
+                        localField: 'author',
+                        foreignField: '_id',
+                        as: 'author',
                     },
                 },
                 {
                     $unwind: {
-                        path: "$author",
+                        path: '$author',
                         preserveNullAndEmptyArrays: true,
                     },
                 },
@@ -275,8 +329,8 @@ export async function getQuestions(params: GetQuestionsParams) {
             return { questions, isNext };
         } else {
             const questions = await Question.find(query)
-                .populate({ path: "skills", model: Skill })
-                .populate({ path: "author", model: User })
+                .populate({ path: 'skills', model: Skill })
+                .populate({ path: 'author', model: User })
                 .sort(sortOptions)
                 .skip(skipAmount)
                 .limit(pageSize);
@@ -291,8 +345,6 @@ export async function getQuestions(params: GetQuestionsParams) {
         throw error;
     }
 }
-
-
 
 export async function upvoteQuestion(params: QuestionVoteParams) {
     try {

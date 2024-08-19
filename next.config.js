@@ -3,6 +3,7 @@ const nextConfig = {
     experimental: {
         mdxRs: true,
         serverComponentsExternalPackages: ["mongoose"],
+        serverActions: {bodySizeLimit: '20mb'}
     },
     async redirects() {
         return [

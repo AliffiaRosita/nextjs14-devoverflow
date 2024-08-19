@@ -20,15 +20,15 @@ const VideoCallSetup = ({
 }: VideoCallSetupProps) => {
   const [
     knockUser,
-    userAuthorId,
+    userAuthorClerkId,
     mongoUser,
-    invitedMentors,
+    invitedUsers,
   ] = useBoundStore(
     useShallow((state) => [
       state.knockUser,
-      state.userAuthorId, 
+      state.userAuthorClerkId, 
       state.mongoUser, 
-      state.invitedMentors, 
+      state.invitedUsers, 
     ]),
   );
 
@@ -61,7 +61,7 @@ const VideoCallSetup = ({
 
   const handleJoin = useCallback(async () => {
       if (knockUser) {
-          invitedMentors.forEach(async inviteUser => {
+        invitedUsers.forEach(async inviteUser => {
               await sendNotification({
                   title: 'New Video Call Invitation',
                   type: 'video_call',
@@ -76,7 +76,7 @@ const VideoCallSetup = ({
       call.join();
 
       setIsSetupComplete(true);
-  }, [call, setIsSetupComplete, userAuthorId, knockUser, pathname]);
+  }, [call, setIsSetupComplete, userAuthorClerkId, knockUser, pathname]);
 
   const handleCopyLink = useCallback(() => {
     navigator.clipboard.writeText(invitationLink);

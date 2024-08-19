@@ -126,30 +126,23 @@ interface KnockUser {
     name: string;
 }
 
-export interface InvitedMentors {
+export interface InvitedUsers {
     _id: string;
     clerkId: string;
     name: string;
 }
 
 export interface VideoCallProps {
-    userAuthorId: string;
+    userAuthorClerkId: string;
     questionId: string;
     knockUser: KnockUser;
-    invitedMentors: InvitedMentors[],
+    invitedUsers: InvitedUsers[],
     mongoUser: MongoUser,
     callRoomId: string;
 }
 
 export interface VideoCallSetupProps {
     setIsSetupComplete: (value: boolean) => void;
-}
-
-export interface VideoCallRoomProps {
-    questionId: string | null;
-    userAuthorId: string;
-    roomId: string;
-    knockUser: KnockUser;
 }
 
 export interface MessageProps {

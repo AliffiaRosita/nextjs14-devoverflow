@@ -1,12 +1,12 @@
 import { StateCreator } from 'zustand';
 import { VideoCallSlice } from './types';
-import { InvitedMentors, KnockUser } from '@/types';
+import { InvitedUsers, KnockUser } from '@/types';
 import { MongoUser } from '@/lib/actions/shared.types';
 
 const initialState = {
-    invitedMentors: [],
+    invitedUsers: [],
     knockUser: null,
-    userAuthorId: null,
+    userAuthorClerkId: null,
     callRoomId: null,
     questionId: null,
     mongoUser: null,
@@ -14,10 +14,10 @@ const initialState = {
 
 export const createVideoCallSlice: StateCreator<VideoCallSlice> = set => ({
     ...initialState,
-    setInvitedMentors: (invitedMentors: InvitedMentors[]) =>
-        set(() => ({ invitedMentors })),
+    setInvitedUsers: (invitedUsers: InvitedUsers[]) =>
+        set(() => ({ invitedUsers })),
     setKnockUser: (knockUser: KnockUser) => set(() => ({ knockUser })),
-    setUserAuthorId: (userAuthorId: string) => set(() => ({ userAuthorId })),
+    setUserAuthorClerkId: (userAuthorClerkId: string) => set(() => ({ userAuthorClerkId })),
     setCallRoomId: (callRoomId: string) => set(() => ({ callRoomId })),
     setQuestionId: (questionId: string) => set(() => ({ questionId })),
     setMongoUser: (mongoUser: MongoUser) => set(() => ({ mongoUser })),

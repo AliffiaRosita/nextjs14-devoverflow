@@ -7,34 +7,34 @@ import { VideoCallProps } from "@/types";
 import { useBoundStore } from "@/store/useBoundStore";
 
 const VideoCall = ({
-  userAuthorId,
+  userAuthorClerkId,
   questionId,
   knockUser,
   mongoUser,
-  invitedMentors,
+  invitedUsers,
   callRoomId,
 }: VideoCallProps) => {
   const [
-    setInvitedMentors,
+    setInvitedUsers,
     setKnockUser,
-    setUserAuthorId,
+    setUserAuthorClerkId,
     setCallRoomId,
     setQuestionId,
     setMongoUser,
   ] = useBoundStore(
     useShallow((state) => [
-      state.setInvitedMentors, 
+      state.setInvitedUsers, 
       state.setKnockUser,
-      state.setUserAuthorId, 
+      state.setUserAuthorClerkId, 
       state.setCallRoomId, 
       state.setQuestionId,
       state.setMongoUser
     ]),
   );
 
-  setInvitedMentors(invitedMentors)
+  setInvitedUsers(invitedUsers)
   setKnockUser(knockUser)
-  setUserAuthorId(userAuthorId)
+  setUserAuthorClerkId(userAuthorClerkId)
   setCallRoomId(callRoomId)
   setQuestionId(questionId)
   setMongoUser(mongoUser)

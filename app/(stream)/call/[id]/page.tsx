@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 
-import { InvitedMentors, URLProps } from "@/types";
+import { InvitedUsers, URLProps } from "@/types";
 
 import { getQuestionById } from "@/lib/actions/question.action";
 
@@ -36,7 +36,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
     const questionId = params.id;
 
     const userAuthorClerkId = question?.author.clerkId;
-    const userAuthor = question?.author;
+    const userAuthor = JSON.parse(JSON.stringify(question?.author));
 
     const userId = clerkId;
 
@@ -54,7 +54,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
 
     const validateUserAccess = async (videoCallData: VideoCallData) => {
         if (!videoCallData) {
-            const invitedIds = invitedUsers.map((member: InvitedMentors) => member._id);
+            const invitedIds = invitedUsers.map((member: InvitedUsers) => member._id);
             await createVideoCall({
                 callRoomId,
                 invitedIds,
@@ -101,10 +101,10 @@ const Page = async ({ params, searchParams }: URLProps) => {
 	return (
         <VideoCall
             questionId={questionId}
-            userAuthorId={userAuthorClerkId}
+            userAuthorClerkId={userAuthorClerkId}
             knockUser={knockUser}
             mongoUser={mongoUser}
-            invitedMentors={invitedUsers}
+            invitedUsers={invitedUsers}
             callRoomId={callRoomId}
         />
 	);

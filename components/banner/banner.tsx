@@ -20,8 +20,8 @@ export const ImageSwiper = () => {
                     <div className="h-10 sm:h-16 xl:h-32 2xl:h-40">
                         <button
                             onClick={handleBannerClose}
-                            className="absolute top-0 -right-5 mt-0 mr- z-40 rounded-full shadow-md shadow-gray-700 bg-white text-black px-1 hover:bg-black hover:text-white">
-                            {`x`}
+                            className="flex items-center justify-center text-lg w-1 h-1 p-2 absolute -right-5 mt-0 z-40 rounded-full shadow-md shadow-gray-700 text-black bg-white hover:bg-gray-500 hover:text-white">
+                            &times;
                         </button>
 
                         <Carousel

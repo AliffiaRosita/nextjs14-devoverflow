@@ -3,8 +3,9 @@ import Modal from '@/components/shared/Modal';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import InstantCallForm from './InstantCallForm';
+import { InstantCallProps } from '@/types';
 
-const InstantCall = ({ skills, mongoUserId }) => {
+const InstantCall = ({ skills, mongoUserId }: InstantCallProps) => {
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     return (
         <>

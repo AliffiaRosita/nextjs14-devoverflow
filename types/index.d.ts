@@ -1,5 +1,5 @@
 import { BADGE_CRITERIA } from '@/constants';
-import { MongoUser } from '@/lib/actions/shared.types';
+import { MongoUser, Skill } from '@/lib/actions/shared.types';
 import type { Channel as StreamChannel } from 'stream-chat';
 
 export interface FilterProps {
@@ -89,13 +89,11 @@ export interface MaxTitleProps {
     maxLength: number;
 }
 
-interface Skill { _id: string; name: string };
-
 export interface QuestionProps {
     _id: string;
     title: string;
     content: string;
-    skills: Skill[];
+    skills: { _id: string; name: string }[];
     author: {
         _id: string;
         name: string;
@@ -170,6 +168,11 @@ export interface StreamUserProps {
     },
     name: string,
     image: string,
+}
+
+export interface InstantCallProps {
+    skills: Skill[],
+    mongoUserId: string,
 }
 
 export interface RelatedSkillUsers {

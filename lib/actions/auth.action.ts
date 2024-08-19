@@ -26,7 +26,6 @@ export const signUp = async (userData: NewCreateUserParams) => {
         );
 
         const newUser = await User.create({
-            name: userData.name,
             username: userData.email.split('@')[0],
             email: userData.email,
             firebaseId: firebaseResponse.user.uid,
@@ -38,6 +37,8 @@ export const signUp = async (userData: NewCreateUserParams) => {
         return newUser;
     } catch (error: any) {
         console.log(error);
+        if (error.code === 'auth/email-already-in-use')
+            throw new Error('Email already exist');
         throw new Error(error.message || 'Failed to sign up');
     }
 };
@@ -62,9 +63,6 @@ export const signIn = async (email: string, password: string) => {
         const refreshToken = await createAndSaveRefreshToken(
             existingUser.firebaseId,
         );
-
-        console.log('accessToken = ' + accessToken);
-        console.log('refreshToken = ' + refreshToken);
 
         return { data: existingUser, accessToken, refreshToken };
     } catch (error: any) {

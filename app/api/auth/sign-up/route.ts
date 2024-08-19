@@ -19,6 +19,13 @@ export const POST = async (request: Request) => {
             return NextResponse.json({ error: error.message }, { status: 400 });
         }
 
+        if (error.message === 'Email already exist') {
+            return NextResponse.json(
+                { error: 'Email already exist' },
+                { status: 401 },
+            );
+        }
+
         return NextResponse.json(
             { error: 'Internal server error' },
             { status: 500 },

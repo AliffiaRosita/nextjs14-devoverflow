@@ -35,7 +35,7 @@ const UserSchema = new Schema({
 	googleId: { type: String },
 	OTPCode: { type: Number },
 	isEmailVerified: { type: Boolean, default: false },
-	name: { type: String, required: true },
+	name: { type: String },
 	username: { type: String, required: true, unique: true },
 	email: { type: String, required: true, unique: true },
 	password: { type: String },

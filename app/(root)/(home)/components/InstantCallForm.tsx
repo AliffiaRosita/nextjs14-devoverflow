@@ -139,7 +139,7 @@ const InstantCallForm: React.FC<InstantCallFormProps> = ({
     }
 
     function navigateToQuestion(questionId: string) {
-        router.push(`/call/${questionId}?instant=true`);
+        router.push(`/call/${questionId}`);
     }
 
     const skillOptions = skills?.map(item => ({

@@ -11,6 +11,7 @@ import { identifyKnockUser } from "@/lib/actions/knock.action";
 import { getRelatedSkillUsers, getUserById } from "@/lib/actions/user.action";
 import { createVideoCall, getVideoCallByRoomId, updateVideoCall } from "@/lib/actions/videoCall.action";
 import { Skill, VideoCallData } from "@/lib/actions/shared.types";
+import VideoCallError from "./components/VideoCallError";
 
 export const metadata: Metadata = {
 	title: "Video Call — TheSkillGuru",
@@ -95,7 +96,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
     const isUserAllowedJoin = await validateUserAccess(videoCallData)
 
     if(!isUserAllowedJoin){
-        return <>you dont have access</>
+        return <VideoCallError message="Other Mentor picked up the call. You can pick the next one!" />
     }
 
 	return (

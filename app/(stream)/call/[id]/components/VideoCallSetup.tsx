@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   DeviceSettings,
   VideoPreview,
@@ -10,7 +10,6 @@ import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { sendNotification } from "@/lib/actions/knock.action";
 import { VideoCallSetupProps } from "@/types";
 import { useBoundStore } from "@/store/useBoundStore";
 import { useShallow } from "zustand/react/shallow";
@@ -19,22 +18,15 @@ const VideoCallSetup = ({
   setIsSetupComplete,
 }: VideoCallSetupProps) => {
   const [
-    knockUser,
-    userAuthorClerkId,
     mongoUser,
-    invitedUsers,
   ] = useBoundStore(
     useShallow((state) => [
-      state.knockUser,
-      state.userAuthorClerkId, 
       state.mongoUser, 
-      state.invitedUsers, 
     ]),
   );
 
   const call = useCall();
   const router = useRouter();
-  const pathname = usePathname();
 
   if (!call) {
     throw new Error(
@@ -60,23 +52,10 @@ const VideoCallSetup = ({
   );
 
   const handleJoin = useCallback(async () => {
-      if (knockUser) {
-        invitedUsers.forEach(async inviteUser => {
-              await sendNotification({
-                  title: 'New Video Call Invitation',
-                  type: 'video_call',
-                  message: `You have a New Video Call Invitation from ${knockUser.name || 'A User'}`,
-                  sender: knockUser.name,
-                  userId: inviteUser.clerkId,
-                  path: `${pathname}?invite=${knockUser.id}`,
-              });
-          });
-      }
-
       call.join();
 
       setIsSetupComplete(true);
-  }, [call, setIsSetupComplete, userAuthorClerkId, knockUser, pathname]);
+  }, [call, setIsSetupComplete]);
 
   const handleCopyLink = useCallback(() => {
     navigator.clipboard.writeText(invitationLink);

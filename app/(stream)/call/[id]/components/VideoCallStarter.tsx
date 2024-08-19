@@ -8,6 +8,7 @@ import {
   Call
 } from "@stream-io/video-react-sdk";
 
+import { toast } from "@/components/ui/use-toast";
 import Loader from "@/components/shared/Loader";
 import VideoCallRoom from "./VideoCallRoom";
 import VideoCallSetup from "./VideoCallSetup";
@@ -15,25 +16,37 @@ import VideoCallSetup from "./VideoCallSetup";
 import "@/styles/stream-video.css";
 import { useShallow } from "zustand/react/shallow";
 import { useBoundStore } from "@/store/useBoundStore";
+import VideoCallError from "./VideoCallError";
+import { sendNotification } from "@/lib/actions/knock.action";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const VideoCallStarter = () => {
   const [
     callRoomId,
+    knockUser,
     questionId,
+    invitedUsers,
     mongoUser
   ] = useBoundStore(
     useShallow((state) => [
       state.callRoomId, 
+      state.knockUser,
       state.questionId,
+      state.invitedUsers, 
       state.mongoUser
     ]),
   );
+
+  const searchParams = useSearchParams()
+
+  const inviteId = searchParams.get('invite')
 
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const [call, setCall] = useState<Call>();
   const [isCallLoading, setIsCallLoading] = useState(true);
 
   const client = useStreamVideoClient();
+  const pathname = usePathname();
 
   useEffect(() => {
       const startRoom = async () => {
@@ -68,6 +81,27 @@ const VideoCallStarter = () => {
   }, []);
 
   const setupComponent = useMemo(() => {
+    if (knockUser && !inviteId) {
+      const invitedUserNames = invitedUsers.map(inviteUser => {
+            sendNotification({
+                title: 'New Video Call Invitation',
+                type: 'video_call',
+                message: `You have a New Video Call Invitation from ${knockUser.name || 'A User'}`,
+                sender: knockUser.name,
+                userId: inviteUser.clerkId,
+                path: `${pathname}?invite=${knockUser.id}`,
+            });
+            return inviteUser.name;
+
+        });
+
+        toast({
+          title: `📨 Invitation Sent!`,
+          description: `Invited: ${invitedUserNames.join(', ')}`,
+          variant: "default",
+        });
+    }
+
     return (
       <VideoCallSetup
         setIsSetupComplete={handleSetupComplete}
@@ -81,12 +115,7 @@ const VideoCallStarter = () => {
 
   if (isCallLoading) return <Loader />;
 
-  if (!call)
-    return (
-      <p className="text-center text-3xl font-bold">
-        Call Failed! Please try again!
-      </p>
-    );
+  if (!call) return <VideoCallError message="Call Failed! Please try again!" />;
 
   return (
       <StreamCall call={call}>

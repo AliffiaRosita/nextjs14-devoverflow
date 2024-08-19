@@ -66,7 +66,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
         },
     ];
 
-    const parsedSkills = skills && JSON.parse(skills || '');
+    // const parsedSkills = skills && JSON.parse(skills || '');
 
     const parsedQuestionDetails =
         questionDetails && JSON.parse(questionDetails || '');
@@ -91,12 +91,39 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
 
     const [skillValidation, setSkillValidation] = useState<string>('');
 
-    const skillOptions = parsedSkills?.map((item: any) => {
-        return {
-            value: item.name,
-            label: item.name,
-        };
-    });
+    // const skillOptions = parsedSkills?.map((item: any) => {
+    //     return {
+    //         value: item.name,
+    //         label: item.name,
+    //     };
+    // });
+
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [skillOptions, setSkillOptions] = useState<Option[]>([]);
+    const itemsPerPage = 20; 
+    const parsedSkills = skills && JSON.parse(skills || '');
+
+    const loadSkills = () => {
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const newSkills = parsedSkills.slice(start, end).map((item: any) => {
+            return {
+                value: item.name,
+                label: item.name,
+            };
+        });
+        setSkillOptions(prevSkills => [...prevSkills, ...newSkills]);
+    };
+
+    useEffect(() => {
+        loadSkills();
+    }, [currentPage]);
+
+    const handleScrollToBottom = () => {
+        if ((currentPage * itemsPerPage) < parsedSkills.length) {
+            setCurrentPage(prevPage => prevPage + 1);
+        }
+    };
 
     const form = useForm<z.infer<typeof QuestionValidation>>({
         resolver: zodResolver(QuestionValidation),
@@ -145,7 +172,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                     });
                     // navigate to home page
                     router.push('/home');
-                    setIsSubmitting(false);
+                    // setIsSubmitting(false);
 
                     toast({
                         title: `Problem ${
@@ -402,6 +429,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                             isMulti
                             placeholder={'Select skill'}
                             options={skillOptions}
+                            onMenuScrollToBottom={handleScrollToBottom}
                             menuPlacement="top"
                         />
                     </FormControl>

@@ -89,11 +89,13 @@ export interface MaxTitleProps {
     maxLength: number;
 }
 
+interface Skill { _id: string; name: string };
+
 export interface QuestionProps {
     _id: string;
     title: string;
     content: string;
-    skills: Array<{ _id: string; name: string }>;
+    skills: Skill[];
     author: {
         _id: string;
         name: string;
@@ -126,17 +128,17 @@ interface KnockUser {
 
 export interface InvitedMentors {
     _id: string;
+    clerkId: string;
     name: string;
 }
 
 export interface VideoCallProps {
-    inviteId?: string;
     userAuthorId: string;
     questionId: string;
-    userId: string;
     knockUser: KnockUser;
     invitedMentors: InvitedMentors[],
-    mongoUser: MongoUser
+    mongoUser: MongoUser,
+    callRoomId: string;
 }
 
 export interface VideoCallSetupProps {

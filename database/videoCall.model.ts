@@ -7,7 +7,7 @@ export interface IVideoCall extends Document {
     createdBy: string;
     createdAt: Date;
     questionId: string;
-    type: string;
+    callInitiator: string;
 }
 
 const VideoCallSchema = new Schema({
@@ -17,7 +17,7 @@ const VideoCallSchema = new Schema({
     createdBy: { type: String, required: true },
     createdAt: { type: Date, default: Date.now },
     questionId: { type: String, required: true },
-    type: { type: String, required: true },
+    callInitiator: { type: String, required: true },
 });
 
 const VideoCall = models.VideoCall || model('VideoCall', VideoCallSchema);

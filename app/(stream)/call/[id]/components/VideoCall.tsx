@@ -7,13 +7,12 @@ import { VideoCallProps } from "@/types";
 import { useBoundStore } from "@/store/useBoundStore";
 
 const VideoCall = ({
-  inviteId,
   userAuthorId,
   questionId,
-  userId,
   knockUser,
   mongoUser,
-  invitedMentors
+  invitedMentors,
+  callRoomId,
 }: VideoCallProps) => {
   const [
     setInvitedMentors,
@@ -32,10 +31,6 @@ const VideoCall = ({
       state.setMongoUser
     ]),
   );
-
-  const isUserAuthor = userId === userAuthorId;
-
-  const callRoomId = `${questionId}-${inviteId || (isUserAuthor ? userAuthorId : userId)}`;
 
   setInvitedMentors(invitedMentors)
   setKnockUser(knockUser)

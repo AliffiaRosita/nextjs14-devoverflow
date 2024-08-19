@@ -244,3 +244,4 @@ export interface UpdateVideoCallParams {
     updateData: Partial<IVideoCall>;
     callRoomId: string;
 }
+export interface VideoCallData extends IVideoCall {}

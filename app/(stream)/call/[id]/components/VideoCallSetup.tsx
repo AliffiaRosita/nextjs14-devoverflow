@@ -7,7 +7,6 @@ import {
   useCall,
 } from "@stream-io/video-react-sdk";
 import { ArrowLeft } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
@@ -22,10 +21,14 @@ const VideoCallSetup = ({
   const [
     knockUser,
     userAuthorId,
+    mongoUser,
+    invitedMentors,
   ] = useBoundStore(
     useShallow((state) => [
       state.knockUser,
       state.userAuthorId, 
+      state.mongoUser, 
+      state.invitedMentors, 
     ]),
   );
 
@@ -33,14 +36,11 @@ const VideoCallSetup = ({
   const router = useRouter();
   const pathname = usePathname();
 
-  const { user } = useUser();
-
   if (!call) {
     throw new Error(
       "useStreamCall must be used within a StreamCall component."
     );
   }
-  if (!user) throw new Error("User not found");
 
   const [isMicCamToggled, setIsMicCamToggled] = useState(false);
 
@@ -55,30 +55,27 @@ const VideoCallSetup = ({
   }, [isMicCamToggled, call.camera, call.microphone]);
 
   const invitationLink = useMemo(
-    () => `${window.location.href}?invite=${user.id}`,
-    [user.id]
+    () => `${window.location.href}?invite=${mongoUser?.clerkId}`,
+    [mongoUser?.clerkId]
   );
 
   const handleJoin = useCallback(async () => {
-    //! Todo: instant call notification logic 
-    // if(userAuthorId === knockUser.id && instantCall) {
+      if (knockUser) {
+          invitedMentors.forEach(async inviteUser => {
+              await sendNotification({
+                  title: 'New Video Call Invitation',
+                  type: 'video_call',
+                  message: `You have a New Video Call Invitation from ${knockUser.name || 'A User'}`,
+                  sender: knockUser.name,
+                  userId: inviteUser.clerkId,
+                  path: `${pathname}?invite=${knockUser.id}`,
+              });
+          });
+      }
 
-    // }
+      call.join();
 
-    if(knockUser && userAuthorId && userAuthorId !== knockUser.id) {
-      await sendNotification({
-        title: "New Video Call Invitation",
-        type: "video_call",
-        message: `You have a New Video Call Invitation from ${knockUser.name || "A User"}`,
-        sender: knockUser.name,
-        userId: userAuthorId,
-        path: `${pathname}?invite=${knockUser.id}`,
-      });
-    }
-
-    call.join();
-
-    setIsSetupComplete(true);
+      setIsSetupComplete(true);
   }, [call, setIsSetupComplete, userAuthorId, knockUser, pathname]);
 
   const handleCopyLink = useCallback(() => {

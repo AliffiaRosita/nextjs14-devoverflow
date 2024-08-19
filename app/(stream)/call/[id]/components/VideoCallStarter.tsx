@@ -5,7 +5,8 @@ import {
   StreamCall,
   StreamTheme,
   useStreamVideoClient,
-  Call
+  Call,
+  CallingState
 } from "@stream-io/video-react-sdk";
 
 import { toast } from "@/components/ui/use-toast";
@@ -49,6 +50,22 @@ const VideoCallStarter = () => {
   const pathname = usePathname();
 
   useEffect(() => {
+    //* Note: this code are to turn off camera and microphone upon leaving the video call page
+    return () => {
+      if (!call || isCallLoading) {
+        return;
+      }
+
+      if (call.state.callingState === CallingState.JOINED) {
+        call.leave();
+      }
+
+      call.camera.disable();
+      call.microphone.disable();
+    };
+  }, [call, isCallLoading]);
+
+  useEffect(() => {
       const startRoom = async () => {
           if (!client || !callRoomId || !mongoUser?._id) return;
           try {
@@ -81,32 +98,35 @@ const VideoCallStarter = () => {
   }, []);
 
   const setupComponent = useMemo(() => {
-    if (knockUser && !inviteId) {
-      const invitedUserNames = invitedUsers.map(inviteUser => {
-            sendNotification({
-                title: 'New Video Call Invitation',
-                type: 'video_call',
-                message: `You have a New Video Call Invitation from ${knockUser.name || 'A User'}`,
-                sender: knockUser.name,
-                userId: inviteUser.clerkId,
-                path: `${pathname}?invite=${knockUser.id}`,
-            });
-            return inviteUser.name;
+      if (knockUser && !inviteId) {
+          const invitedUserNames = invitedUsers.map(inviteUser => {
+              sendNotification({
+                  title: 'New Video Call Invitation',
+                  type: 'video_call',
+                  message: `You have a New Video Call Invitation from ${knockUser.name || 'A User'}`,
+                  sender: knockUser.name,
+                  userId: inviteUser.clerkId,
+                  path: `${pathname}?invite=${knockUser.id}`,
+              });
+              return inviteUser.name;
+          });
 
-        });
+          if (invitedUserNames.length > 0) {
+              toast({
+                  title: `📨 Invitation Sent!`,
+                  description: `Invited Users: ${invitedUserNames.join(', ')}`,
+                  variant: 'default',
+              });
+          } else {
+              toast({
+                  title: `⚠️ Invitation Not Sent!`,
+                  description: `No Users Currently Available for call`,
+                  variant: 'destructive',
+              });
+          }
+      }
 
-        toast({
-          title: `📨 Invitation Sent!`,
-          description: `Invited: ${invitedUserNames.join(', ')}`,
-          variant: "default",
-        });
-    }
-
-    return (
-      <VideoCallSetup
-        setIsSetupComplete={handleSetupComplete}
-      />
-    );
+      return <VideoCallSetup setIsSetupComplete={handleSetupComplete} />;
   }, [handleSetupComplete]);
 
   const roomComponent = useMemo(() => {

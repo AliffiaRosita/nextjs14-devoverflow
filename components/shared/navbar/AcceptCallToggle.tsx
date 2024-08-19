@@ -5,6 +5,7 @@ import { useAuth } from '@clerk/nextjs';
 
 import { getUserById, updateUserById } from '@/lib/actions/user.action';
 import { MongoUser } from '@/lib/actions/shared.types';
+import { toast } from '@/components/ui/use-toast';
 import Toggle from '../Toggle';
 
 const AcceptCallToggle = () => {
@@ -32,7 +33,7 @@ const AcceptCallToggle = () => {
         async (isAcceptCalls: boolean) => {
             if (userId) {
                 try {
-                    // Delay to ensure this doesn't happen during render
+                    //* Delay to ensure this doesn't happen during render
                     await new Promise(resolve => setTimeout(resolve, 0));
 
                     await updateUserById({
@@ -44,6 +45,12 @@ const AcceptCallToggle = () => {
                     });
 
                     setMongoUser(prev => prev && { ...prev, isAcceptCalls });
+
+                    toast({
+                        title: 'Call Status Updated!',
+                        description: `You are now ${isAcceptCalls ? 'available' : 'unavailable'} for call invitations.`,
+                        variant: 'default',
+                    });                    
                 } catch (error) {
                     console.error('Error updating user:', error);
                 }

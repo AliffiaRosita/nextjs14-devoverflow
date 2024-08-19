@@ -175,7 +175,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
             [{ header: '1' }, { header: '2' }],
             [{ list: 'ordered' }, { list: 'bullet' }],
             ['bold', 'italic', 'underline'],
-            ['link', 'image', 'video', 'code-block'],
+            ['link', 'image', 'video'],
         ],
     };
 
@@ -319,7 +319,7 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                                         editorTheme === 'dark' ? 'dark' : ''
                                     }>
                                     <ReactQuill
-                                        className={`min-h-[100px] border-0 rounded-lg dark:bg-gray-800 dark:text-white bg-white text-black`}
+                                        className={`h-80 border-0 rounded-lg dark:bg-gray-800 dark:text-white bg-white text-black`}
                                         value={field.value}
                                         theme="snow"
                                         onChange={field.onChange}
@@ -380,6 +380,9 @@ const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
                                 /> */}
                             </FormControl>
                             <FormDescription className="body-regular mt-2.5 text-light-500">
+                                <br />
+                                <br />
+                                <br />
                                 Introduces the problem and expand on what you
                                 put in the title.
                             </FormDescription>

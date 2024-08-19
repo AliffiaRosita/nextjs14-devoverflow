@@ -172,8 +172,8 @@ const Answer = ({
         toolbar: [
             [{ header: '1' }, { header: '2' }],
             [{ list: 'ordered' }, { list: 'bullet' }],
-            ['bold', 'italic', 'underline'],
-            ['link', 'image', 'video', 'code-block'],
+            ['bold', 'italic', 'underline' ],
+            ['link', 'image', 'video'],
         ],
     };
 
@@ -226,7 +226,7 @@ const Answer = ({
                                             editorTheme === 'dark' ? 'dark' : ''
                                         }>
                                         <ReactQuill
-                                            className={`min-h-[100px] border-0 rounded-lg dark:bg-gray-800 dark:text-white bg-white text-black`}
+                                            className={`h-80 border-0 rounded-lg dark:bg-gray-800 dark:text-white bg-white text-black`}
                                             value={field.value}
                                             theme="snow"
                                             onChange={field.onChange}
@@ -290,7 +290,7 @@ const Answer = ({
                         )}
                     />
 
-                    <div className="flex justify-end">
+                    <div className="flex justify-end mt-5">
                         <Button
                             type="submit"
                             className="primary-gradient w-fit text-white"

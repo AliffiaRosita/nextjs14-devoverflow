@@ -1,7 +1,7 @@
 "use server";
 
 import { StreamClient } from "@stream-io/node-sdk";
-import { getStreamUserData, updateUser } from "./user.action";
+import { getStreamUserData, updateUserById } from "./user.action";
 
 const STREAM_API_KEY = process.env.NEXT_PUBLIC_STREAM_API_KEY;
 const STREAM_API_SECRET = process.env.STREAM_SECRET_KEY;
@@ -27,7 +27,7 @@ export const streamTokenProvider = async (userId: string) => {
 
 		const streamToken = streamClient.createToken(userId);
 
-		await updateUser({
+		await updateUserById({
 			clerkId: userId,
 			updateData: {
 				streamToken,

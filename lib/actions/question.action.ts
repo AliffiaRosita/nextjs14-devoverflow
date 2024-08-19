@@ -93,12 +93,12 @@ import Question from '@/database/question.model';
 export async function createQuestion(params: CreateQuestionParams) {
     try {
         connectToDatabase();
-        let { title, content = ' ', skills, author, path } = params;
+        let { title, content = ' ', skills, author, path, isInstant = false } = params;
         if (!content) {
             content = ' ';
         }
         // Create question
-        const question = await Question.create({ title, content, author });
+        const question = await Question.create({ title, content, author, isInstant });
 
         // Batch create or update skills
         const skillPromises = skills.map(skill =>
@@ -139,6 +139,8 @@ export async function createQuestion(params: CreateQuestionParams) {
         }
 
         revalidatePath(path);
+
+        return JSON.parse(JSON.stringify(question));
     } catch (error) {
         console.log(error);
         throw error;

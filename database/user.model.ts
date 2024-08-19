@@ -18,6 +18,7 @@ export interface IUser extends Document {
 	reputation?: number;
 	saved: Schema.Types.ObjectId[];
 	onboarded: boolean;
+	isAcceptCalls: boolean;
 	streamToken?: string;
 	skills: Schema.Types.ObjectId[];
     referredBy?: Schema.Types.ObjectId;
@@ -43,6 +44,7 @@ const UserSchema = new Schema({
 	reputation: { type: Number, default: 0 },
 	saved: [{ type: Schema.Types.ObjectId, ref: "Question" }],
 	onboarded: { type: Boolean, default: false },
+	isAcceptCalls: { type: Boolean, default: false },
 	streamToken: { type: String },
 	skills: [{ type: Schema.Types.ObjectId, ref: "Skill" }],
     referredBy: { type: Schema.Types.ObjectId, ref: "User" },

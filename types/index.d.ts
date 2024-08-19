@@ -1,4 +1,5 @@
 import { BADGE_CRITERIA } from '@/constants';
+import { MongoUser, Skill } from '@/lib/actions/shared.types';
 import type { Channel as StreamChannel } from 'stream-chat';
 
 export interface FilterProps {
@@ -92,7 +93,7 @@ export interface QuestionProps {
     _id: string;
     title: string;
     content: string;
-    skills: Array<{ _id: string; name: string }>;
+    skills: { _id: string; name: string }[];
     author: {
         _id: string;
         name: string;
@@ -123,25 +124,23 @@ interface KnockUser {
     name: string;
 }
 
+export interface InvitedUsers {
+    _id: string;
+    clerkId: string;
+    name: string;
+}
+
 export interface VideoCallProps {
-    inviteId?: string;
-    userAuthorId: string;
-    questionId: string | null;
-    userId: string;
+    userAuthorClerkId: string;
+    questionId: string;
     knockUser: KnockUser;
+    invitedUsers: InvitedUsers[],
+    mongoUser: MongoUser,
+    callRoomId: string;
 }
 
 export interface VideoCallSetupProps {
-    userAuthorId: string;
     setIsSetupComplete: (value: boolean) => void;
-    knockUser: KnockUser;
-}
-
-export interface VideoCallRoomProps {
-    questionId: string | null;
-    userAuthorId: string;
-    roomId: string;
-    knockUser: KnockUser;
 }
 
 export interface MessageProps {
@@ -159,4 +158,25 @@ export interface ChatChannelProps {
 export interface ChannelInnerProps {
     hideChannelOnThread: boolean;
     knockUser: KnockUser;
+}
+export interface StreamUserProps {
+    id: string,
+    role: string,
+    custom: {
+        email: string,
+        username: string,
+    },
+    name: string,
+    image: string,
+}
+
+export interface InstantCallProps {
+    skills: Skill[],
+    mongoUserId: string,
+}
+
+export interface RelatedSkillUsers {
+    _id: string,
+    clerkId: string,
+    name: string,
 }

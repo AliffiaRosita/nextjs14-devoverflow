@@ -1,6 +1,8 @@
 import { Schema } from "mongoose";
 
 import { IUser } from "@/database/user.model";
+import { ISkill } from "@/database/skill.model";
+import { IVideoCall } from "@/database/videoCall.model";
 
 /**
  * Common interfaces used in actions
@@ -73,6 +75,11 @@ export interface GetUserByIdParams extends UserId {}
 
 export interface GetAllUsersParams extends Searchable {}
 
+export interface GetRelatedSkillUsersParams {
+    limit?: number;
+    skills: string[];
+}
+
 export interface GetJobsParams extends Searchable {
     location?: string;
     remote?: boolean | string;
@@ -99,6 +106,8 @@ export interface ClerkUser {
     lastName: string | null;
     referredBy?: string;
 }
+export interface MongoUser extends Partial<IUser> {}
+export interface Skill extends Partial<ISkill> {}
 
 export interface GetUserStatsParams
     extends UserId,
@@ -124,6 +133,7 @@ export interface CreateQuestionParams extends Path, Content {
     title: string;
     skills: string[];
     author: Schema.Types.ObjectId | IUser;
+    isInstant?: boolean;
 }
 
 export interface GetQuestionByIdParams extends QuestionId {}
@@ -227,3 +237,11 @@ export interface SendNotificationParams {
     type?: string;
     path: string;
 }
+
+export interface CreateVideoCallParams{}
+
+export interface UpdateVideoCallParams {
+    updateData: Partial<IVideoCall>;
+    callRoomId: string;
+}
+export interface VideoCallData extends IVideoCall {}

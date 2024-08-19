@@ -17,6 +17,7 @@ import type {
 	CreateUserParams,
 	DeleteUserParams,
 	GetAllUsersParams,
+	GetRelatedSkillUsersParams,
 	GetSavedQuestionParams,
 	GetUserByIdParams,
 	GetUserStatsParams,
@@ -78,6 +79,32 @@ export async function updateUser(params: UpdateUserParams) {
 	}
 }
 
+export async function updateUserById(params: UpdateUserParams) {
+	try {
+		connectToDatabase();
+
+		const { clerkId, updateData, path } = params;
+
+
+		await User.findOneAndUpdate(
+			{ clerkId },
+			{
+				$set: { ...updateData },
+			},
+			{
+				new: true,
+			}
+		);
+
+		if (path) {
+			revalidatePath(path);
+		}
+	} catch (error) {
+		console.log(error);
+		throw error;
+	}
+}
+
 export async function deleteUser(params: DeleteUserParams) {
 	try {
 		connectToDatabase();
@@ -120,7 +147,7 @@ export async function getUserById(params: { userId: string | null}) {
 			clerkId: userId,
 		}).populate({ path: "skills", model: Skill, select: "_id name" });
 
-		return user;
+		return JSON.parse(JSON.stringify(user));
 	} catch (error) {
 		console.log(error);
 		throw error;
@@ -640,6 +667,31 @@ export async function getReferralUsers(params: GetAllUsersParams) {
         const isNext = totalUsers > skipAmount + users.length;
 
         return { users, isNext };
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+export async function getRelatedSkillUsers(params: GetRelatedSkillUsersParams) {
+    try {
+        await connectToDatabase();
+
+        const { skills = [], limit = 3 } = params;
+
+        const matchQuery: FilterQuery<typeof User> = {
+            $and: [{ skills: { $in: skills }, isAcceptCalls: true }],
+        };
+
+        const usersData = await User.aggregate([
+            { $match: matchQuery },
+            { $sample: { size: limit } },
+            { $project: { _id: 1, clerkId: 1, name: 1 } },
+        ]);
+
+        const users = JSON.parse(JSON.stringify(usersData));
+
+        return users;
     } catch (error) {
         console.log(error);
         throw error;

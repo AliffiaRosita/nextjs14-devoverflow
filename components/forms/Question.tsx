@@ -40,7 +40,7 @@ interface Option {
 }
 
 const Question = ({ type, mongoUserId, questionDetails, skills }: Props) => {
-    const gcpUrl = process.env.NODE_ENV
+    const gcpUrl = process.env.NEXT_GCP_UPLOAD_URL || ''
     const { mode } = useTheme();
     const editorRef = useRef(null);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);

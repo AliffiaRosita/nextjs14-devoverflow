@@ -1,6 +1,6 @@
-import Link from 'next/link';
-
-import { auth } from '@clerk/nextjs/server';
+import type { Metadata } from "next";
+import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 
 import { Button } from '@/components/ui/button';
 import LocalSearchbar from '@/components/shared/search/LocalSearchbar';
@@ -11,8 +11,8 @@ import QuestionsContainer from '@/components/shared/QuestionsContainer';
 
 import { HomePageFilters } from '@/constants/filters';
 
-import type { SearchParamsProps } from '@/types';
-import type { Metadata } from 'next';
+import type { SearchParamsProps } from "@/types";
+
 import {
     getQuestions,
     getRecommendedQuestions,
@@ -21,6 +21,9 @@ import { identifyKnockUser } from '@/lib/actions/knock.action';
 import { getUserById } from '@/lib/actions/user.action';
 import { ImageSwiper } from '@/components/banner/banner';
 // import { redirect } from 'next/navigation';
+
+import InstantCall from "../components/InstantCall";
+import { getSkillsForForm } from "@/lib/actions/skill.action";
 
 export const metadata: Metadata = {
     title: 'Home — TheSkillGuru',
@@ -38,6 +41,8 @@ export default async function Home({ searchParams }: SearchParamsProps) {
     }
 
     // if (!mongoUser?.onboarded) redirect("/onboarding");
+
+	const skills = await getSkillsForForm();
 
     let result;
 
@@ -74,14 +79,21 @@ export default async function Home({ searchParams }: SearchParamsProps) {
             <div className="min-[320px]:mt-0 sm:mt-0 md:mt-0 lg:mt-5 xl:mt-5 2xl:mt-0 flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
                 <h1 className="h1-bold text-dark100_light900">All Problems</h1>
 
-                <Link
-                    prefetch={true}
-                    href="/post-problem"
-                    className="flex justify-end max-sm:w-full">
-                    <Button className="primary-gradient min-h-[46px] px-4 py-3 !text-light-900">
-                        Post a Problem
-                    </Button>
-                </Link>
+				<div className="flex gap-2">
+					<InstantCall
+						skills={skills} 
+						mongoUserId={JSON.stringify(mongoUserId)}
+					/>
+
+					<Link
+						href="/post-problem"
+						className="flex justify-end max-sm:w-full"
+					>
+						<Button className="primary-gradient min-h-[46px] px-4 py-3 !text-light-900">
+							Post a Problem
+						</Button>
+					</Link>
+				</div>
             </div>
 
             <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">

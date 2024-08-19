@@ -1,69 +1,45 @@
 "use client";
 
-import React, { useState, useMemo, useCallback } from "react";
+import { useShallow } from 'zustand/react/shallow'
 
-import { useGetLiveCalls } from "@/hooks/useGetLiveCalls";
-
-import Loader from "@/components/shared/Loader";
 import VideoCallStarter from "./VideoCallStarter";
-import VideoCallList from "./VideoCallList";
 import { VideoCallProps } from "@/types";
+import { useBoundStore } from "@/store/useBoundStore";
 
 const VideoCall = ({
-  inviteId,
-  userAuthorId,
+  userAuthorClerkId,
   questionId,
-  userId,
   knockUser,
+  mongoUser,
+  invitedUsers,
+  callRoomId,
 }: VideoCallProps) => {
-  const isUserAuthor = userId === userAuthorId;
-
-  const { liveCalls, isLoading: isLiveLoading } = useGetLiveCalls(
-    questionId,
-    isUserAuthor
+  const [
+    setInvitedUsers,
+    setKnockUser,
+    setUserAuthorClerkId,
+    setCallRoomId,
+    setQuestionId,
+    setMongoUser,
+  ] = useBoundStore(
+    useShallow((state) => [
+      state.setInvitedUsers, 
+      state.setKnockUser,
+      state.setUserAuthorClerkId, 
+      state.setCallRoomId, 
+      state.setQuestionId,
+      state.setMongoUser
+    ]),
   );
-  const [isShowCallRoom, setIsShowCallRoom] = useState<boolean>(
-    !isUserAuthor || !!inviteId
-  );
-  const [callRoomId, setCallRoomId] = useState<string>(
-    `${questionId}-${inviteId || (isUserAuthor ? userAuthorId : userId)}`
-  );
 
-  const handleShowCallRoom = useCallback(() => setIsShowCallRoom(true), []);
-  const handleSetCallRoomId = useCallback(
-    (roomId: string) => setCallRoomId(roomId),
-    []
-  );
+  setInvitedUsers(invitedUsers)
+  setKnockUser(knockUser)
+  setUserAuthorClerkId(userAuthorClerkId)
+  setCallRoomId(callRoomId)
+  setQuestionId(questionId)
+  setMongoUser(mongoUser)
 
-  const videoCallContent = useMemo(() => {
-    return isShowCallRoom ? (
-      <VideoCallStarter
-        questionId={questionId}
-        roomId={callRoomId}
-        userAuthorId={userAuthorId}
-        knockUser={knockUser}
-      />
-    ) : (
-      <VideoCallList
-        liveCalls={liveCalls}
-        setIsShowCallRoom={handleShowCallRoom}
-        setCallRoomId={handleSetCallRoomId}
-      />
-    );
-  }, [
-    isShowCallRoom,
-    questionId,
-    callRoomId,
-    liveCalls,
-    userAuthorId,
-    knockUser,
-    handleShowCallRoom,
-    handleSetCallRoomId,
-  ]);
-
-  if (isLiveLoading) return <Loader />;
-
-  return videoCallContent;
+  return <VideoCallStarter />;
 };
 
 export default VideoCall;

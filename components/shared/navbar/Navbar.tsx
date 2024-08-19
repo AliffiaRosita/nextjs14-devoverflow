@@ -8,6 +8,7 @@ import Mobile from "@/components/shared/navbar/Mobile";
 import GlobalSearch from "@/components/shared/search/GlobalSearch";
 import { Button } from "@/components/ui/button";
 import Notification from "./Notification";
+import AcceptCallToggle from "./AcceptCallToggle";
 
 const Navbar = () => {
 	return (
@@ -59,6 +60,10 @@ const Navbar = () => {
 						</Link>
 					</div>
 				</SignedOut>
+
+				<SignedIn>
+					<AcceptCallToggle />
+				</SignedIn>
 
 				<Theme />
 

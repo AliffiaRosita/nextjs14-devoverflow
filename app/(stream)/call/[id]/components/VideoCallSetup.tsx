@@ -1,36 +1,38 @@
 "use client";
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   DeviceSettings,
   VideoPreview,
   useCall,
 } from "@stream-io/video-react-sdk";
 import { ArrowLeft } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { sendNotification } from "@/lib/actions/knock.action";
 import { VideoCallSetupProps } from "@/types";
+import { useBoundStore } from "@/store/useBoundStore";
+import { useShallow } from "zustand/react/shallow";
 
 const VideoCallSetup = ({
   setIsSetupComplete,
-  userAuthorId,
-  knockUser,
 }: VideoCallSetupProps) => {
+  const [
+    mongoUser,
+  ] = useBoundStore(
+    useShallow((state) => [
+      state.mongoUser, 
+    ]),
+  );
+
   const call = useCall();
   const router = useRouter();
-  const pathname = usePathname();
-
-  const { user } = useUser();
 
   if (!call) {
     throw new Error(
       "useStreamCall must be used within a StreamCall component."
     );
   }
-  if (!user) throw new Error("User not found");
 
   const [isMicCamToggled, setIsMicCamToggled] = useState(false);
 
@@ -45,24 +47,15 @@ const VideoCallSetup = ({
   }, [isMicCamToggled, call.camera, call.microphone]);
 
   const invitationLink = useMemo(
-    () => `${window.location.href}?invite=${user.id}`,
-    [user.id]
+    () => `${window.location.href}?invite=${mongoUser?.clerkId}`,
+    [mongoUser?.clerkId]
   );
 
   const handleJoin = useCallback(async () => {
-    await sendNotification({
-      title: "New Video Call Invitation",
-      type: "video_call",
-      message: `You have a New Video Call Invitation from ${knockUser.name || "A User"}`,
-      sender: knockUser.name,
-      userId: userAuthorId,
-      path: `${pathname}?invite=${knockUser.id}`,
-    });
+      call.join();
 
-    call.join();
-
-    setIsSetupComplete(true);
-  }, [call, setIsSetupComplete, userAuthorId, knockUser, pathname]);
+      setIsSetupComplete(true);
+  }, [call, setIsSetupComplete]);
 
   const handleCopyLink = useCallback(() => {
     navigator.clipboard.writeText(invitationLink);

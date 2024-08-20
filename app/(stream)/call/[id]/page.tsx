@@ -26,6 +26,8 @@ const Page = async ({ params, searchParams }: URLProps) => {
 
     const mongoUser = await getUserById({ userId: clerkId });
 
+    if (!mongoUser?.onboarded) redirect("/onboarding");
+
 	const knockUserData = await identifyKnockUser(clerkId)
 
 	const knockUser = JSON.parse(JSON.stringify(knockUserData));
@@ -45,15 +47,19 @@ const Page = async ({ params, searchParams }: URLProps) => {
 
 	const { invite: inviteId } = searchParams;
 
+    const skills = question.skills.map((skill: Skill) => (skill._id));
+
     const invitedUsers = isUserAuthor
         ? await getRelatedSkillUsers({
-              skills: question.skills.map((skill: Skill) => (skill._id)),
+              skills,
+              userId: mongoUser._id
           })
         : [userAuthor];
 
     const callRoomId = `${questionId}-${inviteId || (isUserAuthor ? userAuthorClerkId : userId)}`;
 
     const validateUserAccess = async (videoCallData: VideoCallData) => {
+        //* user created a video call
         if (!videoCallData) {
             const invitedIds = invitedUsers.map((member: InvitedUsers) => member._id);
             await createVideoCall({
@@ -68,6 +74,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
             return true;
         }
 
+        //* an invited user join the video call
         if (
             videoCallData.invitedIds.includes(mongoUser._id) &&
             !videoCallData.memberIds.length
@@ -78,17 +85,33 @@ const Page = async ({ params, searchParams }: URLProps) => {
                     memberIds: [mongoUser._id],
                 },
             });
+
             return true;
-        } else if (
-            videoCallData.invitedIds.includes(mongoUser._id) &&
-            videoCallData.memberIds.includes(mongoUser._id)
-        ) {
+        } 
+
+        //* no invited user available, user join the video call via invitation link instead
+        if (!videoCallData.invitedIds.length && !videoCallData.memberIds.length) {
+            await updateVideoCall({
+                callRoomId,
+                updateData: {
+                    memberIds: [mongoUser._id],
+                },
+            });
+
             return true;
-        } else if (videoCallData.createdBy === mongoUser._id) {
-            return true;
-        } else {
-            return false;
         }
+ 
+        //* video call registered member can join call
+        if (videoCallData.memberIds.includes(mongoUser._id)) {
+            return true;
+        }
+
+        //* video call creator can join call
+        if (videoCallData.createdBy === mongoUser._id) {
+            return true;
+        }
+
+        return false;
     };
 
     const videoCallData = await getVideoCallByRoomId({callRoomId})

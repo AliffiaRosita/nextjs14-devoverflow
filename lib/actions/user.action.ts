@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { FilterQuery } from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 
 import User from "@/database/user.model";
 import Skill from "@/database/skill.model";
@@ -677,10 +677,14 @@ export async function getRelatedSkillUsers(params: GetRelatedSkillUsersParams) {
     try {
         await connectToDatabase();
 
-        const { skills = [], limit = 3 } = params;
+        const { skills = [], limit = 3, userId } = params;
 
         const matchQuery: FilterQuery<typeof User> = {
-            $and: [{ skills: { $in: skills }, isAcceptCalls: true }],
+            $and: [
+                { skills: { $in: skills } },
+                { isAcceptCalls: true },
+                { _id: { $ne: new mongoose.Types.ObjectId(userId) } },
+            ],
         };
 
         const usersData = await User.aggregate([

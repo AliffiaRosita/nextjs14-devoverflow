@@ -3,7 +3,7 @@
 export const uploadImage = async (formData: FormData) => {
     try {
         const response = await fetch(
-            process.env.NEXT_GCP_UPLOAD_URL as string,
+            process.env.GCP_UPLOAD_URL as string,
             {
                 method: 'POST',
                 body: formData,

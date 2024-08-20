@@ -158,11 +158,11 @@ const InstantCallForm: React.FC<InstantCallFormProps> = ({
                     render={({ field }) => (
                         <FormItem className="space-y-3.5">
                             <FormLabel className="paragraph-semibold text-dark400_light800">
-                                Problem
+                                Title
                             </FormLabel>
                             <FormControl>
                                 <Textarea
-                                    placeholder="Type your problem here"
+                                    placeholder="Type your problem's title here"
                                     className="no-focus paragraph-regular light-border-2 background-light800_dark300 text-dark300_light700 min-h-[56px] border"
                                     {...field}
                                 />

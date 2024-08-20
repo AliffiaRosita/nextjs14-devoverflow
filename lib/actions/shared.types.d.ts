@@ -78,6 +78,7 @@ export interface GetAllUsersParams extends Searchable {}
 export interface GetRelatedSkillUsersParams {
     limit?: number;
     skills: string[];
+    userId: string;
 }
 
 export interface GetJobsParams extends Searchable {

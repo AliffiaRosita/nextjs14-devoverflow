@@ -48,18 +48,23 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
     const parsedSkills = skills && JSON.parse(skills);
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [whatsappError, setWhatsappError] = useState<string>('');
-
-    const existingSkill = parsedUser?.skills.map((item: any) => {
+  
+    const existingSkill = parsedUser?.skills?.map((item: any) => {
         return {
             value: item.name,
             label: item.name,
         };
     });
-    const [selectedSkillOption, setSelectedSkillOption] = useState<
+    const [selectedSkillLearnOption, setSelectedSkillLearnOption] = useState<
         MultiValue<Option>
     >(existingSkill || []);
 
-    const [skillValidation, setSkillValidation] = useState<string>('');
+    const [selectedSkillTeachOption, setSelectedSkillTeachOption] = useState<
+        MultiValue<Option>
+    >(existingSkill || []);
+
+    const [skillLearnValidation, setSkillLearnValidation] = useState<string>('');
+    const [skillTeachValidation, setSkillTeachValidation] = useState<string>('');
 
     const skillOptions = parsedSkills.map((item: any) => {
         return {
@@ -105,14 +110,20 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
         setIsSubmitting(true);
 
         try {
-            if (selectedSkillOption.length === 0) {
-                setSkillValidation('Add at least 1 skill');
+            if (selectedSkillLearnOption.length === 0) {
+                setSkillLearnValidation('Add at least 1 skill');
+                setIsSubmitting(false);
+            }else if(selectedSkillTeachOption.length === 0){
+                setSkillTeachValidation('Add at least 1 skill');
                 setIsSubmitting(false);
             } else if (!isPhoneNumberValid(values.whatsapp)) {
                 setWhatsappError('Whatsapp number is required')
                 setIsSubmitting(false)
             } else {
-                const skills = selectedSkillOption.map((item: Option) => {
+                const skills = selectedSkillLearnOption.map((item: Option) => {
+                    return item.value;
+                });
+                const skillsTeach = selectedSkillTeachOption.map((item: Option) => {
                     return item.value;
                 });
                 await updateUser({
@@ -130,7 +141,8 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
                         teams: values.teams,
                         onboarded: true,
                     },
-                    skills,
+                    skillsLearn: skills,
+                    skillsTeach,
                     path: pathname,
                 });
 
@@ -209,13 +221,13 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
 
                 <FormItem className="flex w-full flex-col">
                     <FormLabel className="paragraph-semibold text-dark400_light800">
-                        Skills
+                        Skills I am learning
                         <span className="text-primary-500">*</span>
                     </FormLabel>
                     <FormControl className="mt-3.5">
                         <CreatableSelect<Option, true>
-                            defaultValue={selectedSkillOption}
-                            onChange={setSelectedSkillOption}
+                            defaultValue={selectedSkillLearnOption}
+                            onChange={setSelectedSkillLearnOption}
                             isMulti
                             placeholder={'Select skill'}
                             options={skillOptions}
@@ -225,7 +237,29 @@ const Profile = ({ clerkId, user, skills, isOnboarding = false }: Props) => {
                         Add skills to describe what your interest is about
                     </FormDescription>
                     <FormMessage className="text-red-500">
-                        {skillValidation}
+                        {skillLearnValidation}
+                    </FormMessage>
+                </FormItem>
+
+                <FormItem className="flex w-full flex-col">
+                    <FormLabel className="paragraph-semibold text-dark400_light800">
+                        Skills I want to teach
+                        <span className="text-primary-500">*</span>
+                    </FormLabel>
+                    <FormControl className="mt-3.5">
+                        <CreatableSelect<Option, true>
+                            defaultValue={selectedSkillTeachOption}
+                            onChange={setSelectedSkillTeachOption}
+                            isMulti
+                            placeholder={'Select skill'}
+                            options={skillOptions}
+                        />
+                    </FormControl>
+                    <FormDescription className="body-regular mt-2.5 text-light-500">
+                        Add skills to describe what your interest is about
+                    </FormDescription>
+                    <FormMessage className="text-red-500">
+                        {skillTeachValidation}
                     </FormMessage>
                 </FormItem>
 

@@ -47,6 +47,7 @@ const UserSchema = new Schema({
 	isAcceptCalls: { type: Boolean, default: false },
 	streamToken: { type: String },
 	skills: [{ type: Schema.Types.ObjectId, ref: "Skill" }],
+	skillsLearn: [{ type: Schema.Types.ObjectId, ref: "Skill" }],
     referredBy: { type: Schema.Types.ObjectId, ref: "User" },
     referredTo: [{ type: Schema.Types.ObjectId, ref: "User" }],
 	joinedAt: { type: Date, default: Date.now },

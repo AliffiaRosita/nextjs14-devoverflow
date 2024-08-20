@@ -45,11 +45,12 @@ export async function updateUser(params: UpdateUserParams) {
 	try {
 		connectToDatabase();
 
-		const { clerkId, updateData, path, skills = [] } = params;
+		const { clerkId, updateData, path, skillsTeach = [], skillsLearn= [] } = params;
 
-		const skillDocuments = [];
+		const skillTeachDocuments = [];
+		const skillLearnDocuments = [];
 		// create the skills or get them if they already exist
-		for (const skill of skills) {
+		for (const skill of skillsTeach) {
 			const existingSkill = await Skill.findOneAndUpdate(
 				{ name: { $regex: new RegExp(`^${skill}$`, "i") } },
 				{
@@ -58,12 +59,28 @@ export async function updateUser(params: UpdateUserParams) {
 				{ upsert: true, new: true }
 			);
 
-			skillDocuments.push(existingSkill._id);
+			skillTeachDocuments.push(existingSkill._id);
+		}
+
+		for (const skill of skillsLearn) {
+			const existingSkill = await Skill.findOneAndUpdate(
+				{ name: { $regex: new RegExp(`^${skill}$`, "i") } },
+				{
+					$setOnInsert: { name: skill },
+				},
+				{ upsert: true, new: true }
+			);
+
+			skillLearnDocuments.push(existingSkill._id);
 		}
 		await User.findOneAndUpdate(
 			{ clerkId },
 			{
-				$set: { ...updateData, skills: skillDocuments },
+				$set: { 
+					...updateData, 
+					skills: skillLearnDocuments, 
+					skillsLearn: skillTeachDocuments 
+				},
 			},
 			{
 				new: true,

@@ -189,7 +189,31 @@ export async function getSkillsForForm() {
     try {
         connectToDatabase();
 
-        const skill = await Skill.find().sort({ createdOn: -1 });
+        // const skill = await Skill.find().sort({ createdOn: -1 });
+
+        const skill = await Skill.aggregate([
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: '_id',
+                    foreignField: 'skills',
+                    as: 'users',
+                },
+            },
+            {
+                $addFields: {
+                    usageCount: { $size: '$users' },
+                },
+            },
+            {
+                $sort: { usageCount: -1 },
+            },
+            {
+                $project: {
+                    users: 0,
+                },
+            },
+        ]);
 
         return skill;
     } catch (error) {

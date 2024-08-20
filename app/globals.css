@@ -173,3 +173,7 @@ code {
 .cl-profileSection__activeDevices, .cl-profileSection__danger {
     display: none;
 }
+
+label.cl-formFieldLabel__password-field::before{
+    content:"Create\00A0";
+}
